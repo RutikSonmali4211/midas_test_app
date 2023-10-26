@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "795736559732",
+    "project_id": "simplifin-92961",
+    "storage_bucket": "simplifin-92961.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:795736559732:android:9d8d16a5167393005f8121",
+        "android_client_info": {
+          "package_name": "com.org.midas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "795736559732-3eicokmdk2einh472srpooglgal3og8p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.org.midas",
+            "certificate_hash": "13bba41e39f56b75e591fdf99ebf13ee8ba54b36"
+          }
+        },
+        {
+          "client_id": "795736559732-576lb8c3sr5kgq2k5fte6lqnlokviqvt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAnTRHFvEyjrKebHKbZdoalvJFv16b3Tk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "795736559732-576lb8c3sr5kgq2k5fte6lqnlokviqvt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
