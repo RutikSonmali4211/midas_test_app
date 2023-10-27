@@ -1,6 +1,6 @@
 class ApplicationUrls {
-  static const String baseUrl = 'http://10.0.2.2:3000/';
-  // static const String baseUrl = 'http://devmidasadmin.ergobite.com:3000/';
+  // static const String baseUrl = 'http://10.0.2.2:3000/';
+  static const String baseUrl = 'http://devmidasadmin.ergobite.com:3000/';
   static const String signUpUrl = '${baseUrl}auth/signup';
   static const String signInUrl = '${baseUrl}auth/signin';
   static const String signOutUrl = '${baseUrl}auth/signout';
