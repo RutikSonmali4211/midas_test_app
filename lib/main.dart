@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:midas/controller/device_token/device_token_controller.dart';
 import 'package:midas/screen/loading/loading.dart';
@@ -10,11 +9,11 @@ import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  // await Firebase.initializeApp();
   // WidgetsBinding.instance.addObserver(AppLifecycleObserver());
   await LocalStorage.init();
-  String? deviceToken = await DeviceTokenController.getDeviceToken();
-  LocalStorage.setDeviceToken(deviceToken!);
+  // String? deviceToken = await DeviceTokenController.getDeviceToken();
+  // LocalStorage.setDeviceToken(deviceToken!);
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
