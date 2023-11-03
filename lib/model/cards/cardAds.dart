@@ -1,6 +1,6 @@
-class CardsAdsEntity {
-  final String imageUrl;
-  final String url;
+// class CardsAdsEntity {
+//   final String imageUrl;
+//   final String url;
 
-  CardsAdsEntity({required this.imageUrl, required this.url});
-}
+//   CardsAdsEntity({required this.imageUrl, required this.url});
+// }
