@@ -1,23 +1,24 @@
+import 'package:flutter/material.dart';
 import 'package:midas/constant/colors.dart';
 import 'package:midas/constant/size_util.dart';
-import 'package:flutter/material.dart';
 
-class LargeButton extends StatelessWidget {
+class CustomIconButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final Color backgroundColor;
   final Color textColor;
-  const LargeButton(
+  final IconData icon;
+  const CustomIconButton(
       {super.key,
       required this.text,
       required this.onPressed,
       required this.backgroundColor,
-      required this.textColor});
+      required this.textColor,
+      required this.icon});
 
   @override
   Widget build(BuildContext context) {
-    return
-        Column(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -36,18 +37,28 @@ class LargeButton extends StatelessWidget {
               backgroundColor: backgroundColor,
             ),
             child: Align(
-              alignment: Alignment.center,
-              child: Text(
-                text,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: SizeUtil.headingMedium(context),
-                  fontWeight: FontWeight.w700,
-                  fontFamily: "Helvetica",
-                ),
-              ),
-            ),
+                alignment: Alignment.center,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      icon,
+                      color: textColor,
+                      size: SizeUtil.scallingFactor(context) * 22,
+                    ),
+                    Text(
+                       text,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: textColor,
+                        fontSize: SizeUtil.headingMedium(context),
+                        fontWeight: FontWeight.w700,
+                        fontFamily: "Helvetica",
+                      ),
+                    ),
+                  ],
+                )),
           ),
         ),
       ],

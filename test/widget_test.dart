@@ -6,10 +6,9 @@ import 'package:midas/main.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(
-      // const MyApp(token: "",)
-      const MyApp()
-      );
+    await tester.pumpWidget(const MyApp(
+      token: "",
+    ));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
@@ -26,9 +25,9 @@ void main() {
 
   testWidgets('Counter increments on add', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(
-      // const MyApp(token: "",)
-      const MyApp());
+    await tester.pumpWidget(const MyApp(
+      token: "",
+    ));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
@@ -45,10 +44,7 @@ void main() {
 
   testWidgets('Counter increments on remove', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(
-     // const MyApp(token: "",)
-      const MyApp()
-      );
+    await tester.pumpWidget(const MyApp(token: ""));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
