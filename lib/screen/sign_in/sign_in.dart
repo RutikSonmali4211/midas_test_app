@@ -102,17 +102,17 @@ class _SignInScreenState extends State<SignInScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _loadUsername();
-    // userController.isBiometricEnabled =
-    //     LocalStorage.getIsBiometricEnabled() == null
-    //         ? false.obs
-    //         : LocalStorage.getIsBiometricEnabled()!.obs;
-    // userController.isBometricAlertDisplay =
-    //     LocalStorage.getBiometricAlert() == null
-    //         ? false.obs
-    //         : LocalStorage.getBiometricAlert()!.obs;
-    // biometricLogin();
-    // _checkIfIsLogged();
-    // logoutFirebase();
+    userController.isBiometricEnabled =
+        LocalStorage.getIsBiometricEnabled() == null
+            ? false.obs
+            : LocalStorage.getIsBiometricEnabled()!.obs;
+    userController.isBometricAlertDisplay =
+        LocalStorage.getBiometricAlert() == null
+            ? false.obs
+            : LocalStorage.getBiometricAlert()!.obs;
+    biometricLogin();
+    _checkIfIsLogged();
+    logoutFirebase();
   }
 
   logoutFirebase() async {
