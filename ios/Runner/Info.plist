@@ -57,6 +57,12 @@
     <dict>
     <key>NSAllowsArbitraryLoads</key><true/>
     </dict>
+	<key>NSRemoteNotificationType</key>
+    <integer>1</integer>
+    <key>UIBackgroundModes</key>
+    <array>
+    <string>remote-notification</string>
+    </array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 	<string>sms</string>
