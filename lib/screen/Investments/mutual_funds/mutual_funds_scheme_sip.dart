@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class MutualFundSchemeSIP extends StatefulWidget {
-  const MutualFundSchemeSIP({super.key});
+  final bool isUpdate;
+
+  const MutualFundSchemeSIP({super.key,required this.isUpdate});
 
   @override
   State<MutualFundSchemeSIP> createState() => _MutualFundSchemeSIPState();
@@ -22,10 +24,14 @@ class _MutualFundSchemeSIPState extends State<MutualFundSchemeSIP> {
     {"id": 1, "days": "14"}
   ];
 
-  bool _showDataDropdown = false;
-  String _selectedData = "";
-  List<String> dataList = ["14", "15", "16"];
-  TextEditingController dataController = TextEditingController();
+  bool _showDateDropdown = false;
+  bool _showFrequencyDropdown = false;
+  String _selectedDate = "";
+  String _selectedFrequency = "Monthly";
+  List<String> dateList = ["14", "15", "16"];
+  List<String> frequencyList = ["Daily", "Weekly", "Monthly"];
+  TextEditingController dateController = TextEditingController();
+  TextEditingController frequencyController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -376,6 +382,46 @@ class _MutualFundSchemeSIPState extends State<MutualFundSchemeSIP> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Expanded(
+                        //   flex: 6,
+                        //   child: Column(
+                        //     mainAxisAlignment: MainAxisAlignment.start,
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: [
+                        //       Text(
+                        //         'Frequency',
+                        //         style: TextStyle(
+                        //             color: AppColors.primary,
+                        //             fontSize: SizeUtil.bodyLarge(context),
+                        //             fontFamily: "Helvetica"),
+                        //       ),
+                        //       const SizedBox(
+                        //         height: DefaultSizes.spacingBetweenTexts,
+                        //       ),
+                        //       SizedBox(
+                        //         width: SizeUtil.scallingFactor(context)*100,
+                        //         child: ClipRRect(
+                        //           borderRadius: BorderRadius.circular(5),
+                        //           child: TextFormField(
+                        //             readOnly: true,
+                        //             decoration: const InputDecoration(
+                        //               counterText: "",
+                        //               filled: true,
+                        //               isDense: true,
+                        //               hintText: 'Monthly',
+                        //               hintStyle: TextStyle(
+                        //                 color: AppColors.grey,
+                        //               ),
+                        //               border: InputBorder.none,
+                        //               fillColor: TextfieldColors.background,
+                        //             ),
+                        //             style:  TextStyle(color: AppColors.grey,fontSize: SizeUtil.body(context)),
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                         Expanded(
                           flex: 6,
                           child: Column(
@@ -389,28 +435,74 @@ class _MutualFundSchemeSIPState extends State<MutualFundSchemeSIP> {
                                     fontSize: SizeUtil.bodyLarge(context),
                                     fontFamily: "Helvetica"),
                               ),
-                              const SizedBox(
+                             const SizedBox(
                                 height: DefaultSizes.spacingBetweenTexts,
                               ),
                               SizedBox(
-                                width: SizeUtil.scallingFactor(context)*100,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(5),
-                                  child: TextFormField(
-                                    readOnly: true,
-                                    decoration: const InputDecoration(
-                                      counterText: "",
-                                      filled: true,
-                                      isDense: true,
-                                      hintText: 'Monthly',
-                                      hintStyle: TextStyle(
-                                        color: AppColors.grey,
+                                width: SizeUtil.scallingFactor(context)*150,
+                                child: Column(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(5),
+                                      child: TextFormField(
+                                        autovalidateMode:
+                                            AutovalidateMode.onUserInteraction,
+                                        decoration:  InputDecoration(
+                                          suffixIcon: Icon(
+                                            Icons.arrow_drop_down,
+                                            size: SizeUtil.iconsSize(context),
+                                            color: AppColors.primary,
+                                          ),
+                                          suffixIconConstraints:
+                                              const BoxConstraints(),
+                                          filled: true,
+                                          isDense: true,
+                                          border: InputBorder.none,
+                                          hintText: 'Monthly',
+                                          hintStyle: TextStyle(
+                                              color: AppColors.grey,
+                                              fontSize:  SizeUtil.body(context),
+                                              fontFamily: "Helvetica"),
+                                          fillColor: TextfieldColors.background,
+                                        ),
+                                        readOnly: true,
+                                        onTap: _toggleFrequencyDropDown,
+                                        style:  TextStyle(fontSize: SizeUtil.body(context),color: AppColors.black),
+                                        controller: frequencyController,
                                       ),
-                                      border: InputBorder.none,
-                                      fillColor: TextfieldColors.background,
                                     ),
-                                    style:  TextStyle(color: AppColors.grey,fontSize: SizeUtil.body(context)),
-                                  ),
+                                    if (_showFrequencyDropdown)
+                                      Card(
+                                        color:
+                                            const Color.fromARGB(255, 255, 254, 254),
+                                        elevation: 2,
+                                        child: ListView.builder(
+                                          padding: EdgeInsets.zero,
+                                          shrinkWrap: true,
+                                          itemCount: frequencyList.length,
+                                          itemBuilder: (context, index) {
+                                            final option = frequencyList[index];
+                                            return GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  _selectedFrequency = option;
+                                                  frequencyController.text =
+                                                      _selectedFrequency;
+                                                  _showFrequencyDropdown = false;
+                                                });
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 8,
+                                                        horizontal: 16),
+                                                child: Text(option,style: TextStyle(fontSize:SizeUtil.body(context)),),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -449,7 +541,7 @@ class _MutualFundSchemeSIPState extends State<MutualFundSchemeSIP> {
                                             color: AppColors.primary,
                                           ),
                                           suffixIconConstraints:
-                                              BoxConstraints(),
+                                              const BoxConstraints(),
                                           filled: true,
                                           isDense: true,
                                           border: InputBorder.none,
@@ -461,12 +553,12 @@ class _MutualFundSchemeSIPState extends State<MutualFundSchemeSIP> {
                                           fillColor: TextfieldColors.background,
                                         ),
                                         readOnly: true,
-                                        onTap: _toggleDataDropDown,
-                                        style:  TextStyle(fontSize: SizeUtil.body(context),color: AppColors.grey),
-                                        controller: dataController,
+                                        onTap: _toggleDateDropDown,
+                                        style:  TextStyle(fontSize: SizeUtil.body(context),color: AppColors.black),
+                                        controller: dateController,
                                       ),
                                     ),
-                                    if (_showDataDropdown)
+                                    if (_showDateDropdown)
                                       Card(
                                         color:
                                             const Color.fromARGB(255, 255, 254, 254),
@@ -474,16 +566,16 @@ class _MutualFundSchemeSIPState extends State<MutualFundSchemeSIP> {
                                         child: ListView.builder(
                                           padding: EdgeInsets.zero,
                                           shrinkWrap: true,
-                                          itemCount: dataList.length,
+                                          itemCount: dateList.length,
                                           itemBuilder: (context, index) {
-                                            final option = dataList[index];
+                                            final option = dateList[index];
                                             return GestureDetector(
                                               onTap: () {
                                                 setState(() {
-                                                  _selectedData = option;
-                                                  dataController.text =
-                                                      _selectedData;
-                                                  _showDataDropdown = false;
+                                                  _selectedDate = option;
+                                                  dateController.text =
+                                                      _selectedDate;
+                                                  _showDateDropdown = false;
                                                 });
                                               },
                                               child: Padding(
@@ -584,7 +676,7 @@ class _MutualFundSchemeSIPState extends State<MutualFundSchemeSIP> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  LargeButton(text: "Create SIP",
+                  LargeButton(text: widget.isUpdate ? "Update SIP" : "Create SIP",
                    backgroundColor: AppColors.primary,
                               textColor: AppColors.white,
                                onPressed:  () {
@@ -598,9 +690,15 @@ class _MutualFundSchemeSIPState extends State<MutualFundSchemeSIP> {
     );
   }
 
-  void _toggleDataDropDown() {
+  void _toggleDateDropDown() {
     setState(() {
-      _showDataDropdown = !_showDataDropdown;
+      _showDateDropdown = !_showDateDropdown;
+    });
+  }
+
+  void _toggleFrequencyDropDown() {
+    setState(() {
+      _showFrequencyDropdown = !_showFrequencyDropdown;
     });
   }
 }

@@ -1,10 +1,12 @@
+import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:midas/Widgets/buttons/large_button.dart';
 import 'package:midas/constant/colors.dart';
 import 'package:midas/constant/size_util.dart';
 import 'package:flutter/material.dart';
+import 'package:midas/controller/kyc/kyc_controller.dart';
+import 'package:midas/screen/profile/kyc/kyc_request_form.dart';
 import 'package:midas/widgets/appbar/small_appbar.dart';
-
-import 'kyy_processing_first_phase.dart';
 
 class KycDetailsPhase extends StatefulWidget {
   const KycDetailsPhase({super.key});
@@ -17,9 +19,20 @@ class _KyKycDetailsPhaseState extends State<KycDetailsPhase> {
   var height;
   var width;
   bool kycCompleted = false;
+
+  KycController kycController = Get.put(KycController());
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+  }
+
+  void getLocation() async {
+    Position? position = await kycController.getCurrentLocation();
+    double latitude = position!.latitude;
+    double longitude = position.longitude;
+    print(latitude);
+    print(longitude);
   }
 
   @override
@@ -79,11 +92,11 @@ class _KyKycDetailsPhaseState extends State<KycDetailsPhase> {
                       backgroundColor: AppColors.primary,
                       textColor: AppColors.white,
                       onPressed: () {
-                        Navigator.push(
+                        // getLocation();
+                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  const KycProcessingFirstPhase()),
+                              builder: (context) => const KYCRequestForm()),
                         );
                       }),
                 ),

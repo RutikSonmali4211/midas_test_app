@@ -64,8 +64,7 @@ class _MutualFundsScreenState extends State<MutualFundsScreen> {
                 children: <Widget>[
                 MutualFundsPortfolio(),
                 MutualFundsOrdersSIP(),
-                MutualFundTransactionScreen(),
-                // MutualFundsOrders(),
+                MutualFundTransactionScreen(isSeeSingleTransaction: false),
                 MutualFundsWatchList()
                 ],
               ),

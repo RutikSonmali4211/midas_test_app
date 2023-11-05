@@ -8,7 +8,7 @@ import 'package:midas/constant/constant_util.dart';
 import 'package:midas/exception/custom_exception.dart';
 import 'package:midas/logs/Loggers.dart';
 import 'package:midas/service/contact_us/contact_us_service.dart';
-import 'package:midas/widgets/alert_message/snackbar.dart';
+import 'package:midas/widgets/alert_message/alert_message.dart';
 import 'package:midas/widgets/loader.dart';
 
 class ContactUsController extends GetxController {

@@ -8,6 +8,7 @@ import 'package:midas/screen/Investments/mutual_funds/mutual_funds_scheme_detail
 import 'package:midas/screen/Investments/mutual_funds/mutual_funds_scheme_redeem.dart';
 import 'package:midas/screen/Investments/mutual_funds/mutual_funds_scheme_sip.dart';
 import 'package:flutter/material.dart';
+import 'package:midas/screen/Investments/mutual_funds/mutual_funds_transaction.dart';
 
 class MutualFundDetails extends StatefulWidget {
   const MutualFundDetails({super.key});
@@ -483,14 +484,20 @@ class _MutualFundDetailsState extends State<MutualFundDetails> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const MutualFundSchemeSIP()),
+                          builder: (context) => const MutualFundSchemeSIP(isUpdate: false,)),
                     );
                   }),
               SmallButton(
                   text: "Transactions",
                   backgroundColor: AppColors.white,
                   textColor: AppColors.primary,
-                  onPressed: () {}),
+                  onPressed: () {
+                     Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const MutualFundTransactionScreen(isSeeSingleTransaction: true,)),
+                    );
+                  }),
             ],
           ),
         ],

@@ -39,7 +39,7 @@ class ConfirmDialogBox extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: size.width * 0.050),
               child: Column(
                 children: [
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
                   Text(
                     body,
                     textAlign: TextAlign.center,
@@ -48,7 +48,9 @@ class ConfirmDialogBox extends StatelessWidget {
                         fontSize:  SizeUtil.headingMedium(context),
                         fontFamily: "Helvetica"),
                   ),
+                  if(message.isNotEmpty)
                   const SizedBox(height: 30),
+                  if(message.isNotEmpty)
                   Text(
                     message,
                     textAlign: TextAlign.center,

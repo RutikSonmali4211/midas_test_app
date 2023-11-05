@@ -6,7 +6,7 @@ import 'package:midas/exception/custom_exception.dart';
 import 'package:midas/logs/Loggers.dart';
 import 'package:midas/model/investments/investment_model.dart';
 import 'package:midas/service/investment/investment_service.dart';
-import 'package:midas/widgets/alert_message/snackbar.dart';
+import 'package:midas/widgets/alert_message/alert_message.dart';
 
 class InvestmentController extends GetxController {
   InvestmentService investmentService = InvestmentService();

@@ -6,7 +6,7 @@ import 'package:midas/exception/custom_exception.dart';
 import 'package:midas/logs/Loggers.dart';
 import 'package:midas/model/gold_types/gold_types_model.dart';
 import 'package:midas/service/gold_types/gold_types_service.dart';
-import 'package:midas/widgets/alert_message/snackbar.dart';
+import 'package:midas/widgets/alert_message/alert_message.dart';
 
 class GoldTypesController extends GetxController {
   GoldTypesService goldTypesService = GoldTypesService();

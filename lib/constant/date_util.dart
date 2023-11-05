@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DateUtil {
@@ -7,4 +8,15 @@ class DateUtil {
         DateFormat('yyyy-MM-ddTHH:mm:ss').format(inputDate);
     return isoFormattedDate;
   }
+
+  Future<DateTime> selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2101),
+    );
+    return pickedDate!;
+  }
+
 }

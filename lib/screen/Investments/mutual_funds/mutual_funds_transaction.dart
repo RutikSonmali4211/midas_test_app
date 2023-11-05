@@ -3,9 +3,11 @@ import 'package:midas/constant/size_util.dart';
 import 'package:midas/data/mutual_funds/mutual_fund_transaction_list.dart';
 import 'package:midas/model/investments/mutual__funds/mutual_fund_transaction.dart';
 import 'package:flutter/material.dart';
+import 'package:midas/widgets/appbar/large_appbar.dart';
 
 class MutualFundTransactionScreen extends StatefulWidget {
-  const MutualFundTransactionScreen({super.key});
+  final bool isSeeSingleTransaction;
+  const MutualFundTransactionScreen({super.key,required this.isSeeSingleTransaction});
 
   @override
   State<MutualFundTransactionScreen> createState() =>
@@ -26,10 +28,12 @@ class _MutualFundTransactionScreenState
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // const LargeAppbar(heading: "", isAmount: false, isbackButtonAvailable: true, content: "Transactions", timeline: "Last Updated: Aug 6, 2023 | 5:00 pm"),
-          // SizedBox(
-          //   height: SizeUtil.verticalSpacingMedium(context),
-          // ),
+          if(widget.isSeeSingleTransaction)
+          const LargeAppbar(heading: "", isAmount: false, isbackButtonAvailable: true, content: "Transactions", timeline: "Last Updated: Aug 6, 2023 | 5:00 pm"),
+           if(widget.isSeeSingleTransaction)
+          SizedBox(
+            height: SizeUtil.verticalSpacingMedium(context),
+          ),
           Expanded(
             child: Padding(
               padding: EdgeInsets.only(

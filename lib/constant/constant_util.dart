@@ -26,7 +26,10 @@ class ConstantUtil {
       'fingerprint not added please add your fingerprint first to continue with biometric login';
   static const String phoneNumberNotVerifieldMessage =
       'please verify your phone number to continue';
-
+  static const String warningMessageToUploadImage =
+      "when uploading a file for address proof, PAN card copy, Signature scan, Photo, bank account details. File must be in jpg, jpeg, png or pdf format and size should not exceed 5 MB.";
+  static const String warningMessageToUploadVideo =
+      "when uploading verification video of the investor. File must be in mp4 or webm format and size should not exceed 10 MB.";
   static const String addSuccess = "added successfully";
   static const String updateSuccess = "updated successfully";
   static const String deleteSuccess = "deleted successfully";

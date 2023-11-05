@@ -5,7 +5,7 @@ import 'package:midas/exception/custom_exception.dart';
 import 'package:midas/logs/Loggers.dart';
 import 'package:midas/service/dropdown_data/dropdown_data_service.dart';
 import 'package:get/get.dart';
-import 'package:midas/widgets/alert_message/snackbar.dart';
+import 'package:midas/widgets/alert_message/alert_message.dart';
 
 class DropdownController extends GetxController {
   final DropdownDataService dropdownDataService = DropdownDataService();

@@ -13,7 +13,7 @@ import 'package:midas/screen/sign_up/sign_up.dart';
 import 'package:midas/service/user/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:midas/storage/local_storage.dart';
-import 'package:midas/widgets/alert_message/snackbar.dart';
+import 'package:midas/widgets/alert_message/alert_message.dart';
 import 'package:midas/widgets/biometric_alert_box.dart';
 import 'package:midas/widgets/loader.dart';
 import 'package:shared_preferences/shared_preferences.dart';

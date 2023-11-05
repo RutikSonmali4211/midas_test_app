@@ -12,15 +12,15 @@ class MutualFundsWatchList extends StatefulWidget {
 }
 
 class _MutualFundsWatchListState extends State<MutualFundsWatchList> {
-    final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   List<SIPDetails> filteredSipDetailsList = sipDetailsList;
   List<SIPDetails> selectedSipDetails = [];
   @override
   Widget build(BuildContext context) {
-    Size size =MediaQuery.of(context).size;
+    Size size = MediaQuery.of(context).size;
     return SingleChildScrollView(
       child: Padding(
-        padding:  EdgeInsets.symmetric(horizontal:size.width*0.04),
+        padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
         child: Column(
           children: [
             Row(
@@ -43,18 +43,20 @@ class _MutualFundsWatchListState extends State<MutualFundsWatchList> {
                         });
                       },
                       autovalidateMode: AutovalidateMode.onUserInteraction,
-                      decoration:  InputDecoration(
+                      decoration: InputDecoration(
                         counterText: "",
                         prefixIcon: Padding(
-                          padding: const EdgeInsets.only(left: 5.0,right: 5.0),
+                          padding: const EdgeInsets.only(left: 5.0, right: 5.0),
                           child: Icon(Icons.search,
-                              size: SizeUtil.iconsSize(context) ,color: AppColors.primary),
+                              size: SizeUtil.iconsSize(context),
+                              color: AppColors.primary),
                         ),
                         prefixIconConstraints: const BoxConstraints(),
-                        suffixIcon:  Padding(
+                        suffixIcon: Padding(
                           padding: const EdgeInsets.only(right: 5.0),
                           child: Icon(Icons.highlight_remove_rounded,
-                              size: SizeUtil.iconsSize(context), color: AppColors.primary),
+                              size: SizeUtil.iconsSize(context),
+                              color: AppColors.primary),
                         ),
                         suffixIconConstraints: const BoxConstraints(),
                         filled: true,
@@ -62,16 +64,36 @@ class _MutualFundsWatchListState extends State<MutualFundsWatchList> {
                         border: InputBorder.none,
                         fillColor: TextfieldColors.background,
                       ),
-                      style:  TextStyle(fontSize: SizeUtil.body(context)),
+                      style: TextStyle(fontSize: SizeUtil.body(context)),
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
-                 Icon(
-                  Icons.filter_alt_sharp,
-                  size: SizeUtil.iconsSize(context),
-                  color: AppColors.primary,
-                )
+                PopupMenuButton<String>(
+                  icon: Icon(
+                    Icons.filter_alt_sharp,
+                    size: SizeUtil.iconsSize(context),
+                    color: AppColors.primary,
+                  ),
+                  itemBuilder: (BuildContext context) {
+                    return <PopupMenuItem<String>>[
+                      const PopupMenuItem<String>(
+                        value: 'AMC name',
+                        child: Text('AMC name'),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'AMC type',
+                        child: Text('AMC type'),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'AMC category',
+                        child: Text('AMC category'),
+                      ),
+                    ];
+                  },
+                  onSelected: (String choice) {
+                    print('Selected filter: $choice');
+                  },
+                ),
               ],
             ),
             const Divider(
@@ -93,13 +115,15 @@ class _MutualFundsWatchListState extends State<MutualFundsWatchList> {
                       SizedBox(
                         width: double.infinity,
                         child: Padding(
-                          padding: EdgeInsets.all(SizeUtil.verticalSpacingSmall(context)),
+                          padding: EdgeInsets.all(
+                              SizeUtil.verticalSpacingSmall(context)),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     sip.name,
@@ -111,8 +135,7 @@ class _MutualFundsWatchListState extends State<MutualFundsWatchList> {
                                     ),
                                   ),
                                   GestureDetector(
-                                    onTap: () {
-                                    },
+                                    onTap: () {},
                                     child: Icon(
                                       Icons.delete,
                                       color: AppColors.primary,
@@ -159,7 +182,8 @@ class _MutualFundsWatchListState extends State<MutualFundsWatchList> {
                       SizedBox(
                         width: double.infinity,
                         child: Padding(
-                          padding: EdgeInsets.all(SizeUtil.verticalSpacingSmall(context)),
+                          padding: EdgeInsets.all(
+                              SizeUtil.verticalSpacingSmall(context)),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -171,13 +195,14 @@ class _MutualFundsWatchListState extends State<MutualFundsWatchList> {
                                     sip.name,
                                     style: TextStyle(
                                       color: AppColors.primary,
-                                      fontSize:SizeUtil.headingMedium(context),
+                                      fontSize: SizeUtil.headingMedium(context),
                                       fontWeight: FontWeight.w700,
                                       fontFamily: "Helvetica",
                                     ),
                                   ),
                                   SizedBox(
-                                    height:SizeUtil.verticalSpacingSmall(context),
+                                    height:
+                                        SizeUtil.verticalSpacingSmall(context),
                                   ),
                                   Text(
                                     'Growth | ${sip.sipType} - ${sip.sipTypeValue}',
@@ -199,7 +224,8 @@ class _MutualFundsWatchListState extends State<MutualFundsWatchList> {
                                       activeColor: AppColors.primary,
                                       value: selectedSipDetails.contains(sip),
                                       visualDensity: const VisualDensity(
-                                        horizontal: VisualDensity.minimumDensity,
+                                        horizontal:
+                                            VisualDensity.minimumDensity,
                                         vertical: VisualDensity.minimumDensity,
                                       ),
                                       materialTapTargetSize:

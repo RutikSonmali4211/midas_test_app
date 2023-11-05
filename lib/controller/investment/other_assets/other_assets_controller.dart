@@ -10,7 +10,7 @@ import 'package:midas/exception/custom_exception.dart';
 import 'package:midas/logs/Loggers.dart';
 import 'package:midas/model/investments/other_assets/other_assets_model.dart';
 import 'package:midas/service/investment/other_assets/other_assets_service.dart';
-import 'package:midas/widgets/alert_message/snackbar.dart';
+import 'package:midas/widgets/alert_message/alert_message.dart';
 import 'package:midas/widgets/loader.dart';
 
 class OtherAssetsController extends GetxController {

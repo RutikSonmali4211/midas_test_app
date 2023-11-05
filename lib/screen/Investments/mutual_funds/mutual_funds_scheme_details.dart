@@ -594,7 +594,7 @@ class _MutualFundSchemeDetailsState extends State<MutualFundSchemeDetails> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const MutualFundSchemeSIP()),
+                          builder: (context) => const MutualFundSchemeSIP(isUpdate: false,)),
                     );
                   }),
             ],

@@ -11,7 +11,7 @@ import 'package:midas/controller/dropdown_data/dropdown_controller.dart';
 import 'package:midas/controller/sms/sms_controller.dart';
 import 'package:midas/controller/user/user_controller.dart';
 import 'package:midas/screen/sign_in/sign_in.dart';
-import 'package:midas/widgets/alert_message/snackbar.dart';
+import 'package:midas/widgets/alert_message/alert_message.dart';
 import 'package:midas/widgets/otp_verification.dart';
 import 'package:midas/widgets/upper_case_formatter.dart';
 import 'package:flutter/material.dart';
@@ -582,7 +582,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     child: TextFormField(
                       focusNode: panFocusNode,
                       onEditingComplete: () {
-                        FocusScope.of(context).requestFocus(aadhaarFocusNode);
+                        FocusScope.of(context).unfocus();
                       },
                       controller: panController,
                       decoration: InputDecoration(
@@ -903,7 +903,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: width * 0.04,
-                  vertical: SizeUtil.scallingFactor(context)*40),
+                  vertical: SizeUtil.scallingFactor(context)*35),
               child: Text(
                 textAlign: TextAlign.start,
                 getCurrentStepName(currentStep),

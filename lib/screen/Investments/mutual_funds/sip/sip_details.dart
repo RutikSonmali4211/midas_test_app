@@ -6,6 +6,8 @@ import 'package:midas/constant/sizeConstant.dart';
 import 'package:midas/constant/size_util.dart';
 import 'package:midas/screen/Investments/mutual_funds/mutual_funds_scheme_details.dart';
 import 'package:flutter/material.dart';
+import 'package:midas/screen/Investments/mutual_funds/mutual_funds_scheme_sip.dart';
+import 'package:midas/widgets/confirmation_dialog_box.dart';
 
 class SIPDetailsScreen extends StatefulWidget {
   const SIPDetailsScreen({super.key});
@@ -30,7 +32,12 @@ class _SIPDetailsScreenState extends State<SIPDetailsScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-           const LargeAppbar(heading: "Current Value", isAmount: true, isbackButtonAvailable: true, content: "39,325.82", timeline: "Last Updated: Aug 6, 2023 | 5:00 pm"),
+          const LargeAppbar(
+              heading: "Current Value",
+              isAmount: true,
+              isbackButtonAvailable: true,
+              content: "39,325.82",
+              timeline: "Last Updated: Aug 6, 2023 | 5:00 pm"),
           // Container(
           //   width: screenSize.width,
           //   decoration: const BoxDecoration(
@@ -172,9 +179,8 @@ class _SIPDetailsScreenState extends State<SIPDetailsScreen> {
           ),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(
-                  left: height * 0.02,
-                  right: height * 0.02),
+              padding:
+                  EdgeInsets.only(left: height * 0.02, right: height * 0.02),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,10 +189,11 @@ class _SIPDetailsScreenState extends State<SIPDetailsScreen> {
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const MutualFundSchemeDetails()),
-                          );
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const MutualFundSchemeDetails()),
+                        );
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -207,7 +214,8 @@ class _SIPDetailsScreenState extends State<SIPDetailsScreen> {
                         ),
                         width: double.infinity,
                         child: Padding(
-                          padding: EdgeInsets.all(SizeUtil.verticalSpacingSmall(context)),
+                          padding: EdgeInsets.all(
+                              SizeUtil.verticalSpacingSmall(context)),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,9 +230,8 @@ class _SIPDetailsScreenState extends State<SIPDetailsScreen> {
                                 ),
                               ),
                               const SizedBox(
-                                  height:
-                                      DefaultSizes.spacingBetweenTexts,
-                                ),
+                                height: DefaultSizes.spacingBetweenTexts,
+                              ),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -234,15 +241,13 @@ class _SIPDetailsScreenState extends State<SIPDetailsScreen> {
                                     'UTI Nifty 50 Infed Fund',
                                     style: TextStyle(
                                         color: AppColors.grey,
-                                        fontSize:SizeUtil.body(context),
+                                        fontSize: SizeUtil.body(context),
                                         fontFamily: "Helvetica"),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(right: 5.0),
-                                    child: Icon(
-                                      Icons.arrow_right_alt_sharp,
-                                      size: SizeUtil.iconsSize(context)
-                                    ),
+                                    child: Icon(Icons.arrow_right_alt_sharp,
+                                        size: SizeUtil.iconsSize(context)),
                                   )
                                 ],
                               ),
@@ -271,7 +276,7 @@ class _SIPDetailsScreenState extends State<SIPDetailsScreen> {
                                     fontSize: SizeUtil.bodyLarge(context),
                                     fontFamily: "Helvetica"),
                               ),
-                              const  SizedBox(
+                              const SizedBox(
                                 height: DefaultSizes.spacingBetweenTexts,
                               ),
                               Text(
@@ -295,17 +300,17 @@ class _SIPDetailsScreenState extends State<SIPDetailsScreen> {
                                 'Type',
                                 style: TextStyle(
                                     color: AppColors.primary,
-                                    fontSize:  SizeUtil.bodyLarge(context),
+                                    fontSize: SizeUtil.bodyLarge(context),
                                     fontFamily: "Helvetica"),
                               ),
-                              const  SizedBox(
+                              const SizedBox(
                                 height: DefaultSizes.spacingBetweenTexts,
                               ),
                               Text(
                                 'Regular | Growth',
                                 style: TextStyle(
                                     color: AppColors.grey,
-                                    fontSize:  SizeUtil.body(context),
+                                    fontSize: SizeUtil.body(context),
                                     fontFamily: "Helvetica"),
                               ),
                             ],
@@ -314,7 +319,7 @@ class _SIPDetailsScreenState extends State<SIPDetailsScreen> {
                       ],
                     ),
                     SizedBox(
-                      height:  SizeUtil.verticalSpacingMedium(context),
+                      height: SizeUtil.verticalSpacingMedium(context),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -333,7 +338,7 @@ class _SIPDetailsScreenState extends State<SIPDetailsScreen> {
                                     fontSize: SizeUtil.bodyLarge(context),
                                     fontFamily: "Helvetica"),
                               ),
-                              const  SizedBox(
+                              const SizedBox(
                                 height: DefaultSizes.spacingBetweenTexts,
                               ),
                               Text(
@@ -360,11 +365,12 @@ class _SIPDetailsScreenState extends State<SIPDetailsScreen> {
                                     fontSize: SizeUtil.bodyLarge(context),
                                     fontFamily: "Helvetica"),
                               ),
-                              const  SizedBox(
+                              const SizedBox(
                                 height: DefaultSizes.spacingBetweenTexts,
                               ),
                               RichText(
-                                 textScaleFactor:MediaQuery.of(context).textScaleFactor,
+                                textScaleFactor:
+                                    MediaQuery.of(context).textScaleFactor,
                                 textAlign: TextAlign.start,
                                 text: TextSpan(
                                   children: [
@@ -373,7 +379,7 @@ class _SIPDetailsScreenState extends State<SIPDetailsScreen> {
                                       style: TextStyle(
                                           letterSpacing: 2,
                                           color: AppColors.grey,
-                                          fontSize:  SizeUtil.body(context)),
+                                          fontSize: SizeUtil.body(context)),
                                     ),
                                     TextSpan(
                                       text: "2700.72",
@@ -410,11 +416,12 @@ class _SIPDetailsScreenState extends State<SIPDetailsScreen> {
                                     fontSize: SizeUtil.bodyLarge(context),
                                     fontFamily: "Helvetica"),
                               ),
-                              const  SizedBox(
+                              const SizedBox(
                                 height: DefaultSizes.spacingBetweenTexts,
                               ),
                               RichText(
-                                 textScaleFactor:MediaQuery.of(context).textScaleFactor,
+                                textScaleFactor:
+                                    MediaQuery.of(context).textScaleFactor,
                                 textAlign: TextAlign.start,
                                 text: TextSpan(
                                   children: [
@@ -429,7 +436,7 @@ class _SIPDetailsScreenState extends State<SIPDetailsScreen> {
                                       text: "1,000",
                                       style: TextStyle(
                                           color: AppColors.grey,
-                                          fontSize:  SizeUtil.body(context),
+                                          fontSize: SizeUtil.body(context),
                                           fontFamily: "Helvetica"),
                                     ),
                                   ],
@@ -449,14 +456,15 @@ class _SIPDetailsScreenState extends State<SIPDetailsScreen> {
                                 'Investment Multiple',
                                 style: TextStyle(
                                     color: AppColors.primary,
-                                    fontSize:  SizeUtil.bodyLarge(context),
+                                    fontSize: SizeUtil.bodyLarge(context),
                                     fontFamily: "Helvetica"),
                               ),
-                              const  SizedBox(
+                              const SizedBox(
                                 height: DefaultSizes.spacingBetweenTexts,
                               ),
                               RichText(
-                                 textScaleFactor:MediaQuery.of(context).textScaleFactor,
+                                textScaleFactor:
+                                    MediaQuery.of(context).textScaleFactor,
                                 textAlign: TextAlign.start,
                                 text: TextSpan(
                                   children: [
@@ -465,13 +473,13 @@ class _SIPDetailsScreenState extends State<SIPDetailsScreen> {
                                       style: TextStyle(
                                           letterSpacing: 2,
                                           color: AppColors.grey,
-                                          fontSize:  SizeUtil.body(context)),
+                                          fontSize: SizeUtil.body(context)),
                                     ),
                                     TextSpan(
                                       text: "1.0",
                                       style: TextStyle(
                                           color: AppColors.grey,
-                                          fontSize:  SizeUtil.body(context),
+                                          fontSize: SizeUtil.body(context),
                                           fontFamily: "Helvetica"),
                                     ),
                                   ],
@@ -483,7 +491,7 @@ class _SIPDetailsScreenState extends State<SIPDetailsScreen> {
                       ],
                     ),
                     SizedBox(
-                      height:  SizeUtil.verticalSpacingMedium(context),
+                      height: SizeUtil.verticalSpacingMedium(context),
                     ),
                   ],
                 ),
@@ -491,47 +499,81 @@ class _SIPDetailsScreenState extends State<SIPDetailsScreen> {
             ),
           ),
           Column(
-         mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-               Padding(
-            padding: EdgeInsets.only(
-                right: width * 0.10, left: width * 0.10, bottom: SizeUtil.buttonPaddingBottom(context)),
-            child: Container(
-              color: AppColors.white,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  LargeButton(
-                      text: "Modify",
-                      backgroundColor: AppColors.primary,
-                      textColor: AppColors.white,
-                      onPressed: () {
-                      })
-                ],
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(
+                    right: width * 0.10,
+                    left: width * 0.10,
+                    bottom: SizeUtil.buttonPaddingBottom(context)),
+                child: Container(
+                  color: AppColors.white,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      LargeButton(
+                          text: "Modify",
+                          backgroundColor: AppColors.primary,
+                          textColor: AppColors.white,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const MutualFundSchemeSIP(
+                                        isUpdate: true,
+                                      )),
+                            );
+                          })
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-           Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          SmallButton(
-              text: "Pause",
-              onPressed: () {
-              },
-              backgroundColor: AppColors.white,
-              textColor: AppColors.primary),
-          SmallButton(
-              text: "Delete",
-              onPressed: () {
-              },
-              backgroundColor: AppColors.white,
-              textColor: AppColors.primary),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+                SmallButton(
+                    text: "Pause",
+                    onPressed: () {
+                      confirmPauseSIP(context);
+                    },
+                    backgroundColor: AppColors.white,
+                    textColor: AppColors.primary),
+                SmallButton(
+                    text: "Delete",
+                    onPressed: () {
+                      confirmDeleteSIP(context);
+                    },
+                    backgroundColor: AppColors.white,
+                    textColor: AppColors.primary),
               ]),
+            ],
+          ),
         ],
       ),
-        ],
-      ),
+    );
+  }
+
+   Future<void> confirmPauseSIP(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const ConfirmDialogBox(
+            heading: "Confirm Pause",
+            body: "Do you confirm to pause the SIP ?",
+            message: "");
+      },
+    );
+  }
+
+   Future<void> confirmDeleteSIP(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const ConfirmDialogBox(
+            heading: "Confirm Delete",
+            body: "Do you confirm to delete the SIP ?",
+            message: "");
+      },
     );
   }
 }

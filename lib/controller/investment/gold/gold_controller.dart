@@ -10,7 +10,7 @@ import 'package:midas/logs/Loggers.dart';
 import 'package:midas/model/investments/gold/gold_model.dart';
 import 'package:midas/service/investment/gold/gold_service.dart';
 import 'package:http/http.dart' as http;
-import 'package:midas/widgets/alert_message/snackbar.dart';
+import 'package:midas/widgets/alert_message/alert_message.dart';
 import 'package:midas/widgets/loader.dart';
 
 class GoldController extends GetxController {
