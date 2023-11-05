@@ -1,4 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class ConstantUtil {
@@ -75,5 +77,26 @@ class ConstantUtil {
       formattedDate = desiredFormat.format(originalDate.toLocal());
     }
     return formattedDate;
+  }
+
+
+    Future<XFile?> pickImage(ImageSource imageType) async {
+    try {
+      final photo = await ImagePicker().pickImage(source: imageType);
+      return photo != null ? XFile(photo.path) : null;
+    } catch (error) {
+      debugPrint(error.toString());
+      return null;
+    }
+  }
+
+   Future<XFile?> pickVideo(ImageSource imageType) async {
+    try {
+      final photo = await ImagePicker().pickVideo(source: imageType);
+      return photo != null ? XFile(photo.path) : null;
+    } catch (error) {
+      debugPrint(error.toString());
+      return null;
+    }
   }
 }

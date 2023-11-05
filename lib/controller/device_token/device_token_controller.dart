@@ -2,6 +2,21 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+// class DeviceTokenController {
+//   static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
+
+//   static Future<String?> getDeviceToken()async{
+//     String? token = await _firebaseMessaging.getToken();
+//     return token;
+//   }
+
+//   static void refreshDeviceToken() {
+//     _firebaseMessaging.onTokenRefresh.listen((newToken) {
+//     });
+//   }
+// }
+
 class DeviceTokenController {
   static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
@@ -16,7 +31,6 @@ class DeviceTokenController {
       );
 
       if (settings.authorizationStatus != AuthorizationStatus.authorized) {
-        // Handle permission denied
         return null;
       }
     }

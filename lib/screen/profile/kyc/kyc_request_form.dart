@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -51,6 +49,8 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
       TextEditingController();
   TextEditingController photoDocumentController = TextEditingController();
   TextEditingController bankAccountDocumentController = TextEditingController();
+  TextEditingController videoVerificationDocumentController =
+      TextEditingController();
 
   final FocusNode fullNameFocusNode = FocusNode();
   final FocusNode phoneNoFocusNode = FocusNode();
@@ -95,11 +95,12 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
     occupationTypeFocusNode.dispose();
   }
 
-  File? addressProofDocument;
-  File? panCardDocument;
-  File? signatureScanDocument;
-  File? photoDocument;
-  File? bankAccountDocument;
+  XFile? addressProofDocument;
+  XFile? panCardDocument;
+  XFile? signatureScanDocument;
+  XFile? photoDocument;
+  XFile? bankAccountDocument;
+  XFile? videoVerificationDocument;
 
   List<String> genderList = ["Male", "Female", "Others"];
   List<String> countryofBirthList = ["IN", "USA", "AUS", "NZ"];
@@ -146,9 +147,19 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
     });
   }
 
+  // next() {
+  //   if (currentStep <= 2) {
+  //     setState(() => currentStep += 1);
+  //   }
+  // }
+
   next() {
     if (currentStep <= 2) {
-      setState(() => currentStep += 1);
+      if (formKeys[currentStep - 1].currentState!.validate()) {
+        setState(() => currentStep += 1);
+      }
+    } else if (currentStep == 3) {
+      if (formKeys[currentStep - 1].currentState!.validate()) {}
     }
   }
 
@@ -495,13 +506,26 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                       const SizedBox(width: 10),
                       Padding(
                         padding: const EdgeInsets.only(top: 7.5),
-                        child: Text(
-                          "Send OTP",
-                          style: TextStyle(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w400,
-                              fontSize: SizeUtil.body(context),
-                              fontFamily: "Helvetica"),
+                        child: GestureDetector(
+                          onTap: () async {
+                            // await showDialog(
+                            //   barrierDismissible: false,
+                            //   context: context,
+                            //   builder: (BuildContext context) {
+                            //     return OtpVerification(
+                            //         mobileNumber:
+                            //             phoneNoController.text.toString());
+                            //   },
+                            // );
+                          },
+                          child: Text(
+                            "Send OTP",
+                            style: TextStyle(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w400,
+                                fontSize: SizeUtil.body(context),
+                                fontFamily: "Helvetica"),
+                          ),
                         ),
                       ),
                     ],
@@ -791,7 +815,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
   Widget kycForm2() {
     return SingleChildScrollView(
       child: Form(
-        key: formKeys[0],
+        key: formKeys[1],
         child: Column(
           children: [
             Column(
@@ -1329,7 +1353,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
   Widget kycForm3() {
     return SingleChildScrollView(
       child: Form(
-          key: formKeys[0],
+          key: formKeys[2],
           child: Column(children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1374,10 +1398,18 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                 AutovalidateMode.onUserInteraction,
                             decoration: InputDecoration(
                               counterText: "",
-                              suffixIcon: const Padding(
-                                padding: EdgeInsets.only(right: 5.0),
-                                child: Icon(Icons.clear,
-                                    size: 20, color: AppColors.primary),
+                              suffixIcon: Padding(
+                                padding: const EdgeInsets.only(right: 5.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      addressProofDocumentController.clear();
+                                      addressProofDocument = null;
+                                    });
+                                  },
+                                  child: const Icon(Icons.clear,
+                                      size: 20, color: AppColors.primary),
+                                ),
                               ),
                               suffixIconConstraints: const BoxConstraints(),
                               filled: true,
@@ -1408,10 +1440,21 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         padding: const EdgeInsets.only(top: 8),
                         child: GestureDetector(
                           onTap: () {
-                            imagePickerOption();
+                            if (addressProofDocument == null) {
+                              mediaPicker(addressProofDocumentController,
+                                  (image) {
+                                setState(() {
+                                  addressProofDocumentController.text =
+                                      image.name;
+                                  addressProofDocument = image;
+                                });
+                              }, false);
+                            }
                           },
                           child: Text(
-                            "select a file",
+                            addressProofDocument == null
+                                ? "Select a file"
+                                : "Uploaded",
                             style: TextStyle(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w400,
@@ -1471,10 +1514,18 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                 AutovalidateMode.onUserInteraction,
                             decoration: InputDecoration(
                               counterText: "",
-                              suffixIcon: const Padding(
-                                padding: EdgeInsets.only(right: 5.0),
-                                child: Icon(Icons.clear,
-                                    size: 20, color: AppColors.primary),
+                              suffixIcon: Padding(
+                                padding: const EdgeInsets.only(right: 5.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      panCardDocumentController.clear();
+                                      panCardDocument = null;
+                                    });
+                                  },
+                                  child: const Icon(Icons.clear,
+                                      size: 20, color: AppColors.primary),
+                                ),
                               ),
                               suffixIconConstraints: const BoxConstraints(),
                               filled: true,
@@ -1505,10 +1556,19 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         padding: const EdgeInsets.only(top: 8),
                         child: GestureDetector(
                           onTap: () {
-                            imagePickerOption();
+                            if (panCardDocument == null) {
+                              mediaPicker(panCardDocumentController, (image) {
+                                setState(() {
+                                  panCardDocumentController.text = image.name;
+                                  panCardDocument = image;
+                                });
+                              }, false);
+                            }
                           },
                           child: Text(
-                            "select a file",
+                            panCardDocument == null
+                                ? "Select a file"
+                                : "Uploaded",
                             style: TextStyle(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w400,
@@ -1568,10 +1628,18 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                 AutovalidateMode.onUserInteraction,
                             decoration: InputDecoration(
                               counterText: "",
-                              suffixIcon: const Padding(
-                                padding: EdgeInsets.only(right: 5.0),
-                                child: Icon(Icons.clear,
-                                    size: 20, color: AppColors.primary),
+                              suffixIcon: Padding(
+                                padding: const EdgeInsets.only(right: 5.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      signatureScanDocumentController.clear();
+                                      signatureScanDocument = null;
+                                    });
+                                  },
+                                  child: const Icon(Icons.clear,
+                                      size: 20, color: AppColors.primary),
+                                ),
                               ),
                               suffixIconConstraints: const BoxConstraints(),
                               filled: true,
@@ -1602,10 +1670,21 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         padding: const EdgeInsets.only(top: 8),
                         child: GestureDetector(
                           onTap: () {
-                            imagePickerOption();
+                            if (signatureScanDocument == null) {
+                              mediaPicker(signatureScanDocumentController,
+                                  (image) {
+                                setState(() {
+                                  signatureScanDocumentController.text =
+                                      image.name;
+                                  signatureScanDocument = image;
+                                });
+                              }, false);
+                            }
                           },
                           child: Text(
-                            "select a file",
+                            signatureScanDocument == null
+                                ? "Select a file"
+                                : "Uploaded",
                             style: TextStyle(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w400,
@@ -1665,10 +1744,18 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                 AutovalidateMode.onUserInteraction,
                             decoration: InputDecoration(
                               counterText: "",
-                              suffixIcon: const Padding(
-                                padding: EdgeInsets.only(right: 5.0),
-                                child: Icon(Icons.clear,
-                                    size: 20, color: AppColors.primary),
+                              suffixIcon: Padding(
+                                padding: const EdgeInsets.only(right: 5.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      photoDocumentController.clear();
+                                      photoDocument = null;
+                                    });
+                                  },
+                                  child: const Icon(Icons.clear,
+                                      size: 20, color: AppColors.primary),
+                                ),
                               ),
                               suffixIconConstraints: const BoxConstraints(),
                               filled: true,
@@ -1699,10 +1786,19 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         padding: const EdgeInsets.only(top: 8),
                         child: GestureDetector(
                           onTap: () {
-                            imagePickerOption();
+                            if (photoDocument == null) {
+                              mediaPicker(photoDocumentController, (image) {
+                                setState(() {
+                                  photoDocumentController.text = image.name;
+                                  photoDocument = image;
+                                });
+                              }, false);
+                            }
                           },
                           child: Text(
-                            "select a file",
+                            photoDocument == null
+                                ? "Select a file"
+                                : "Uploaded",
                             style: TextStyle(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w400,
@@ -1762,10 +1858,18 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                 AutovalidateMode.onUserInteraction,
                             decoration: InputDecoration(
                               counterText: "",
-                              suffixIcon: const Padding(
-                                padding: EdgeInsets.only(right: 5.0),
-                                child: Icon(Icons.clear,
-                                    size: 20, color: AppColors.primary),
+                              suffixIcon: Padding(
+                                padding: const EdgeInsets.only(right: 5.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      bankAccountDocumentController.clear();
+                                      bankAccountDocument = null;
+                                    });
+                                  },
+                                  child: const Icon(Icons.clear,
+                                      size: 20, color: AppColors.primary),
+                                ),
                               ),
                               suffixIconConstraints: const BoxConstraints(),
                               filled: true,
@@ -1796,10 +1900,21 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         padding: const EdgeInsets.only(top: 8),
                         child: GestureDetector(
                           onTap: () {
-                            imagePickerOption();
+                            if (bankAccountDocument == null) {
+                              mediaPicker(bankAccountDocumentController,
+                                  (image) {
+                                setState(() {
+                                  bankAccountDocumentController.text =
+                                      image.name;
+                                  bankAccountDocument = image;
+                                });
+                              }, false);
+                            }
                           },
                           child: Text(
-                            "select a file",
+                            bankAccountDocument == null
+                                ? "Select a file"
+                                : "Uploaded",
                             style: TextStyle(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w400,
@@ -1850,17 +1965,26 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                           borderRadius: BorderRadius.circular(5),
                           child: TextFormField(
                             readOnly: true,
-                            controller: bankAccountDocumentController,
+                            controller: videoVerificationDocumentController,
                             keyboardType: const TextInputType.numberWithOptions(
                                 signed: true, decimal: true),
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
                             decoration: InputDecoration(
                               counterText: "",
-                              suffixIcon: const Padding(
-                                padding: EdgeInsets.only(right: 5.0),
-                                child: Icon(Icons.clear,
-                                    size: 20, color: AppColors.primary),
+                              suffixIcon: Padding(
+                                padding: const EdgeInsets.only(right: 5.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      videoVerificationDocumentController
+                                          .clear();
+                                      videoVerificationDocument = null;
+                                    });
+                                  },
+                                  child: const Icon(Icons.clear,
+                                      size: 20, color: AppColors.primary),
+                                ),
                               ),
                               suffixIconConstraints: const BoxConstraints(),
                               filled: true,
@@ -1891,10 +2015,21 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         padding: const EdgeInsets.only(top: 8),
                         child: GestureDetector(
                           onTap: () {
-                            imagePickerOption();
+                            if (videoVerificationDocument == null) {
+                              mediaPicker(videoVerificationDocumentController,
+                                  (video) {
+                                setState(() {
+                                  videoVerificationDocumentController.text =
+                                      video.name;
+                                  videoVerificationDocument = video;
+                                });
+                              }, true);
+                            }
                           },
                           child: Text(
-                            "select a file",
+                            videoVerificationDocument == null
+                                ? "select a file"
+                                : "Uploaded",
                             style: TextStyle(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w400,
@@ -1912,12 +2047,10 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
               height: SizeUtil.verticalSpacingMedium(context),
             ),
             const WarningMessage(
-                message:
-                    ConstantUtil.warningMessageToUploadImage),
+                message: ConstantUtil.warningMessageToUploadImage),
             SizedBox(height: SizeUtil.verticalSpacingSmall(context)),
             const WarningMessage(
-                message:
-                    ConstantUtil.warningMessageToUploadVideo),
+                message: ConstantUtil.warningMessageToUploadVideo),
             SizedBox(
               height: height * 0.35,
             )
@@ -2016,7 +2149,8 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
     }
   }
 
-  void imagePickerOption() {
+  void mediaPicker(TextEditingController controller, Function(XFile) onSelected,
+      bool isVideo) {
     Get.bottomSheet(
       SingleChildScrollView(
         child: ClipRRect(
@@ -2043,8 +2177,20 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                   SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
                   CustomIconButton(
                     text: " Camera",
-                    onPressed: () {
-                      pickImage(ImageSource.camera);
+                    onPressed: () async {
+                      if (isVideo) {
+                        XFile? file = await pickVideo(ImageSource.camera);
+                        if (file != null) {
+                          onSelected(file);
+                          Get.back();
+                        }
+                      } else {
+                        XFile? file = await pickImage(ImageSource.camera);
+                        if (file != null) {
+                          onSelected(file);
+                          Get.back();
+                        }
+                      }
                     },
                     backgroundColor: AppColors.primary,
                     textColor: AppColors.white,
@@ -2055,8 +2201,20 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                   ),
                   CustomIconButton(
                     text: " Gallery",
-                    onPressed: () {
-                      pickImage(ImageSource.gallery);
+                    onPressed: () async {
+                      if (isVideo) {
+                        XFile? file = await pickVideo(ImageSource.gallery);
+                        if (file != null) {
+                          onSelected(file);
+                          Get.back();
+                        }
+                      } else {
+                        XFile? file = await pickImage(ImageSource.gallery);
+                        if (file != null) {
+                          onSelected(file);
+                          Get.back();
+                        }
+                      }
                     },
                     backgroundColor: AppColors.primary,
                     textColor: AppColors.white,
@@ -2082,18 +2240,131 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
     );
   }
 
-  pickImage(ImageSource imageType) async {
+  Future<XFile?> pickImage(ImageSource imageType) async {
     try {
       final photo = await ImagePicker().pickImage(source: imageType);
-      final tempImage = File(photo!.path);
-      setState(() {
-        addressProofDocument = tempImage;
-        addressProofDocumentController.text = photo.name;
-      });
-
-      Get.back();
+      return photo != null ? XFile(photo.path) : null;
     } catch (error) {
       debugPrint(error.toString());
+      return null;
     }
   }
+
+  Future<XFile?> pickVideo(ImageSource imageType) async {
+    try {
+      final photo = await ImagePicker().pickVideo(source: imageType);
+      return photo != null ? XFile(photo.path) : null;
+    } catch (error) {
+      debugPrint(error.toString());
+      return null;
+    }
+  }
+
+//    void requestPermissionsAndPickImage() async {
+//   // Check if permissions are already granted
+//   final cameraStatus = await Permission.camera.status;
+//   final photosStatus = await Permission.photos.status;
+
+//   if (cameraStatus.isGranted && photosStatus.isGranted) {
+//     // Permissions are already granted, open image picker
+//     // imagePickerOption();
+//   } else {
+//     // Permissions are not granted, request permissions
+//     final cameraPermissionStatus = await Permission.camera.request();
+//     final photosPermissionStatus = await Permission.photos.request();
+
+//     if (cameraPermissionStatus.isGranted && photosPermissionStatus.isGranted) {
+//       // Permissions granted, open image picker
+//       imagePickerOption();
+//     } else {
+//       // Handle cases where the user denied permission
+//       Get.snackbar(
+//         "Permission Denied",
+//         "Please grant camera and photos access to select an image.",
+//         snackPosition: SnackPosition.BOTTOM,
+//       );
+//     }
+//   }
+// }
+
+  // void imagePickerOption() {
+  //   Get.bottomSheet(
+  //     SingleChildScrollView(
+  //       child: ClipRRect(
+  //         borderRadius: const BorderRadius.only(
+  //           topLeft: Radius.circular(10.0),
+  //           topRight: Radius.circular(10.0),
+  //         ),
+  //         child: Container(
+  //           color: Colors.white,
+  //           child: Padding(
+  //             padding: const EdgeInsets.all(8.0),
+  //             child: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.stretch,
+  //               children: [
+  //                 SizedBox(height: SizeUtil.verticalSpacingSmall(context)),
+  //                 Text(
+  //                   "Pick Image From",
+  //                   style: Theme.of(context)
+  //                       .textTheme
+  //                       .headline6!
+  //                       .apply(color: AppColors.primary),
+  //                   textAlign: TextAlign.center,
+  //                 ),
+  //                 SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
+  //                 CustomIconButton(
+  //                   text: " Camera",
+  //                   onPressed: () {
+  //                     pickImage(ImageSource.camera);
+  //                   },
+  //                   backgroundColor: AppColors.primary,
+  //                   textColor: AppColors.white,
+  //                   icon: Icons.camera,
+  //                 ),
+  //                 const SizedBox(
+  //                   height: 20,
+  //                 ),
+  //                 CustomIconButton(
+  //                   text: " Gallery",
+  //                   onPressed: () {
+  //                     pickImage(ImageSource.gallery);
+  //                   },
+  //                   backgroundColor: AppColors.primary,
+  //                   textColor: AppColors.white,
+  //                   icon: Icons.image,
+  //                 ),
+  //                 SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
+  //                 CustomIconButton(
+  //                   text: " Cancel",
+  //                   onPressed: () {
+  //                     Get.back();
+  //                   },
+  //                   backgroundColor: AppColors.white,
+  //                   textColor: AppColors.primary,
+  //                   icon: Icons.close,
+  //                 ),
+  //                 SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // pickImage(ImageSource imageType) async {
+  //   try {
+  //     final photo = await ImagePicker().pickImage(source: imageType);
+  //     final tempImage = File(photo!.path);
+  //     setState(() {
+  //       addressProofDocument = tempImage;
+  //       addressProofDocumentController.text = photo.name;
+  //     });
+
+  //     Get.back();
+  //   } catch (error) {
+  //     debugPrint(error.toString());
+  //   }
+  // }
 }

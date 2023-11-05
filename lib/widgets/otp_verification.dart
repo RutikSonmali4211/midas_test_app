@@ -21,7 +21,7 @@ class OtpVerification extends StatefulWidget {
 }
 
 class _OtpVerificationState extends State<OtpVerification> {
-  SmsController smsController = Get.find();
+  SmsController smsController = Get.put(SmsController());
   TextEditingController otpController = TextEditingController();
   int countdown = 30;
   Timer? _countdownTimer;

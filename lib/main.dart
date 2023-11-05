@@ -12,13 +12,24 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await LocalStorage.init();
-  String? deviceToken = await DeviceTokenController.getDeviceToken();
-  LocalStorage.setDeviceToken(deviceToken!);
+  if (LocalStorage.getDeviceToken() == null) {
+    String? deviceToken = await DeviceTokenController.getDeviceToken();
+    LocalStorage.setDeviceToken(deviceToken!);
+  }
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
   String? token = LocalStorage.getToken();
+  // runApp(
+  //   DevicePreview(
+  //     enabled: true,
+  //     tools: const [
+  //       ...DevicePreview.defaultTools,
+  //     ],
+  //     builder: (context) => MyApp(token: token),
+  //   ),
+  // );
   runApp(
     MyApp(token: token),
   );
@@ -63,7 +74,10 @@ class _MyAppState extends State<MyApp> {
       ),
       home: _isLoading
           ? const LoadingScreen()
-              : const SignInScreen(),
+          // : (widget.token != null &&
+          //         JwtDecoder.isExpired(widget.token) == false)
+          // ? const BottomNevbar()
+          : const SignInScreen(),
     );
   }
 }

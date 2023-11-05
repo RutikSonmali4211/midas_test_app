@@ -15,6 +15,7 @@ class _MutualFundsWatchListState extends State<MutualFundsWatchList> {
   final TextEditingController _searchController = TextEditingController();
   List<SIPDetails> filteredSipDetailsList = sipDetailsList;
   List<SIPDetails> selectedSipDetails = [];
+  String _selectedFilter = "Name";
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -69,6 +70,9 @@ class _MutualFundsWatchListState extends State<MutualFundsWatchList> {
                   ),
                 ),
                 PopupMenuButton<String>(
+                  enableFeedback: true,
+                  enabled: true,
+                  initialValue: _selectedFilter,
                   icon: Icon(
                     Icons.filter_alt_sharp,
                     size: SizeUtil.iconsSize(context),
@@ -77,21 +81,23 @@ class _MutualFundsWatchListState extends State<MutualFundsWatchList> {
                   itemBuilder: (BuildContext context) {
                     return <PopupMenuItem<String>>[
                       const PopupMenuItem<String>(
-                        value: 'AMC name',
-                        child: Text('AMC name'),
+                        value: 'Name',
+                        child: Text('Name'),
                       ),
                       const PopupMenuItem<String>(
-                        value: 'AMC type',
-                        child: Text('AMC type'),
+                        value: 'Type',
+                        child: Text('Type'),
                       ),
                       const PopupMenuItem<String>(
-                        value: 'AMC category',
-                        child: Text('AMC category'),
+                        value: 'Category',
+                        child: Text('Category'),
                       ),
                     ];
                   },
                   onSelected: (String choice) {
-                    print('Selected filter: $choice');
+                    setState(() {
+                       _selectedFilter = choice;
+                    });
                   },
                 ),
               ],
