@@ -11,7 +11,6 @@ import 'package:flutter/services.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  // WidgetsBinding.instance.addObserver(AppLifecycleObserver());
   await LocalStorage.init();
   String? deviceToken = await DeviceTokenController.getDeviceToken();
   LocalStorage.setDeviceToken(deviceToken!);
@@ -20,15 +19,6 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   String? token = LocalStorage.getToken();
-  // runApp(
-  //   DevicePreview(
-  //     enabled: true,
-  //     tools: const [
-  //       ...DevicePreview.defaultTools,
-  //     ],
-  //     builder: (context) => MyApp(token: token),
-  //   ),
-  // );
   runApp(
     MyApp(token: token),
   );
@@ -73,9 +63,6 @@ class _MyAppState extends State<MyApp> {
       ),
       home: _isLoading
           ? const LoadingScreen()
-          // : (widget.token != null &&
-          //         JwtDecoder.isExpired(widget.token) == false)
-              // ? const BottomNevbar()
               : const SignInScreen(),
     );
   }
