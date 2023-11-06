@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
-import 'package:midas/controller/device_token/device_token_controller.dart';
+// import 'package:midas/controller/device_token/device_token_controller.dart';
 import 'package:midas/screen/loading/loading.dart';
 import 'package:midas/screen/sign_in/sign_in.dart';
 import 'package:midas/storage/local_storage.dart';
@@ -12,10 +12,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await LocalStorage.init();
-  if (LocalStorage.getDeviceToken() == null) {
-    String? deviceToken = await DeviceTokenController.getDeviceToken();
-    LocalStorage.setDeviceToken(deviceToken!);
-  }
+  // if (LocalStorage.getDeviceToken() == null) {
+  //   String? deviceToken = await DeviceTokenController.getDeviceToken();
+  //   LocalStorage.setDeviceToken(deviceToken!);
+  // }
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
