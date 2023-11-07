@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -5,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:midas/constant/colors.dart';
 import 'package:midas/constant/constant_util.dart';
 import 'package:midas/constant/size_util.dart';
+import 'package:midas/widgets/alert_message/alert_message.dart';
 import 'package:midas/widgets/alert_message/warning_message.dart';
 import 'package:midas/widgets/appbar/small_appbar.dart';
 import 'package:midas/widgets/buttons/icon_button.dart';
@@ -22,11 +25,11 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
   var height;
   var width;
   int currentStep = 1;
-  int stepLength = 2;
+  int stepLength = 4;
   bool complete = false;
 
   List<GlobalKey<FormState>> formKeys =
-      List.generate(3, (_) => GlobalKey<FormState>());
+      List.generate(5, (_) => GlobalKey<FormState>());
 
   TextEditingController fullNameController = TextEditingController();
   TextEditingController phoneNoController = TextEditingController();
@@ -37,18 +40,39 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
   TextEditingController genderController = TextEditingController();
   TextEditingController fatherNameController = TextEditingController();
   TextEditingController motherNameController = TextEditingController();
+  TextEditingController spouseNameController = TextEditingController();
   TextEditingController countryOfBirthController = TextEditingController();
   TextEditingController maritalStatusController = TextEditingController();
   TextEditingController occupationTypeController = TextEditingController();
 
-  // controllers to documents to uplaod
-  TextEditingController addressProofDocumentController =
+// controllers to select document for address to uplaod
+  TextEditingController addressline1Controller = TextEditingController();
+  TextEditingController addressline2Controller = TextEditingController();
+  TextEditingController addressline3Controller = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  TextEditingController pincodeController = TextEditingController();
+  TextEditingController countryController = TextEditingController();
+  TextEditingController addressProofController = TextEditingController();
+  TextEditingController addressProofBackController = TextEditingController();
+  TextEditingController addressProofTypeController = TextEditingController();
+  TextEditingController addressProofNumberController = TextEditingController();
+  TextEditingController addressProofIssueDateController =
       TextEditingController();
+  TextEditingController addressProofExpiryDateController =
+      TextEditingController();
+
+  // controllers to select document for bank account details to uplaod
+  TextEditingController bankAccountHolderNameController =
+      TextEditingController();
+  TextEditingController bankAccountNumberController = TextEditingController();
+  TextEditingController bankAccountIfscCodeController = TextEditingController();
+  TextEditingController bankAccountProofController = TextEditingController();
+
+  // controllers to documents to uplaod
   TextEditingController panCardDocumentController = TextEditingController();
   TextEditingController signatureScanDocumentController =
       TextEditingController();
   TextEditingController photoDocumentController = TextEditingController();
-  TextEditingController bankAccountDocumentController = TextEditingController();
   TextEditingController videoVerificationDocumentController =
       TextEditingController();
 
@@ -61,9 +85,31 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
   final FocusNode genderFocusNode = FocusNode();
   final FocusNode fathernameFocusNode = FocusNode();
   final FocusNode motherNameFocusNode = FocusNode();
+  final FocusNode spouseNameFocusNode = FocusNode();
   final FocusNode countryOfBirthFocusNode = FocusNode();
   final FocusNode maritalStatusFocusNode = FocusNode();
   final FocusNode occupationTypeFocusNode = FocusNode();
+
+// focus nodes to select document for address to uplaod
+
+  final FocusNode addressline1FocusNode = FocusNode();
+  final FocusNode addressline2FocusNode = FocusNode();
+  final FocusNode addressline3FocusNode = FocusNode();
+  final FocusNode cityFocusNode = FocusNode();
+  final FocusNode pincodeFocusNode = FocusNode();
+  final FocusNode countryFocusNode = FocusNode();
+  final FocusNode addressProofFocusNode = FocusNode();
+  final FocusNode addressProofBackFocusNode = FocusNode();
+  final FocusNode addressProofTypeFocusNode = FocusNode();
+  final FocusNode addressProofNumberFocusNode = FocusNode();
+  final FocusNode addressProofIssueDateFocusNode = FocusNode();
+  final FocusNode addressProofExpiryDateFocusNode = FocusNode();
+
+  // focus nodes to select document for bank account details to uplaod
+  final FocusNode bankAccountHolderNameFocusNode = FocusNode();
+  final FocusNode bankAccountNumberFocusNode = FocusNode();
+  final FocusNode bankAccountIfscCodeFocusNode = FocusNode();
+  final FocusNode bankAccountProofFocusNode = FocusNode();
 
   @override
   void dispose() {
@@ -78,11 +124,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
     countryOfBirthController.dispose();
     maritalStatusController.dispose();
     occupationTypeController.dispose();
-    addressProofDocumentController.dispose();
     panCardDocumentController.dispose();
     signatureScanDocumentController.dispose();
     photoDocumentController.dispose();
-    bankAccountDocumentController.dispose();
     fullNameFocusNode.dispose();
     phoneNoFocusNode.dispose();
     emailFocusNode.dispose();
@@ -96,30 +140,38 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
   }
 
   XFile? addressProofDocument;
+  XFile? addressProofBackDocument;
   XFile? panCardDocument;
   XFile? signatureScanDocument;
   XFile? photoDocument;
-  XFile? bankAccountDocument;
+  XFile? bankAccountProofDocument;
   XFile? videoVerificationDocument;
 
-  List<String> genderList = ["Male", "Female", "Others"];
-  List<String> countryofBirthList = ["IN", "USA", "AUS", "NZ"];
-  List<String> maritalStatusList = ["married", "unmarried"];
+  List<String> genderList = ["Male", "Female", "Transgender"];
+  List<String> countriesList = ["India"];
+  List<String> addressProofTypeList = [
+    "Passport",
+    "voter id",
+    "Driving licence"
+  ];
+  List<String> maritalStatusList = ["Married", "Unmarried"];
 
   List<String> occupationTypeList = [
-    "business",
-    "professional",
-    "self_employed",
-    "retired",
-    "housewife",
-    "student",
-    "public_sector",
-    "private_sector",
-    "government_sector",
-    "others"
+    "Business",
+    "Professional",
+    "Self employed",
+    "Retired",
+    "Housewife",
+    "Student",
+    "Public sector",
+    "Private sector",
+    "Government sector",
+    "Others"
   ];
   bool _showGenderDropdown = false;
   bool _showCountryOfBirthDropdown = false;
+  bool _showCountryDropdown = false;
+  bool _showAddressProofType = false;
   bool _showMaritalStatusDropdown = false;
   bool _showOccupationTypeDropdown = false;
 
@@ -135,6 +187,18 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
     });
   }
 
+  void _toggleCountryDropdown() async {
+    setState(() {
+      _showCountryDropdown = !_showCountryDropdown;
+    });
+  }
+
+  void _toggleAddressProofTypeDropdown() async {
+    setState(() {
+      _showAddressProofType = !_showAddressProofType;
+    });
+  }
+
   void _toggleMaritalStatusDropdown() async {
     setState(() {
       _showMaritalStatusDropdown = !_showMaritalStatusDropdown;
@@ -147,18 +211,12 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
     });
   }
 
-  // next() {
-  //   if (currentStep <= 2) {
-  //     setState(() => currentStep += 1);
-  //   }
-  // }
-
   next() {
-    if (currentStep <= 2) {
+    if (currentStep <= 4) {
       if (formKeys[currentStep - 1].currentState!.validate()) {
         setState(() => currentStep += 1);
       }
-    } else if (currentStep == 3) {
+    } else if (currentStep == 5) {
       if (formKeys[currentStep - 1].currentState!.validate()) {}
     }
   }
@@ -186,7 +244,37 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
     }
   }
 
-  Widget kycForm1() {
+  Future<void> _selectAddressProofIssueDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != DateTime.now()) {
+      setState(() {
+        addressProofIssueDateController.text =
+            "${picked.year.toString()}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+      });
+    }
+  }
+
+  Future<void> _selectAddressProofExpiryDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != DateTime.now()) {
+      setState(() {
+        addressProofExpiryDateController.text =
+            "${picked.year.toString()}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+      });
+    }
+  }
+
+  Widget kycBasicInformationForm() {
     return SingleChildScrollView(
       child: Form(
         key: formKeys[0],
@@ -231,9 +319,6 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                       onEditingComplete: () {
                         phoneNoFocusNode.unfocus();
                         FocusScope.of(context).requestFocus(panFocusNode);
-                      },
-                      onFieldSubmitted: (_) {
-                        phoneNoFocusNode.unfocus();
                       },
                       decoration: InputDecoration(
                         counterText: "",
@@ -812,7 +897,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
     );
   }
 
-  Widget kycForm2() {
+  Widget kycPersonalInformationForm() {
     return SingleChildScrollView(
       child: Form(
         key: formKeys[1],
@@ -925,7 +1010,6 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                     child: TextFormField(
                       maxLength: 40,
                       controller: motherNameController,
-                      autofocus: true,
                       focusNode: motherNameFocusNode,
                       onEditingComplete: () {
                         FocusScope.of(context)
@@ -1012,7 +1096,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         filled: true,
                         isDense: true,
                         border: InputBorder.none,
-                        hintText: 'e.g., IN, USA',
+                        hintText: 'e.g., India',
                         hintStyle: TextStyle(
                             color: Colors.grey,
                             fontFamily: "Helvetica",
@@ -1047,7 +1131,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (countryofBirthList.isEmpty)
+                            if (countriesList.isEmpty)
                               ListTile(
                                 title: Text(
                                   'No Records Found',
@@ -1057,13 +1141,13 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                 ),
                                 enabled: false,
                               ),
-                            if (countryofBirthList.isNotEmpty)
+                            if (countriesList.isNotEmpty)
                               ListView.builder(
                                 padding: EdgeInsets.zero,
                                 shrinkWrap: true,
-                                itemCount: countryofBirthList.length,
+                                itemCount: countriesList.length,
                                 itemBuilder: (context, index) {
-                                  final option = countryofBirthList[index];
+                                  final option = countriesList[index];
                                   return ListTile(
                                     dense: true,
                                     title: Text(option,
@@ -1135,7 +1219,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         filled: true,
                         isDense: true,
                         border: InputBorder.none,
-                        hintText: 'e.g., married, unmarried',
+                        hintText: 'e.g., Married, Unmarried',
                         hintStyle: TextStyle(
                             color: Colors.grey,
                             fontFamily: "Helvetica",
@@ -1207,6 +1291,65 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                       ),
                     ),
                   ),
+              ],
+            ),
+             if(maritalStatusController.text == "Married")
+            SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
+            if(maritalStatusController.text == "Married")
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Spouse name',
+                        style: TextStyle(
+                            fontSize: SizeUtil.body(context),
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica"),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 40.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: TextFormField(
+                      maxLength: 40,
+                      controller: spouseNameController,
+                      autofocus: true,
+                      focusNode: spouseNameFocusNode,
+                      onEditingComplete: () {
+                        FocusScope.of(context)
+                            .requestFocus(occupationTypeFocusNode);
+                      },
+                      decoration: InputDecoration(
+                        counterText: "",
+                        filled: true,
+                        isDense: true,
+                        border: InputBorder.none,
+                        hintText: 'e.g. John Doe',
+                        hintStyle: TextStyle(
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica",
+                            fontSize: SizeUtil.body(context)),
+                        fillColor: TextfieldColors.background,
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[a-z A-Z]'))
+                      ],
+                      style: TextStyle(fontSize: SizeUtil.body(context)),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                    ),
+                  ),
+                ),
               ],
             ),
             SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
@@ -1350,11 +1493,12 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
     );
   }
 
-  Widget kycForm3() {
+  Widget kycAddressDetailsForm() {
     return SingleChildScrollView(
       child: Form(
-          key: formKeys[2],
-          child: Column(children: [
+        key: formKeys[2],
+        child: Column(
+          children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1364,7 +1508,819 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'Address with proof (address)',
+                        text: 'line 1',
+                        style: TextStyle(
+                            fontSize: SizeUtil.body(context),
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica"),
+                      ),
+                      TextSpan(
+                          text: "*",
+                          style: TextStyle(
+                              fontSize: SizeUtil.body(context),
+                              color: AppColors.red,
+                              fontFamily: "Helvetica")),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 40.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: TextFormField(
+                      maxLength: 500,
+                      controller: addressline1Controller,
+                      autofocus: true,
+                      focusNode: addressline1FocusNode,
+                      onEditingComplete: () {
+                        FocusScope.of(context)
+                            .requestFocus(addressline2FocusNode);
+                      },
+                      decoration: InputDecoration(
+                        counterText: "",
+                        filled: true,
+                        isDense: true,
+                        border: InputBorder.none,
+                        hintText: 'e.g. John Doe',
+                        hintStyle: TextStyle(
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica",
+                            fontSize: SizeUtil.body(context)),
+                        fillColor: TextfieldColors.background,
+                      ),
+                      style: TextStyle(fontSize: SizeUtil.body(context)),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'line 1 is required';
+                        } else {
+                          if (value.length < 2) {
+                            return 'please enter valid address line 1';
+                          }
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'line 2',
+                        style: TextStyle(
+                            fontSize: SizeUtil.body(context),
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica"),
+                      ),
+                      // TextSpan(
+                      //     text: "*",
+                      //     style: TextStyle(
+                      //         fontSize: SizeUtil.body(context),
+                      //         color: AppColors.red,
+                      //         fontFamily: "Helvetica")),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 40.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: TextFormField(
+                      maxLength: 40,
+                      controller: addressline2Controller,
+                      focusNode: addressline2FocusNode,
+                      onEditingComplete: () {
+                        FocusScope.of(context)
+                            .requestFocus(addressline3FocusNode);
+                      },
+                      decoration: InputDecoration(
+                        counterText: "",
+                        filled: true,
+                        isDense: true,
+                        border: InputBorder.none,
+                        hintText: 'e.g. John Doe',
+                        hintStyle: TextStyle(
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica",
+                            fontSize: SizeUtil.body(context)),
+                        fillColor: TextfieldColors.background,
+                      ),
+                      style: TextStyle(fontSize: SizeUtil.body(context)),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      // validator: (value) {
+                      //   if (value!.isEmpty) {
+                      //     return 'address line 2 is required';
+                      //   } else {
+                      //     if (value.length < 2) {
+                      //       return 'please enter valid address line 2';
+                      //     }
+                      //   }
+                      //   return null;
+                      // },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'line 3',
+                        style: TextStyle(
+                            fontSize: SizeUtil.body(context),
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica"),
+                      ),
+                      // TextSpan(
+                      //     text: "*",
+                      //     style: TextStyle(
+                      //         fontSize: SizeUtil.body(context),
+                      //         color: AppColors.red,
+                      //         fontFamily: "Helvetica")),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 40.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: TextFormField(
+                      maxLength: 40,
+                      controller: addressline3Controller,
+                      focusNode: addressline3FocusNode,
+                      onEditingComplete: () {
+                        FocusScope.of(context).requestFocus(cityFocusNode);
+                      },
+                      decoration: InputDecoration(
+                        counterText: "",
+                        filled: true,
+                        isDense: true,
+                        border: InputBorder.none,
+                        hintText: 'e.g. John Doe',
+                        hintStyle: TextStyle(
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica",
+                            fontSize: SizeUtil.body(context)),
+                        fillColor: TextfieldColors.background,
+                      ),
+                      style: TextStyle(fontSize: SizeUtil.body(context)),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      // validator: (value) {
+                      //   if (value!.isEmpty) {
+                      //     return 'address line 2 is required';
+                      //   } else {
+                      //     if (value.length < 2) {
+                      //       return 'please enter valid address line 2';
+                      //     }
+                      //   }
+                      //   return null;
+                      // },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'City',
+                        style: TextStyle(
+                            fontSize: SizeUtil.body(context),
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica"),
+                      ),
+                      TextSpan(
+                          text: "*",
+                          style: TextStyle(
+                              fontSize: SizeUtil.body(context),
+                              color: AppColors.red,
+                              fontFamily: "Helvetica")),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 40.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: TextFormField(
+                      maxLength: 40,
+                      controller: cityController,
+                      focusNode: cityFocusNode,
+                      onEditingComplete: () {
+                        FocusScope.of(context).requestFocus(pincodeFocusNode);
+                      },
+                      decoration: InputDecoration(
+                        counterText: "",
+                        filled: true,
+                        isDense: true,
+                        border: InputBorder.none,
+                        hintText: 'e.g. mumbai',
+                        hintStyle: TextStyle(
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica",
+                            fontSize: SizeUtil.body(context)),
+                        fillColor: TextfieldColors.background,
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[a-z A-Z]'))
+                      ],
+                      style: TextStyle(fontSize: SizeUtil.body(context)),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'city is required';
+                        } else {
+                          if (value.length < 2) {
+                            return 'please enter valid city';
+                          }
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Pin Code',
+                        style: TextStyle(
+                            fontSize: SizeUtil.body(context),
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica"),
+                      ),
+                      TextSpan(
+                          text: "*",
+                          style: TextStyle(
+                              fontSize: SizeUtil.body(context),
+                              color: AppColors.red,
+                              fontFamily: "Helvetica")),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 40.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: TextFormField(
+                      maxLength: 40,
+                      controller: pincodeController,
+                      focusNode: pincodeFocusNode,
+                      onEditingComplete: () {
+                        FocusScope.of(context).requestFocus(countryFocusNode);
+                      },
+                      decoration: InputDecoration(
+                        counterText: "",
+                        filled: true,
+                        isDense: true,
+                        border: InputBorder.none,
+                        hintText: 'e.g. John Doe',
+                        hintStyle: TextStyle(
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica",
+                            fontSize: SizeUtil.body(context)),
+                        fillColor: TextfieldColors.background,
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(6),
+                      ],
+                      style: TextStyle(fontSize: SizeUtil.body(context)),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'pin code is required';
+                        } else {
+                          if (value.length < 6) {
+                            return 'please enter valid pin code';
+                          }
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Country',
+                        style: TextStyle(
+                          fontSize: SizeUtil.body(context),
+                          color: AppColors.grey,
+                          fontFamily: "Helvetica",
+                        ),
+                      ),
+                      TextSpan(
+                        text: "*",
+                        style: TextStyle(
+                          fontSize: SizeUtil.body(context),
+                          color: AppColors.red,
+                          fontFamily: "Helvetica",
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Padding(
+                  padding: const EdgeInsets.only(right: 40),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: TextFormField(
+                      onEditingComplete: () {
+                        FocusScope.of(context)
+                            .requestFocus(addressProofTypeFocusNode);
+                      },
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      decoration: InputDecoration(
+                        suffixIcon: Icon(
+                          Icons.arrow_drop_down,
+                          size: SizeUtil.iconsSize(context),
+                          color: AppColors.primary,
+                        ),
+                        suffixIconConstraints: const BoxConstraints(),
+                        filled: true,
+                        isDense: true,
+                        border: InputBorder.none,
+                        hintText: 'e.g., IN, USA',
+                        hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontFamily: "Helvetica",
+                            fontSize: SizeUtil.body(context)),
+                        fillColor: TextfieldColors.background,
+                      ),
+                      readOnly: true,
+                      onTap: _toggleCountryDropdown,
+                      style: TextStyle(
+                          fontSize: SizeUtil.body(context),
+                          fontFamily: "Helvetica"),
+                      controller: countryController,
+                      focusNode: countryFocusNode,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'country of birth is required';
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                  ),
+                ),
+                if (_showCountryDropdown)
+                  Material(
+                    color: Colors.transparent,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 40),
+                      child: Card(
+                        color: AppColors.white,
+                        elevation: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (countriesList.isEmpty)
+                              ListTile(
+                                title: Text(
+                                  'No Records Found',
+                                  style: TextStyle(
+                                      fontSize: SizeUtil.body(context),
+                                      fontFamily: "Helvetica"),
+                                ),
+                                enabled: false,
+                              ),
+                            if (countriesList.isNotEmpty)
+                              ListView.builder(
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                itemCount: countriesList.length,
+                                itemBuilder: (context, index) {
+                                  final option = countriesList[index];
+                                  return ListTile(
+                                    dense: true,
+                                    title: Text(option,
+                                        style: TextStyle(
+                                            fontFamily: "Helvetica",
+                                            fontSize: SizeUtil.body(context))),
+                                    onTap: () {
+                                      setState(() {
+                                        countryController.text = option;
+                                        _showCountryDropdown = false;
+                                      });
+                                    },
+                                  );
+                                },
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Proof type',
+                        style: TextStyle(
+                          fontSize: SizeUtil.body(context),
+                          color: AppColors.grey,
+                          fontFamily: "Helvetica",
+                        ),
+                      ),
+                      TextSpan(
+                        text: "*",
+                        style: TextStyle(
+                          fontSize: SizeUtil.body(context),
+                          color: AppColors.red,
+                          fontFamily: "Helvetica",
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Padding(
+                  padding: const EdgeInsets.only(right: 40),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: TextFormField(
+                      onEditingComplete: () {
+                        FocusScope.of(context)
+                            .requestFocus(addressProofNumberFocusNode);
+                      },
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      decoration: InputDecoration(
+                        suffixIcon: Icon(
+                          Icons.arrow_drop_down,
+                          size: SizeUtil.iconsSize(context),
+                          color: AppColors.primary,
+                        ),
+                        suffixIconConstraints: const BoxConstraints(),
+                        filled: true,
+                        isDense: true,
+                        border: InputBorder.none,
+                        hintText: 'e.g., passport',
+                        hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontFamily: "Helvetica",
+                            fontSize: SizeUtil.body(context)),
+                        fillColor: TextfieldColors.background,
+                      ),
+                      readOnly: true,
+                      onTap: _toggleAddressProofTypeDropdown,
+                      style: TextStyle(
+                          fontSize: SizeUtil.body(context),
+                          fontFamily: "Helvetica"),
+                      controller: addressProofTypeController,
+                      focusNode: addressProofTypeFocusNode,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'proof type is required';
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                  ),
+                ),
+                if (_showAddressProofType)
+                  Material(
+                    color: Colors.transparent,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 40),
+                      child: Card(
+                        color: AppColors.white,
+                        elevation: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (addressProofTypeList.isEmpty)
+                              ListTile(
+                                title: Text(
+                                  'No Records Found',
+                                  style: TextStyle(
+                                      fontSize: SizeUtil.body(context),
+                                      fontFamily: "Helvetica"),
+                                ),
+                                enabled: false,
+                              ),
+                            if (addressProofTypeList.isNotEmpty)
+                              ListView.builder(
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                itemCount: addressProofTypeList.length,
+                                itemBuilder: (context, index) {
+                                  final option = addressProofTypeList[index];
+                                  return ListTile(
+                                    dense: true,
+                                    title: Text(option,
+                                        style: TextStyle(
+                                            fontFamily: "Helvetica",
+                                            fontSize: SizeUtil.body(context))),
+                                    onTap: () {
+                                      setState(() {
+                                        addressProofTypeController.text =
+                                            option;
+                                        _showAddressProofType = false;
+                                      });
+                                    },
+                                  );
+                                },
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Proof Number',
+                        style: TextStyle(
+                            fontSize: SizeUtil.body(context),
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica"),
+                      ),
+                      TextSpan(
+                          text: "*",
+                          style: TextStyle(
+                              fontSize: SizeUtil.body(context),
+                              color: AppColors.red,
+                              fontFamily: "Helvetica")),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 40.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: TextFormField(
+                      maxLength: 40,
+                      controller: addressProofNumberController,
+                      focusNode: addressProofNumberFocusNode,
+                      onEditingComplete: () {
+                        FocusScope.of(context)
+                            .requestFocus(addressProofIssueDateFocusNode);
+                      },
+                      decoration: InputDecoration(
+                        counterText: "",
+                        filled: true,
+                        isDense: true,
+                        border: InputBorder.none,
+                        hintText: 'e.g. JXXXXXX0',
+                        hintStyle: TextStyle(
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica",
+                            fontSize: SizeUtil.body(context)),
+                        fillColor: TextfieldColors.background,
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'[0-9 a-z A-Z]'))
+                      ],
+                      style: TextStyle(fontSize: SizeUtil.body(context)),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'address proof number is required';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              RichText(
+                textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                textAlign: TextAlign.start,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                        text: 'Address Proof Issue Date',
+                        style: TextStyle(
+                            fontSize: SizeUtil.bodyLarge(context),
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica")),
+                    TextSpan(
+                        text: "*",
+                        style: TextStyle(
+                            fontSize: SizeUtil.bodyLarge(context),
+                            color: AppColors.red)),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 2),
+              Padding(
+                padding: const EdgeInsets.only(right: 40),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    readOnly: true,
+                    keyboardType: TextInputType.datetime,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10)
+                    ],
+                    decoration: InputDecoration(
+                      suffixIcon: Padding(
+                        padding: const EdgeInsets.only(right: 5.0),
+                        child: GestureDetector(
+                          onTap: () => _selectAddressProofIssueDate(context),
+                          child: const Icon(Icons.calendar_month,
+                              size: 30, color: AppColors.primary),
+                        ),
+                      ),
+                      suffixIconConstraints: const BoxConstraints(),
+                      filled: true,
+                      isDense: true,
+                      border: InputBorder.none,
+                      hintText: 'e.g., 2021-11-01',
+                      hintStyle: const TextStyle(
+                          color: AppColors.grey, fontFamily: "Helvetica"),
+                      fillColor: TextfieldColors.background,
+                    ),
+                    style: TextStyle(
+                      fontSize: SizeUtil.body(context),
+                    ),
+                    controller: addressProofIssueDateController,
+                    focusNode: addressProofIssueDateFocusNode,
+                    onEditingComplete: () {
+                      addressProofIssueDateFocusNode
+                          .requestFocus(addressProofExpiryDateFocusNode);
+                    },
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'address proof issue date is required';
+                      } else {
+                        return null;
+                      }
+                    },
+                    onTap: () => _selectAddressProofIssueDate(context),
+                  ),
+                ),
+              )
+            ]),
+            SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              RichText(
+                textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                textAlign: TextAlign.start,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                        text: 'Address Proof Expiry Date',
+                        style: TextStyle(
+                            fontSize: SizeUtil.bodyLarge(context),
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica")),
+                    TextSpan(
+                        text: "*",
+                        style: TextStyle(
+                            fontSize: SizeUtil.bodyLarge(context),
+                            color: AppColors.red)),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 2),
+              Padding(
+                padding: const EdgeInsets.only(right: 40),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    readOnly: true,
+                    keyboardType: TextInputType.datetime,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10)
+                    ],
+                    decoration: InputDecoration(
+                      suffixIcon: Padding(
+                        padding: const EdgeInsets.only(right: 5.0),
+                        child: GestureDetector(
+                          onTap: () => _selectAddressProofExpiryDate(context),
+                          child: const Icon(Icons.calendar_month,
+                              size: 30, color: AppColors.primary),
+                        ),
+                      ),
+                      suffixIconConstraints: const BoxConstraints(),
+                      filled: true,
+                      isDense: true,
+                      border: InputBorder.none,
+                      hintText: 'e.g., 2021-12-01',
+                      hintStyle: const TextStyle(
+                          color: AppColors.grey, fontFamily: "Helvetica"),
+                      fillColor: TextfieldColors.background,
+                    ),
+                    style: TextStyle(
+                      fontSize: SizeUtil.body(context),
+                    ),
+                    controller: addressProofExpiryDateController,
+                    focusNode: addressProofExpiryDateFocusNode,
+                    onEditingComplete: () {
+                      addressProofExpiryDateFocusNode
+                          .requestFocus(addressProofFocusNode);
+                    },
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'address proof expiry date is required';
+                      } else {
+                        return null;
+                      }
+                    },
+                    onTap: () => _selectAddressProofExpiryDate(context),
+                  ),
+                ),
+              )
+            ]),
+            SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Address Proof',
                         style: TextStyle(
                             fontSize: SizeUtil.body(context),
                             color: AppColors.grey,
@@ -1391,7 +2347,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                           borderRadius: BorderRadius.circular(5),
                           child: TextFormField(
                             readOnly: true,
-                            controller: addressProofDocumentController,
+                            controller: addressProofController,
                             keyboardType: const TextInputType.numberWithOptions(
                                 signed: true, decimal: true),
                             autovalidateMode:
@@ -1403,7 +2359,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                 child: GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      addressProofDocumentController.clear();
+                                      addressProofController.clear();
                                       addressProofDocument = null;
                                     });
                                   },
@@ -1441,11 +2397,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         child: GestureDetector(
                           onTap: () {
                             if (addressProofDocument == null) {
-                              mediaPicker(addressProofDocumentController,
-                                  (image) {
+                              mediaPicker(addressProofController, (image) {
                                 setState(() {
-                                  addressProofDocumentController.text =
-                                      image.name;
+                                  addressProofController.text = image.name;
                                   addressProofDocument = image;
                                 });
                               }, false);
@@ -1468,6 +2422,607 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                 ),
               ],
             ),
+            SizedBox(
+              height: SizeUtil.verticalSpacingSmall(context),
+            ),
+            const WarningMessage(
+                message: ConstantUtil.warningMessageToUploadImage),
+            SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Address Proof Back',
+                        style: TextStyle(
+                            fontSize: SizeUtil.body(context),
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica"),
+                      ),
+                      TextSpan(
+                          text: "*",
+                          style: TextStyle(
+                              fontSize: SizeUtil.body(context),
+                              color: AppColors.red,
+                              fontFamily: "Helvetica")),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Padding(
+                  padding: const EdgeInsets.only(right: 40),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: TextFormField(
+                            readOnly: true,
+                            controller: addressProofBackController,
+                            keyboardType: const TextInputType.numberWithOptions(
+                                signed: true, decimal: true),
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            decoration: InputDecoration(
+                              counterText: "",
+                              suffixIcon: Padding(
+                                padding: const EdgeInsets.only(right: 5.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      addressProofBackController.clear();
+                                      addressProofBackDocument = null;
+                                    });
+                                  },
+                                  child: const Icon(Icons.clear,
+                                      size: 20, color: AppColors.primary),
+                                ),
+                              ),
+                              suffixIconConstraints: const BoxConstraints(),
+                              filled: true,
+                              isDense: true,
+                              border: InputBorder.none,
+                              hintText: 'document.jpg',
+                              hintStyle: TextStyle(
+                                  color: AppColors.grey,
+                                  fontFamily: "Helvetica",
+                                  fontSize: SizeUtil.body(context)),
+                              fillColor: TextfieldColors.background,
+                            ),
+                            style: TextStyle(
+                                fontSize: SizeUtil.body(context),
+                                fontFamily: "Helvetica"),
+                            onChanged: (value) {},
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'address proof back is required';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: GestureDetector(
+                          onTap: () {
+                            if (addressProofBackDocument == null) {
+                              mediaPicker(addressProofBackController, (image) {
+                                setState(() {
+                                  addressProofBackController.text = image.name;
+                                  addressProofBackDocument = image;
+                                });
+                              }, false);
+                            }
+                          },
+                          child: Text(
+                            addressProofBackDocument == null
+                                ? "Select a file"
+                                : "Uploaded",
+                            style: TextStyle(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w400,
+                                fontSize: SizeUtil.body(context),
+                                fontFamily: "Helvetica"),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: SizeUtil.verticalSpacingSmall(context),
+            ),
+            const WarningMessage(
+                message: ConstantUtil.warningMessageToUploadImage),
+            SizedBox(
+              height: height * 0.35,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget kycBankDetailsForm() {
+    return SingleChildScrollView(
+      child: Form(
+        key: formKeys[3],
+        child: Column(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Account holder name',
+                        style: TextStyle(
+                            fontSize: SizeUtil.body(context),
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica"),
+                      ),
+                      TextSpan(
+                          text: "*",
+                          style: TextStyle(
+                              fontSize: SizeUtil.body(context),
+                              color: AppColors.red,
+                              fontFamily: "Helvetica")),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 40.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: TextFormField(
+                      maxLength: 40,
+                      controller: bankAccountHolderNameController,
+                      autofocus: true,
+                      focusNode: bankAccountHolderNameFocusNode,
+                      onEditingComplete: () {
+                        FocusScope.of(context)
+                            .requestFocus(bankAccountNumberFocusNode);
+                      },
+                      decoration: InputDecoration(
+                        counterText: "",
+                        filled: true,
+                        isDense: true,
+                        border: InputBorder.none,
+                        hintText: 'e.g. John Doe',
+                        hintStyle: TextStyle(
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica",
+                            fontSize: SizeUtil.body(context)),
+                        fillColor: TextfieldColors.background,
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[a-z A-Z]'))
+                      ],
+                      style: TextStyle(fontSize: SizeUtil.body(context)),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'account holder name is required';
+                        } else {
+                          if (value.length < 2) {
+                            return 'please enter valid account holder name';
+                          }
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Account Number',
+                        style: TextStyle(
+                            fontSize: SizeUtil.body(context),
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica"),
+                      ),
+                      TextSpan(
+                          text: "*",
+                          style: TextStyle(
+                              fontSize: SizeUtil.body(context),
+                              color: AppColors.red,
+                              fontFamily: "Helvetica")),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 40.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: TextFormField(
+                      maxLength: 40,
+                      controller: bankAccountNumberController,
+                      focusNode: bankAccountNumberFocusNode,
+                      onEditingComplete: () {
+                        FocusScope.of(context)
+                            .requestFocus(bankAccountIfscCodeFocusNode);
+                      },
+                      decoration: InputDecoration(
+                        counterText: "",
+                        filled: true,
+                        isDense: true,
+                        border: InputBorder.none,
+                        hintText: 'e.g. John Doe',
+                        hintStyle: TextStyle(
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica",
+                            fontSize: SizeUtil.body(context)),
+                        fillColor: TextfieldColors.background,
+                      ),
+                      keyboardType: const TextInputType.numberWithOptions(
+                          signed: true, decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(17),
+                      ],
+                      style: TextStyle(fontSize: SizeUtil.body(context)),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'account number is required';
+                        } else {
+                          if (value.length < 11) {
+                            return 'please enter valid account number';
+                          }
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'IFSC code',
+                        style: TextStyle(
+                            fontSize: SizeUtil.body(context),
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica"),
+                      ),
+                      TextSpan(
+                          text: "*",
+                          style: TextStyle(
+                              fontSize: SizeUtil.body(context),
+                              color: AppColors.red,
+                              fontFamily: "Helvetica")),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 40.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: TextFormField(
+                      maxLength: 11,
+                      controller: bankAccountIfscCodeController,
+                      focusNode: bankAccountIfscCodeFocusNode,
+                      onEditingComplete: () {
+                        FocusScope.of(context)
+                            .requestFocus(bankAccountProofFocusNode);
+                      },
+                      decoration: InputDecoration(
+                        counterText: "",
+                        filled: true,
+                        isDense: true,
+                        border: InputBorder.none,
+                        hintText: 'e.g. John Doe',
+                        hintStyle: TextStyle(
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica",
+                            fontSize: SizeUtil.body(context)),
+                        fillColor: TextfieldColors.background,
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'[0-9 a-z A-Z]'))
+                      ],
+                      style: TextStyle(fontSize: SizeUtil.body(context)),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'ifsc code is required';
+                        } else {
+                          if (value.length < 11) {
+                            return 'please enter valid ifsc code';
+                          }
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: SizeUtil.verticalSpacingMedium(context),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Bank account proof',
+                        style: TextStyle(
+                            fontSize: SizeUtil.body(context),
+                            color: AppColors.grey,
+                            fontFamily: "Helvetica"),
+                      ),
+                      TextSpan(
+                          text: "*",
+                          style: TextStyle(
+                              fontSize: SizeUtil.body(context),
+                              color: AppColors.red,
+                              fontFamily: "Helvetica")),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Padding(
+                  padding: const EdgeInsets.only(right: 40),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: TextFormField(
+                            readOnly: true,
+                            controller: bankAccountProofController,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            decoration: InputDecoration(
+                              counterText: "",
+                              suffixIcon: Padding(
+                                padding: const EdgeInsets.only(right: 5.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      bankAccountProofController.clear();
+                                      bankAccountProofDocument = null;
+                                    });
+                                  },
+                                  child: const Icon(Icons.clear,
+                                      size: 20, color: AppColors.primary),
+                                ),
+                              ),
+                              suffixIconConstraints: const BoxConstraints(),
+                              filled: true,
+                              isDense: true,
+                              border: InputBorder.none,
+                              hintText: 'document.jpg',
+                              hintStyle: TextStyle(
+                                  color: AppColors.grey,
+                                  fontFamily: "Helvetica",
+                                  fontSize: SizeUtil.body(context)),
+                              fillColor: TextfieldColors.background,
+                            ),
+                            style: TextStyle(
+                                fontSize: SizeUtil.body(context),
+                                fontFamily: "Helvetica"),
+                            onChanged: (value) {},
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'account proof is required';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: GestureDetector(
+                          onTap: () {
+                            if (bankAccountProofDocument == null) {
+                              mediaPicker(bankAccountProofController, (image) {
+                                setState(() {
+                                  bankAccountProofController.text = image.name;
+                                  bankAccountProofDocument = image;
+                                });
+                              }, false);
+                            }
+                          },
+                          child: Text(
+                            bankAccountProofDocument == null
+                                ? "Select a file"
+                                : "Uploaded",
+                            style: TextStyle(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w400,
+                                fontSize: SizeUtil.body(context),
+                                fontFamily: "Helvetica"),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: SizeUtil.verticalSpacingSmall(context),
+            ),
+            const WarningMessage(
+                message: ConstantUtil.warningMessageToUploadImage),
+            SizedBox(
+              height: height * 0.35,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget kycDocumentVerification() {
+    return SingleChildScrollView(
+      child: Form(
+          key: formKeys[4],
+          child: Column(children: [
+            // Column(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: [
+            //     RichText(
+            //       textScaleFactor: MediaQuery.of(context).textScaleFactor,
+            //       textAlign: TextAlign.start,
+            //       text: TextSpan(
+            //         children: [
+            //           TextSpan(
+            //             text: 'Address with proof (address)',
+            //             style: TextStyle(
+            //                 fontSize: SizeUtil.body(context),
+            //                 color: AppColors.grey,
+            //                 fontFamily: "Helvetica"),
+            //           ),
+            //           TextSpan(
+            //               text: "*",
+            //               style: TextStyle(
+            //                   fontSize: SizeUtil.body(context),
+            //                   color: AppColors.red,
+            //                   fontFamily: "Helvetica")),
+            //         ],
+            //       ),
+            //     ),
+            //     const SizedBox(height: 2),
+            //     Padding(
+            //       padding: const EdgeInsets.only(right: 40),
+            //       child: Row(
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         mainAxisAlignment: MainAxisAlignment.start,
+            //         children: [
+            //           Expanded(
+            //             child: ClipRRect(
+            //               borderRadius: BorderRadius.circular(5),
+            //               child: TextFormField(
+            //                 readOnly: true,
+            //                 controller: addressProofDocumentController,
+            //                 keyboardType: const TextInputType.numberWithOptions(
+            //                     signed: true, decimal: true),
+            //                 autovalidateMode:
+            //                     AutovalidateMode.onUserInteraction,
+            //                 decoration: InputDecoration(
+            //                   counterText: "",
+            //                   suffixIcon: Padding(
+            //                     padding: const EdgeInsets.only(right: 5.0),
+            //                     child: GestureDetector(
+            //                       onTap: () {
+            //                         setState(() {
+            //                           addressProofDocumentController.clear();
+            //                           addressProofDocument = null;
+            //                         });
+            //                       },
+            //                       child: const Icon(Icons.clear,
+            //                           size: 20, color: AppColors.primary),
+            //                     ),
+            //                   ),
+            //                   suffixIconConstraints: const BoxConstraints(),
+            //                   filled: true,
+            //                   isDense: true,
+            //                   border: InputBorder.none,
+            //                   hintText: 'document.jpg',
+            //                   hintStyle: TextStyle(
+            //                       color: AppColors.grey,
+            //                       fontFamily: "Helvetica",
+            //                       fontSize: SizeUtil.body(context)),
+            //                   fillColor: TextfieldColors.background,
+            //                 ),
+            //                 style: TextStyle(
+            //                     fontSize: SizeUtil.body(context),
+            //                     fontFamily: "Helvetica"),
+            //                 onChanged: (value) {},
+            //                 validator: (value) {
+            //                   if (value!.isEmpty) {
+            //                     return 'address proof is required';
+            //                   }
+            //                   return null;
+            //                 },
+            //               ),
+            //             ),
+            //           ),
+            //           const SizedBox(width: 10),
+            //           Padding(
+            //             padding: const EdgeInsets.only(top: 8),
+            //             child: GestureDetector(
+            //               onTap: () {
+            //                 if (addressProofDocument == null) {
+            //                   mediaPicker(addressProofDocumentController,
+            //                       (image) {
+            //                     setState(() {
+            //                       addressProofDocumentController.text =
+            //                           image.name;
+            //                       addressProofDocument = image;
+            //                     });
+            //                   }, false);
+            //                 }
+            //               },
+            //               child: Text(
+            //                 addressProofDocument == null
+            //                     ? "Select a file"
+            //                     : "Uploaded",
+            //                 style: TextStyle(
+            //                     color: AppColors.primary,
+            //                     fontWeight: FontWeight.w400,
+            //                     fontSize: SizeUtil.body(context),
+            //                     fontFamily: "Helvetica"),
+            //               ),
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ],
+            // ),
             SizedBox(
               height: SizeUtil.verticalSpacingMedium(context),
             ),
@@ -1812,122 +3367,122 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                 ),
               ],
             ),
-            SizedBox(
-              height: SizeUtil.verticalSpacingMedium(context),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RichText(
-                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
-                  textAlign: TextAlign.start,
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Bank account details (bank_account)',
-                        style: TextStyle(
-                            fontSize: SizeUtil.body(context),
-                            color: AppColors.grey,
-                            fontFamily: "Helvetica"),
-                      ),
-                      TextSpan(
-                          text: "*",
-                          style: TextStyle(
-                              fontSize: SizeUtil.body(context),
-                              color: AppColors.red,
-                              fontFamily: "Helvetica")),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Padding(
-                  padding: const EdgeInsets.only(right: 40),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: TextFormField(
-                            readOnly: true,
-                            controller: bankAccountDocumentController,
-                            keyboardType: const TextInputType.numberWithOptions(
-                                signed: true, decimal: true),
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            decoration: InputDecoration(
-                              counterText: "",
-                              suffixIcon: Padding(
-                                padding: const EdgeInsets.only(right: 5.0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      bankAccountDocumentController.clear();
-                                      bankAccountDocument = null;
-                                    });
-                                  },
-                                  child: const Icon(Icons.clear,
-                                      size: 20, color: AppColors.primary),
-                                ),
-                              ),
-                              suffixIconConstraints: const BoxConstraints(),
-                              filled: true,
-                              isDense: true,
-                              border: InputBorder.none,
-                              hintText: 'document.jpg',
-                              hintStyle: TextStyle(
-                                  color: AppColors.grey,
-                                  fontFamily: "Helvetica",
-                                  fontSize: SizeUtil.body(context)),
-                              fillColor: TextfieldColors.background,
-                            ),
-                            style: TextStyle(
-                                fontSize: SizeUtil.body(context),
-                                fontFamily: "Helvetica"),
-                            onChanged: (value) {},
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'pan card copy is required';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: GestureDetector(
-                          onTap: () {
-                            if (bankAccountDocument == null) {
-                              mediaPicker(bankAccountDocumentController,
-                                  (image) {
-                                setState(() {
-                                  bankAccountDocumentController.text =
-                                      image.name;
-                                  bankAccountDocument = image;
-                                });
-                              }, false);
-                            }
-                          },
-                          child: Text(
-                            bankAccountDocument == null
-                                ? "Select a file"
-                                : "Uploaded",
-                            style: TextStyle(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w400,
-                                fontSize: SizeUtil.body(context),
-                                fontFamily: "Helvetica"),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+            // SizedBox(
+            //   height: SizeUtil.verticalSpacingMedium(context),
+            // ),
+            // Column(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: [
+            //     RichText(
+            //       textScaleFactor: MediaQuery.of(context).textScaleFactor,
+            //       textAlign: TextAlign.start,
+            //       text: TextSpan(
+            //         children: [
+            //           TextSpan(
+            //             text: 'Bank account details (bank_account)',
+            //             style: TextStyle(
+            //                 fontSize: SizeUtil.body(context),
+            //                 color: AppColors.grey,
+            //                 fontFamily: "Helvetica"),
+            //           ),
+            //           TextSpan(
+            //               text: "*",
+            //               style: TextStyle(
+            //                   fontSize: SizeUtil.body(context),
+            //                   color: AppColors.red,
+            //                   fontFamily: "Helvetica")),
+            //         ],
+            //       ),
+            //     ),
+            //     const SizedBox(height: 2),
+            //     Padding(
+            //       padding: const EdgeInsets.only(right: 40),
+            //       child: Row(
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         mainAxisAlignment: MainAxisAlignment.start,
+            //         children: [
+            //           Expanded(
+            //             child: ClipRRect(
+            //               borderRadius: BorderRadius.circular(5),
+            //               child: TextFormField(
+            //                 readOnly: true,
+            //                 controller: bankAccountDocumentController,
+            //                 keyboardType: const TextInputType.numberWithOptions(
+            //                     signed: true, decimal: true),
+            //                 autovalidateMode:
+            //                     AutovalidateMode.onUserInteraction,
+            //                 decoration: InputDecoration(
+            //                   counterText: "",
+            //                   suffixIcon: Padding(
+            //                     padding: const EdgeInsets.only(right: 5.0),
+            //                     child: GestureDetector(
+            //                       onTap: () {
+            //                         setState(() {
+            //                           bankAccountDocumentController.clear();
+            //                           bankAccountDocument = null;
+            //                         });
+            //                       },
+            //                       child: const Icon(Icons.clear,
+            //                           size: 20, color: AppColors.primary),
+            //                     ),
+            //                   ),
+            //                   suffixIconConstraints: const BoxConstraints(),
+            //                   filled: true,
+            //                   isDense: true,
+            //                   border: InputBorder.none,
+            //                   hintText: 'document.jpg',
+            //                   hintStyle: TextStyle(
+            //                       color: AppColors.grey,
+            //                       fontFamily: "Helvetica",
+            //                       fontSize: SizeUtil.body(context)),
+            //                   fillColor: TextfieldColors.background,
+            //                 ),
+            //                 style: TextStyle(
+            //                     fontSize: SizeUtil.body(context),
+            //                     fontFamily: "Helvetica"),
+            //                 onChanged: (value) {},
+            //                 validator: (value) {
+            //                   if (value!.isEmpty) {
+            //                     return 'pan card copy is required';
+            //                   }
+            //                   return null;
+            //                 },
+            //               ),
+            //             ),
+            //           ),
+            //           const SizedBox(width: 10),
+            //           Padding(
+            //             padding: const EdgeInsets.only(top: 8),
+            //             child: GestureDetector(
+            //               onTap: () {
+            //                 if (bankAccountDocument == null) {
+            //                   mediaPicker(bankAccountDocumentController,
+            //                       (image) {
+            //                     setState(() {
+            //                       bankAccountDocumentController.text =
+            //                           image.name;
+            //                       bankAccountDocument = image;
+            //                     });
+            //                   }, false);
+            //                 }
+            //               },
+            //               child: Text(
+            //                 bankAccountDocument == null
+            //                     ? "Select a file"
+            //                     : "Uploaded",
+            //                 style: TextStyle(
+            //                     color: AppColors.primary,
+            //                     fontWeight: FontWeight.w400,
+            //                     fontSize: SizeUtil.body(context),
+            //                     fontFamily: "Helvetica"),
+            //               ),
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ],
+            // ),
             SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -2047,7 +3602,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
               height: SizeUtil.verticalSpacingMedium(context),
             ),
             const WarningMessage(
-                message: ConstantUtil.warningMessageToUploadImage),
+                message: ConstantUtil.warningMessageToUploadMultipleImages),
             SizedBox(height: SizeUtil.verticalSpacingSmall(context)),
             const WarningMessage(
                 message: ConstantUtil.warningMessageToUploadVideo),
@@ -2126,11 +3681,15 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
   Widget getCurrentKYCForm() {
     switch (currentStep) {
       case 1:
-        return kycForm1();
+        return kycBasicInformationForm();
       case 2:
-        return kycForm2();
+        return kycPersonalInformationForm();
       case 3:
-        return kycForm3();
+        return kycAddressDetailsForm();
+      case 4:
+        return kycBankDetailsForm();
+      case 5:
+        return kycDocumentVerification();
       default:
         return Container();
     }
@@ -2143,6 +3702,10 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
       case 2:
         return "Personal Information";
       case 3:
+        return "Address Details";
+      case 4:
+        return "Bank Account Details";
+      case 5:
         return "Document Verification";
       default:
         return "";
@@ -2243,7 +3806,19 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
   Future<XFile?> pickImage(ImageSource imageType) async {
     try {
       final photo = await ImagePicker().pickImage(source: imageType);
-      return photo != null ? XFile(photo.path) : null;
+      if (photo != null) {
+        final imageFile = File(photo.path);
+        final fileSize = await imageFile.length();
+        const maxSize = 5 * 1024 * 1024;
+        if (fileSize <= maxSize) {
+          return XFile(photo.path);
+        } else {
+          showErrorAlert("please select a file less than 5 mb");
+          Get.back();
+        }
+      }
+      // return photo != null ? XFile(photo.path) : null;
+      return null;
     } catch (error) {
       debugPrint(error.toString());
       return null;
@@ -2252,119 +3827,24 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
 
   Future<XFile?> pickVideo(ImageSource imageType) async {
     try {
-      final photo = await ImagePicker().pickVideo(source: imageType);
-      return photo != null ? XFile(photo.path) : null;
+      final video = await ImagePicker().pickVideo(source: imageType);
+      if (video != null) {
+        final imageFile = File(video.path);
+        final fileSize = await imageFile.length();
+        const maxSize = 10 * 1024 * 1024;
+        if (fileSize <= maxSize) {
+          return XFile(video.path);
+        } else {
+          showErrorAlert("please select a file less than 10 mb");
+          Get.back();
+        }
+      }
+      // return photo != null ? XFile(photo.path) : null;
+      return null;
+      // return photo != null ? XFile(photo.path) : null;
     } catch (error) {
       debugPrint(error.toString());
       return null;
     }
   }
-
-//    void requestPermissionsAndPickImage() async {
-//   // Check if permissions are already granted
-//   final cameraStatus = await Permission.camera.status;
-//   final photosStatus = await Permission.photos.status;
-
-//   if (cameraStatus.isGranted && photosStatus.isGranted) {
-//     // Permissions are already granted, open image picker
-//     // imagePickerOption();
-//   } else {
-//     // Permissions are not granted, request permissions
-//     final cameraPermissionStatus = await Permission.camera.request();
-//     final photosPermissionStatus = await Permission.photos.request();
-
-//     if (cameraPermissionStatus.isGranted && photosPermissionStatus.isGranted) {
-//       // Permissions granted, open image picker
-//       imagePickerOption();
-//     } else {
-//       // Handle cases where the user denied permission
-//       Get.snackbar(
-//         "Permission Denied",
-//         "Please grant camera and photos access to select an image.",
-//         snackPosition: SnackPosition.BOTTOM,
-//       );
-//     }
-//   }
-// }
-
-  // void imagePickerOption() {
-  //   Get.bottomSheet(
-  //     SingleChildScrollView(
-  //       child: ClipRRect(
-  //         borderRadius: const BorderRadius.only(
-  //           topLeft: Radius.circular(10.0),
-  //           topRight: Radius.circular(10.0),
-  //         ),
-  //         child: Container(
-  //           color: Colors.white,
-  //           child: Padding(
-  //             padding: const EdgeInsets.all(8.0),
-  //             child: Column(
-  //               crossAxisAlignment: CrossAxisAlignment.stretch,
-  //               children: [
-  //                 SizedBox(height: SizeUtil.verticalSpacingSmall(context)),
-  //                 Text(
-  //                   "Pick Image From",
-  //                   style: Theme.of(context)
-  //                       .textTheme
-  //                       .headline6!
-  //                       .apply(color: AppColors.primary),
-  //                   textAlign: TextAlign.center,
-  //                 ),
-  //                 SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
-  //                 CustomIconButton(
-  //                   text: " Camera",
-  //                   onPressed: () {
-  //                     pickImage(ImageSource.camera);
-  //                   },
-  //                   backgroundColor: AppColors.primary,
-  //                   textColor: AppColors.white,
-  //                   icon: Icons.camera,
-  //                 ),
-  //                 const SizedBox(
-  //                   height: 20,
-  //                 ),
-  //                 CustomIconButton(
-  //                   text: " Gallery",
-  //                   onPressed: () {
-  //                     pickImage(ImageSource.gallery);
-  //                   },
-  //                   backgroundColor: AppColors.primary,
-  //                   textColor: AppColors.white,
-  //                   icon: Icons.image,
-  //                 ),
-  //                 SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
-  //                 CustomIconButton(
-  //                   text: " Cancel",
-  //                   onPressed: () {
-  //                     Get.back();
-  //                   },
-  //                   backgroundColor: AppColors.white,
-  //                   textColor: AppColors.primary,
-  //                   icon: Icons.close,
-  //                 ),
-  //                 SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // pickImage(ImageSource imageType) async {
-  //   try {
-  //     final photo = await ImagePicker().pickImage(source: imageType);
-  //     final tempImage = File(photo!.path);
-  //     setState(() {
-  //       addressProofDocument = tempImage;
-  //       addressProofDocumentController.text = photo.name;
-  //     });
-
-  //     Get.back();
-  //   } catch (error) {
-  //     debugPrint(error.toString());
-  //   }
-  // }
 }

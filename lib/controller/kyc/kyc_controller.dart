@@ -23,7 +23,7 @@ class KycController extends GetxController {
     if(permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if(permission == LocationPermission.denied) {
-        return Future.error('Location Permissions are denied');
+        return Future.error('please give permissions to enable your location to continue');
       }
     }
 

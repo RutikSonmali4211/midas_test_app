@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:midas/Widgets/buttons/large_button.dart';
@@ -6,6 +8,7 @@ import 'package:midas/constant/size_util.dart';
 import 'package:flutter/material.dart';
 import 'package:midas/controller/kyc/kyc_controller.dart';
 import 'package:midas/screen/profile/kyc/kyc_request_form.dart';
+import 'package:midas/widgets/alert_message/alert_message.dart';
 import 'package:midas/widgets/appbar/small_appbar.dart';
 
 class KycDetailsPhase extends StatefulWidget {
@@ -22,17 +25,19 @@ class _KyKycDetailsPhaseState extends State<KycDetailsPhase> {
 
   KycController kycController = Get.put(KycController());
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
 
-  void getLocation() async {
-    Position? position = await kycController.getCurrentLocation();
-    double latitude = position!.latitude;
-    double longitude = position.longitude;
-    print(latitude);
-    print(longitude);
+  Future<bool> getLocation() async {
+    try {
+      Position? position = await kycController.getCurrentLocation();
+      double latitude = position!.latitude;
+      double longitude = position.longitude;
+      print(latitude);
+      print(longitude);
+      return true;
+    } catch (e) {
+      showErrorAlert(e.toString());
+      return false;
+    }
   }
 
   @override
@@ -46,70 +51,73 @@ class _KyKycDetailsPhaseState extends State<KycDetailsPhase> {
         children: [
           const SmallAppbar(heading: "KYC Details"),
           SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (!kycCompleted)
-                Center(
-                  child: Icon(
-                    Icons.check_circle,
-                    size: SizeUtil.scallingFactor(context) * 180,
-                    color: AppColors.grey,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (!kycCompleted)
+                  Center(
+                    child: Icon(
+                      Icons.check_circle,
+                      size: SizeUtil.scallingFactor(context) * 180,
+                      color: AppColors.grey,
+                    ),
                   ),
-                ),
-              if (kycCompleted)
-                Center(
-                  child: Icon(
-                    Icons.check_circle,
-                    size: SizeUtil.scallingFactor(context) * 180,
-                    color: AppColors.primary,
+                if (kycCompleted)
+                  Center(
+                    child: Icon(
+                      Icons.check_circle,
+                      size: SizeUtil.scallingFactor(context) * 180,
+                      color: AppColors.primary,
+                    ),
                   ),
-                ),
-              const SizedBox(height: 20),
-              if (kycCompleted)
-                Text(
-                  textAlign: TextAlign.center,
-                  "KYC done",
-                  style: TextStyle(
-                      fontSize: SizeUtil.bodyLarge(context),
-                      color: AppColors.primary),
-                ),
-              if (!kycCompleted)
-                Text(
-                  textAlign: TextAlign.center,
-                  "KYC not complete",
-                  style: TextStyle(
-                      fontSize: SizeUtil.bodyLarge(context),
-                      color: AppColors.grey),
-                ),
-              SizedBox(height: height * 0.161),
-              if (!kycCompleted)
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: width * 0.10),
-                  child: LargeButton(
-                      text: "Start KYC",
-                      backgroundColor: AppColors.primary,
-                      textColor: AppColors.white,
-                      onPressed: () {
-                        // getLocation();
-                         Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const KYCRequestForm()),
-                        );
-                      }),
-                ),
-              if (kycCompleted)
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: width * 0.10),
-                  child: LargeButton(
-                      text: "Start KYC",
-                      backgroundColor: AppColors.grey,
-                      textColor: AppColors.white,
-                      onPressed: () {}),
-                ),
-            ],
+                const SizedBox(height: 20),
+                if (kycCompleted)
+                  Text(
+                    textAlign: TextAlign.center,
+                    "KYC done",
+                    style: TextStyle(
+                        fontSize: SizeUtil.bodyLarge(context),
+                        color: AppColors.primary),
+                  ),
+                if (!kycCompleted)
+                  Text(
+                    textAlign: TextAlign.center,
+                    "KYC not complete",
+                    style: TextStyle(
+                        fontSize: SizeUtil.bodyLarge(context),
+                        color: AppColors.grey),
+                  ),
+                SizedBox(height: height * 0.161),
+                if (!kycCompleted)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: width * 0.10),
+                    child: LargeButton(
+                        text: "Start KYC",
+                        backgroundColor: AppColors.primary,
+                        textColor: AppColors.white,
+                        onPressed: () async {
+                          if (await getLocation()) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const KYCRequestForm()),
+                          );
+                          }
+                        }),
+                  ),
+                if (kycCompleted)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: width * 0.10),
+                    child: LargeButton(
+                        text: "Start KYC",
+                        backgroundColor: AppColors.grey,
+                        textColor: AppColors.white,
+                        onPressed: () {}),
+                  ),
+              ],
+            ),
           ),
         ],
       ),

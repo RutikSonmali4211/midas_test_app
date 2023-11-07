@@ -1,6 +1,4 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class ConstantUtil {
@@ -28,8 +26,10 @@ class ConstantUtil {
       'fingerprint not added please add your fingerprint first to continue with biometric login';
   static const String phoneNumberNotVerifieldMessage =
       'please verify your phone number to continue';
+  static const String warningMessageToUploadMultipleImages =
+      "when uploading a file for PAN card copy, Signature scan, Photo. File must be in jpg, jpeg, png or pdf format and size should not exceed 5 MB.";
   static const String warningMessageToUploadImage =
-      "when uploading a file for address proof, PAN card copy, Signature scan, Photo, bank account details. File must be in jpg, jpeg, png or pdf format and size should not exceed 5 MB.";
+      "File must be in jpg, jpeg, png or pdf format and size should not exceed 5 MB.";
   static const String warningMessageToUploadVideo =
       "when uploading verification video of the investor. File must be in mp4 or webm format and size should not exceed 10 MB.";
   static const String addSuccess = "added successfully";
@@ -77,26 +77,5 @@ class ConstantUtil {
       formattedDate = desiredFormat.format(originalDate.toLocal());
     }
     return formattedDate;
-  }
-
-
-    Future<XFile?> pickImage(ImageSource imageType) async {
-    try {
-      final photo = await ImagePicker().pickImage(source: imageType);
-      return photo != null ? XFile(photo.path) : null;
-    } catch (error) {
-      debugPrint(error.toString());
-      return null;
-    }
-  }
-
-   Future<XFile?> pickVideo(ImageSource imageType) async {
-    try {
-      final photo = await ImagePicker().pickVideo(source: imageType);
-      return photo != null ? XFile(photo.path) : null;
-    } catch (error) {
-      debugPrint(error.toString());
-      return null;
-    }
   }
 }

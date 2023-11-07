@@ -117,7 +117,8 @@ class _SignInScreenState extends State<SignInScreen>
     logoutFirebase();
   }
 
-  generateDeviceToken() async {
+
+   generateDeviceToken() async {
     if (LocalStorage.getDeviceToken() == null) {
       String? deviceToken = await DeviceTokenController.getDeviceToken();
       LocalStorage.setDeviceToken(deviceToken!);
@@ -427,8 +428,7 @@ class _SignInScreenState extends State<SignInScreen>
                               },
                               backgroundColor: AppColors.white,
                               textColor: AppColors.primary),
-                          Obx(() => userController.isDeviceSupport.value &&
-                                  userController.isBiometricEnabled.value
+                          Obx(() => userController.isDeviceSupport.value && userController.isBiometricEnabled.value
                               ? Column(
                                   children: [
                                     Row(
@@ -590,9 +590,7 @@ class _SignInScreenState extends State<SignInScreen>
                     ),
                     SizedBox(height: SizeUtil.scallingFactor(context) * 30),
                     Row(
-                      mainAxisAlignment: Platform.isIOS
-                          ? MainAxisAlignment.spaceBetween
-                          : MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: Platform.isIOS? MainAxisAlignment.spaceBetween:MainAxisAlignment.spaceEvenly,
                       children: [
                         AuthButton(
                             imageUrl: 'assets/facebook_icon.png',
@@ -605,10 +603,10 @@ class _SignInScreenState extends State<SignInScreen>
                             _handleSignIn();
                           },
                         ),
-                        if (Platform.isIOS)
-                          AuthButton(
-                              imageUrl: 'assets/apple_icon.png',
-                              onPressed: () {}),
+                        if(Platform.isIOS)
+                        AuthButton(
+                            imageUrl: 'assets/apple_icon.png',
+                            onPressed: () {}),
                       ],
                     ),
                     const SizedBox(
