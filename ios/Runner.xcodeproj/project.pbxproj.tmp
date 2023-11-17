@@ -247,9 +247,9 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 				<key>CODE_SIGN_ENTITLEMENTS</key>
 				<string>Runner/Runner.entitlements</string>
 				<key>CODE_SIGN_IDENTITY</key>
-				<string>Apple Distribution: Amol Agnihotri (P7J63583PS)</string>
+				<string>Apple Development</string>
 				<key>CODE_SIGN_STYLE</key>
-				<string>Manual</string>
+				<string>Automatic</string>
 				<key>CURRENT_PROJECT_VERSION</key>
 				<string>$(FLUTTER_BUILD_NUMBER)</string>
 				<key>DEVELOPMENT_TEAM</key>
@@ -268,7 +268,7 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
 				<key>PROVISIONING_PROFILE_SPECIFIER</key>
-				<string>midas app bundle id ios_app_adhoc 1700130330</string>
+				<string></string>
 				<key>SWIFT_OBJC_BRIDGING_HEADER</key>
 				<string>Runner/Runner-Bridging-Header.h</string>
 				<key>SWIFT_VERSION</key>
@@ -848,12 +848,8 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 					<dict>
 						<key>CreatedOnToolsVersion</key>
 						<string>7.3.1</string>
-						<key>DevelopmentTeam</key>
-						<string>P7J63583PS</string>
 						<key>LastSwiftMigration</key>
 						<string>1100</string>
-						<key>ProvisioningStyle</key>
-						<string>Manual</string>
 					</dict>
 				</dict>
 			</dict>
@@ -1353,9 +1349,9 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 				<key>CODE_SIGN_ENTITLEMENTS</key>
 				<string>Runner/Runner.entitlements</string>
 				<key>CODE_SIGN_IDENTITY</key>
-				<string>Apple Distribution: Amol Agnihotri (P7J63583PS)</string>
+				<string>Apple Development</string>
 				<key>CODE_SIGN_STYLE</key>
-				<string>Manual</string>
+				<string>Automatic</string>
 				<key>CURRENT_PROJECT_VERSION</key>
 				<string>$(FLUTTER_BUILD_NUMBER)</string>
 				<key>DEVELOPMENT_TEAM</key>
@@ -1374,7 +1370,7 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
 				<key>PROVISIONING_PROFILE_SPECIFIER</key>
-				<string>midas app bundle id ios_app_adhoc 1700130330</string>
+				<string></string>
 				<key>SWIFT_OBJC_BRIDGING_HEADER</key>
 				<string>Runner/Runner-Bridging-Header.h</string>
 				<key>SWIFT_OPTIMIZATION_LEVEL</key>
@@ -1402,9 +1398,9 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 				<key>CODE_SIGN_ENTITLEMENTS</key>
 				<string>Runner/Runner.entitlements</string>
 				<key>CODE_SIGN_IDENTITY</key>
-				<string>Apple Distribution: Amol Agnihotri (P7J63583PS)</string>
+				<string>Apple Development</string>
 				<key>CODE_SIGN_STYLE</key>
-				<string>Manual</string>
+				<string>Automatic</string>
 				<key>CURRENT_PROJECT_VERSION</key>
 				<string>$(FLUTTER_BUILD_NUMBER)</string>
 				<key>DEVELOPMENT_TEAM</key>
@@ -1423,7 +1419,7 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
 				<key>PROVISIONING_PROFILE_SPECIFIER</key>
-				<string>midas app bundle id ios_app_adhoc 1700130330</string>
+				<string></string>
 				<key>SWIFT_OBJC_BRIDGING_HEADER</key>
 				<string>Runner/Runner-Bridging-Header.h</string>
 				<key>SWIFT_VERSION</key>
