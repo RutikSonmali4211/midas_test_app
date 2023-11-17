@@ -193,9 +193,9 @@
 				<key>CODE_SIGN_ENTITLEMENTS</key>
 				<string>Runner/Runner.entitlements</string>
 				<key>CODE_SIGN_IDENTITY</key>
-				<string>Apple Development</string>
+				<string>Apple Distribution: Amol Agnihotri (P7J63583PS)</string>
 				<key>CODE_SIGN_STYLE</key>
-				<string>Automatic</string>
+				<string>Manual</string>
 				<key>CURRENT_PROJECT_VERSION</key>
 				<string>$(FLUTTER_BUILD_NUMBER)</string>
 				<key>DEVELOPMENT_TEAM</key>
@@ -214,7 +214,7 @@
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
 				<key>PROVISIONING_PROFILE_SPECIFIER</key>
-				<string></string>
+				<string>midas app bundle id ios_app_adhoc 1700130330</string>
 				<key>SWIFT_OBJC_BRIDGING_HEADER</key>
 				<string>Runner/Runner-Bridging-Header.h</string>
 				<key>SWIFT_VERSION</key>
@@ -832,8 +832,12 @@
 					<dict>
 						<key>CreatedOnToolsVersion</key>
 						<string>7.3.1</string>
+						<key>DevelopmentTeam</key>
+						<string>P7J63583PS</string>
 						<key>LastSwiftMigration</key>
 						<string>1100</string>
+						<key>ProvisioningStyle</key>
+						<string>Manual</string>
 					</dict>
 				</dict>
 			</dict>
@@ -1333,9 +1337,9 @@
 				<key>CODE_SIGN_ENTITLEMENTS</key>
 				<string>Runner/Runner.entitlements</string>
 				<key>CODE_SIGN_IDENTITY</key>
-				<string>Apple Development</string>
+				<string>Apple Distribution: Amol Agnihotri (P7J63583PS)</string>
 				<key>CODE_SIGN_STYLE</key>
-				<string>Automatic</string>
+				<string>Manual</string>
 				<key>CURRENT_PROJECT_VERSION</key>
 				<string>$(FLUTTER_BUILD_NUMBER)</string>
 				<key>DEVELOPMENT_TEAM</key>
@@ -1354,7 +1358,7 @@
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
 				<key>PROVISIONING_PROFILE_SPECIFIER</key>
-				<string></string>
+				<string>midas app bundle id ios_app_adhoc 1700130330</string>
 				<key>SWIFT_OBJC_BRIDGING_HEADER</key>
 				<string>Runner/Runner-Bridging-Header.h</string>
 				<key>SWIFT_OPTIMIZATION_LEVEL</key>
@@ -1382,9 +1386,9 @@
 				<key>CODE_SIGN_ENTITLEMENTS</key>
 				<string>Runner/Runner.entitlements</string>
 				<key>CODE_SIGN_IDENTITY</key>
-				<string>Apple Development</string>
+				<string>Apple Distribution: Amol Agnihotri (P7J63583PS)</string>
 				<key>CODE_SIGN_STYLE</key>
-				<string>Automatic</string>
+				<string>Manual</string>
 				<key>CURRENT_PROJECT_VERSION</key>
 				<string>$(FLUTTER_BUILD_NUMBER)</string>
 				<key>DEVELOPMENT_TEAM</key>
@@ -1403,7 +1407,7 @@
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
 				<key>PROVISIONING_PROFILE_SPECIFIER</key>
-				<string></string>
+				<string>midas app bundle id ios_app_adhoc 1700130330</string>
 				<key>SWIFT_OBJC_BRIDGING_HEADER</key>
 				<string>Runner/Runner-Bridging-Header.h</string>
 				<key>SWIFT_VERSION</key>
