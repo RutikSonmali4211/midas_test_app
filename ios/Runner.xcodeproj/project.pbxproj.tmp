@@ -190,6 +190,12 @@
 				<string>AppIcon</string>
 				<key>CLANG_ENABLE_MODULES</key>
 				<string>YES</string>
+				<key>CODE_SIGN_ENTITLEMENTS</key>
+				<string>Runner/Runner.entitlements</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>Apple Development</string>
+				<key>CODE_SIGN_STYLE</key>
+				<string>Automatic</string>
 				<key>CURRENT_PROJECT_VERSION</key>
 				<string>$(FLUTTER_BUILD_NUMBER)</string>
 				<key>DEVELOPMENT_TEAM</key>
@@ -207,6 +213,8 @@
 				<string>com.org.midasApp</string>
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
+				<key>PROVISIONING_PROFILE_SPECIFIER</key>
+				<string></string>
 				<key>SWIFT_OBJC_BRIDGING_HEADER</key>
 				<string>Runner/Runner-Bridging-Header.h</string>
 				<key>SWIFT_VERSION</key>
@@ -380,8 +388,10 @@
 			<dict>
 				<key>BUNDLE_LOADER</key>
 				<string>$(TEST_HOST)</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>Apple Distribution: Amol Agnihotri (P7J63583PS)</string>
 				<key>CODE_SIGN_STYLE</key>
-				<string>Automatic</string>
+				<string>Manual</string>
 				<key>CURRENT_PROJECT_VERSION</key>
 				<string>1</string>
 				<key>DEVELOPMENT_TEAM</key>
@@ -416,8 +426,10 @@
 			<dict>
 				<key>BUNDLE_LOADER</key>
 				<string>$(TEST_HOST)</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>Apple Distribution: Amol Agnihotri (P7J63583PS)</string>
 				<key>CODE_SIGN_STYLE</key>
-				<string>Automatic</string>
+				<string>Manual</string>
 				<key>CURRENT_PROJECT_VERSION</key>
 				<string>1</string>
 				<key>DEVELOPMENT_TEAM</key>
@@ -448,8 +460,10 @@
 			<dict>
 				<key>BUNDLE_LOADER</key>
 				<string>$(TEST_HOST)</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>Apple Distribution: Amol Agnihotri (P7J63583PS)</string>
 				<key>CODE_SIGN_STYLE</key>
-				<string>Automatic</string>
+				<string>Manual</string>
 				<key>CURRENT_PROJECT_VERSION</key>
 				<string>1</string>
 				<key>DEVELOPMENT_TEAM</key>
@@ -682,6 +696,17 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
+		<key>9063B59A2AF699880040373F</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.entitlements</string>
+			<key>path</key>
+			<string>Runner.entitlements</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>9705A1C41CF9048500538489</key>
 		<dict>
 			<key>buildActionMask</key>
@@ -798,6 +823,8 @@
 					<dict>
 						<key>CreatedOnToolsVersion</key>
 						<string>14.0</string>
+						<key>DevelopmentTeam</key>
+						<string>P7J63583PS</string>
 						<key>TestTargetID</key>
 						<string>97C146ED1CF9000F007C117D</string>
 					</dict>
@@ -911,7 +938,6 @@
 				<string>97C146EC1CF9000F007C117D</string>
 				<string>9705A1C41CF9048500538489</string>
 				<string>3B06AD1E1E4923F5004D2608</string>
-				<string>B8F601B0847D9E6595A6F4D1</string>
 			</array>
 			<key>buildRules</key>
 			<array/>
@@ -959,6 +985,7 @@
 		<dict>
 			<key>children</key>
 			<array>
+				<string>9063B59A2AF699880040373F</string>
 				<string>5AA81BDF2AEA6F8E003EDD37</string>
 				<string>97C146FA1CF9000F007C117D</string>
 				<string>97C146FD1CF9000F007C117D</string>
@@ -1303,6 +1330,12 @@
 				<string>AppIcon</string>
 				<key>CLANG_ENABLE_MODULES</key>
 				<string>YES</string>
+				<key>CODE_SIGN_ENTITLEMENTS</key>
+				<string>Runner/Runner.entitlements</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>Apple Development</string>
+				<key>CODE_SIGN_STYLE</key>
+				<string>Automatic</string>
 				<key>CURRENT_PROJECT_VERSION</key>
 				<string>$(FLUTTER_BUILD_NUMBER)</string>
 				<key>DEVELOPMENT_TEAM</key>
@@ -1320,6 +1353,8 @@
 				<string>com.org.midasApp</string>
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
+				<key>PROVISIONING_PROFILE_SPECIFIER</key>
+				<string></string>
 				<key>SWIFT_OBJC_BRIDGING_HEADER</key>
 				<string>Runner/Runner-Bridging-Header.h</string>
 				<key>SWIFT_OPTIMIZATION_LEVEL</key>
@@ -1344,6 +1379,12 @@
 				<string>AppIcon</string>
 				<key>CLANG_ENABLE_MODULES</key>
 				<string>YES</string>
+				<key>CODE_SIGN_ENTITLEMENTS</key>
+				<string>Runner/Runner.entitlements</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>Apple Development</string>
+				<key>CODE_SIGN_STYLE</key>
+				<string>Automatic</string>
 				<key>CURRENT_PROJECT_VERSION</key>
 				<string>$(FLUTTER_BUILD_NUMBER)</string>
 				<key>DEVELOPMENT_TEAM</key>
@@ -1361,6 +1402,8 @@
 				<string>com.org.midasApp</string>
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
+				<key>PROVISIONING_PROFILE_SPECIFIER</key>
+				<string></string>
 				<key>SWIFT_OBJC_BRIDGING_HEADER</key>
 				<string>Runner/Runner-Bridging-Header.h</string>
 				<key>SWIFT_VERSION</key>
@@ -1409,34 +1452,6 @@ if [ $? != 0 ] ; then
 fi
 # This output is used by Xcode 'outputs' to avoid re-running this script phase.
 echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
-</string>
-			<key>showEnvVarsInLog</key>
-			<string>0</string>
-		</dict>
-		<key>B8F601B0847D9E6595A6F4D1</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array/>
-			<key>inputFileListPaths</key>
-			<array>
-				<string>${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist</string>
-			</array>
-			<key>isa</key>
-			<string>PBXShellScriptBuildPhase</string>
-			<key>name</key>
-			<string>[CP] Embed Pods Frameworks</string>
-			<key>outputFileListPaths</key>
-			<array>
-				<string>${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist</string>
-			</array>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-			<key>shellPath</key>
-			<string>/bin/sh</string>
-			<key>shellScript</key>
-			<string>"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh"
 </string>
 			<key>showEnvVarsInLog</key>
 			<string>0</string>
