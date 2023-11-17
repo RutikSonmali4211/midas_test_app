@@ -10,18 +10,60 @@
 	<string>54</string>
 	<key>objects</key>
 	<dict>
-		<key>0D1D8D20803FDB64B5AB635E</key>
+		<key>04831E3DBCD7CF23BBA699FD</key>
 		<dict>
-			<key>explicitFileType</key>
-			<string>wrapper.framework</string>
-			<key>includeInIndex</key>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputFileListPaths</key>
+			<array/>
+			<key>inputPaths</key>
+			<array>
+				<string>${PODS_PODFILE_DIR_PATH}/Podfile.lock</string>
+				<string>${PODS_ROOT}/Manifest.lock</string>
+			</array>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>[CP] Check Pods Manifest.lock</string>
+			<key>outputFileListPaths</key>
+			<array/>
+			<key>outputPaths</key>
+			<array>
+				<string>$(DERIVED_FILE_DIR)/Pods-Runner-checkManifestLockResult.txt</string>
+			</array>
+			<key>runOnlyForDeploymentPostprocessing</key>
 			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>diff "${PODS_PODFILE_DIR_PATH}/Podfile.lock" "${PODS_ROOT}/Manifest.lock" &gt; /dev/null
+if [ $? != 0 ] ; then
+    # print error to STDERR
+    echo "error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation." &gt;&amp;2
+    exit 1
+fi
+# This output is used by Xcode 'outputs' to avoid re-running this script phase.
+echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>120F93DE39D88A2EB8EE278E</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-Runner.release.xcconfig</string>
 			<key>path</key>
-			<string>Pods_Runner.framework</string>
+			<string>Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig</string>
 			<key>sourceTree</key>
-			<string>BUILT_PRODUCTS_DIR</string>
+			<string>&lt;group&gt;</string>
 		</dict>
 		<key>1498D2321E8E86230040F4C2</key>
 		<dict>
@@ -54,33 +96,45 @@
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>17160B390E131F16621AA826</key>
+		<key>1ED96247599F26098CFCB8A1</key>
 		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputFileListPaths</key>
+			<array/>
+			<key>inputPaths</key>
+			<array>
+				<string>${PODS_PODFILE_DIR_PATH}/Podfile.lock</string>
+				<string>${PODS_ROOT}/Manifest.lock</string>
+			</array>
 			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
+			<string>PBXShellScriptBuildPhase</string>
 			<key>name</key>
-			<string>Pods-RunnerTests.debug.xcconfig</string>
-			<key>path</key>
-			<string>Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>1A00496DC592B4DBFDFB05B9</key>
-		<dict>
-			<key>explicitFileType</key>
-			<string>wrapper.framework</string>
-			<key>includeInIndex</key>
+			<string>[CP] Check Pods Manifest.lock</string>
+			<key>outputFileListPaths</key>
+			<array/>
+			<key>outputPaths</key>
+			<array>
+				<string>$(DERIVED_FILE_DIR)/Pods-RunnerTests-checkManifestLockResult.txt</string>
+			</array>
+			<key>runOnlyForDeploymentPostprocessing</key>
 			<string>0</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>path</key>
-			<string>Pods_RunnerTests.framework</string>
-			<key>sourceTree</key>
-			<string>BUILT_PRODUCTS_DIR</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>diff "${PODS_PODFILE_DIR_PATH}/Podfile.lock" "${PODS_ROOT}/Manifest.lock" &gt; /dev/null
+if [ $? != 0 ] ; then
+    # print error to STDERR
+    echo "error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation." &gt;&amp;2
+    exit 1
+fi
+# This output is used by Xcode 'outputs' to avoid re-running this script phase.
+echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
 		</dict>
 		<key>249021D3217E4FDB00AE95B9</key>
 		<dict>
@@ -233,26 +287,12 @@
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
-				<string>2D7F3163FE1EA4B4A806F369</string>
+				<string>88ECDC44328962FA4DC15FD1</string>
 			</array>
 			<key>isa</key>
 			<string>PBXFrameworksBuildPhase</string>
 			<key>runOnlyForDeploymentPostprocessing</key>
 			<string>0</string>
-		</dict>
-		<key>2D5BDFAB47EBC900CE0EB5B2</key>
-		<dict>
-			<key>fileRef</key>
-			<string>0D1D8D20803FDB64B5AB635E</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>2D7F3163FE1EA4B4A806F369</key>
-		<dict>
-			<key>fileRef</key>
-			<string>1A00496DC592B4DBFDFB05B9</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
 		</dict>
 		<key>331C807B294A618700263BE5</key>
 		<dict>
@@ -295,7 +335,7 @@
 			<string>331C8087294A63A400263BE5</string>
 			<key>buildPhases</key>
 			<array>
-				<string>9862627C7BD23EB5307B76B9</string>
+				<string>1ED96247599F26098CFCB8A1</string>
 				<string>331C807D294A63A400263BE5</string>
 				<string>331C807F294A63A400263BE5</string>
 				<string>2AEF53F2A46189B668D6F74A</string>
@@ -383,7 +423,7 @@
 		<key>331C8088294A63A400263BE5</key>
 		<dict>
 			<key>baseConfigurationReference</key>
-			<string>17160B390E131F16621AA826</string>
+			<string>FA5524B618914D53C03D7DAB</string>
 			<key>buildSettings</key>
 			<dict>
 				<key>BUNDLE_LOADER</key>
@@ -421,7 +461,7 @@
 		<key>331C8089294A63A400263BE5</key>
 		<dict>
 			<key>baseConfigurationReference</key>
-			<string>8BD73D1F5B50F09DBB6ADFB4</string>
+			<string>8BD09BEDE76B8C8C76CD8A02</string>
 			<key>buildSettings</key>
 			<dict>
 				<key>BUNDLE_LOADER</key>
@@ -455,7 +495,7 @@
 		<key>331C808A294A63A400263BE5</key>
 		<dict>
 			<key>baseConfigurationReference</key>
-			<string>F1373FD88489AE536FEE4A97</string>
+			<string>C68DFABD4E4D1E0BEC61E0B3</string>
 			<key>buildSettings</key>
 			<dict>
 				<key>BUNDLE_LOADER</key>
@@ -492,21 +532,6 @@
 			<string>331C807B294A618700263BE5</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
-		</dict>
-		<key>35888E6830285FCDB2DA6C2D</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>name</key>
-			<string>Pods-Runner.profile.xcconfig</string>
-			<key>path</key>
-			<string>Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
 		</dict>
 		<key>3B06AD1E1E4923F5004D2608</key>
 		<dict>
@@ -555,20 +580,18 @@
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>4017EC234E29E84076C0F8F8</key>
+		<key>3CCDA42F3F62325428672223</key>
 		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.framework</string>
 			<key>includeInIndex</key>
-			<string>1</string>
+			<string>0</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>name</key>
-			<string>Pods-Runner.debug.xcconfig</string>
 			<key>path</key>
-			<string>Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig</string>
+			<string>Pods_Runner.framework</string>
 			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
+			<string>BUILT_PRODUCTS_DIR</string>
 		</dict>
 		<key>5AA81BDF2AEA6F8E003EDD37</key>
 		<dict>
@@ -594,32 +617,17 @@
 		<dict>
 			<key>children</key>
 			<array>
-				<string>4017EC234E29E84076C0F8F8</string>
-				<string>70A72A920D4FC38000DA1111</string>
-				<string>35888E6830285FCDB2DA6C2D</string>
-				<string>17160B390E131F16621AA826</string>
-				<string>8BD73D1F5B50F09DBB6ADFB4</string>
-				<string>F1373FD88489AE536FEE4A97</string>
+				<string>8CDCC43A982D3C2B8861E38B</string>
+				<string>120F93DE39D88A2EB8EE278E</string>
+				<string>FBF0C67ABC9C06BF3D5E09A4</string>
+				<string>FA5524B618914D53C03D7DAB</string>
+				<string>8BD09BEDE76B8C8C76CD8A02</string>
+				<string>C68DFABD4E4D1E0BEC61E0B3</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
 			<key>path</key>
 			<string>Pods</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>70A72A920D4FC38000DA1111</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>name</key>
-			<string>Pods-Runner.release.xcconfig</string>
-			<key>path</key>
-			<string>Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -654,20 +662,6 @@
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>77C37E6B32A86C998964E3FC</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>0D1D8D20803FDB64B5AB635E</string>
-				<string>1A00496DC592B4DBFDFB05B9</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Frameworks</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
 		<key>7AFA3C8E1D35360C0083082E</key>
 		<dict>
 			<key>isa</key>
@@ -681,7 +675,14 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>8BD73D1F5B50F09DBB6ADFB4</key>
+		<key>88ECDC44328962FA4DC15FD1</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9DE8ABE1DAFADBDE77E5481D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8BD09BEDE76B8C8C76CD8A02</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -693,6 +694,21 @@
 			<string>Pods-RunnerTests.release.xcconfig</string>
 			<key>path</key>
 			<string>Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8CDCC43A982D3C2B8861E38B</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-Runner.debug.xcconfig</string>
+			<key>path</key>
+			<string>Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -802,7 +818,7 @@
 				<string>97C146EF1CF9000F007C117D</string>
 				<string>331C8082294A63A400263BE5</string>
 				<string>6A966CE1388913A16DC4A3AE</string>
-				<string>77C37E6B32A86C998964E3FC</string>
+				<string>FD839DD19148347D92AA2576</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -905,7 +921,7 @@
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
-				<string>2D5BDFAB47EBC900CE0EB5B2</string>
+				<string>FD4D74AF2C767DAF20BB502D</string>
 			</array>
 			<key>isa</key>
 			<string>PBXFrameworksBuildPhase</string>
@@ -935,7 +951,7 @@
 			<string>97C147051CF9000F007C117D</string>
 			<key>buildPhases</key>
 			<array>
-				<string>DC02D2C8EE5DD34BEADD6D87</string>
+				<string>04831E3DBCD7CF23BBA699FD</string>
 				<string>9740EEB61CF901F6004384FC</string>
 				<string>97C146EA1CF9000F007C117D</string>
 				<string>97C146EB1CF9000F007C117D</string>
@@ -1420,87 +1436,20 @@
 			<key>name</key>
 			<string>Release</string>
 		</dict>
-		<key>9862627C7BD23EB5307B76B9</key>
+		<key>9DE8ABE1DAFADBDE77E5481D</key>
 		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array/>
-			<key>inputFileListPaths</key>
-			<array/>
-			<key>inputPaths</key>
-			<array>
-				<string>${PODS_PODFILE_DIR_PATH}/Podfile.lock</string>
-				<string>${PODS_ROOT}/Manifest.lock</string>
-			</array>
+			<key>explicitFileType</key>
+			<string>wrapper.framework</string>
+			<key>includeInIndex</key>
+			<string>0</string>
 			<key>isa</key>
-			<string>PBXShellScriptBuildPhase</string>
-			<key>name</key>
-			<string>[CP] Check Pods Manifest.lock</string>
-			<key>outputFileListPaths</key>
-			<array/>
-			<key>outputPaths</key>
-			<array>
-				<string>$(DERIVED_FILE_DIR)/Pods-RunnerTests-checkManifestLockResult.txt</string>
-			</array>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-			<key>shellPath</key>
-			<string>/bin/sh</string>
-			<key>shellScript</key>
-			<string>diff "${PODS_PODFILE_DIR_PATH}/Podfile.lock" "${PODS_ROOT}/Manifest.lock" &gt; /dev/null
-if [ $? != 0 ] ; then
-    # print error to STDERR
-    echo "error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation." &gt;&amp;2
-    exit 1
-fi
-# This output is used by Xcode 'outputs' to avoid re-running this script phase.
-echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
-</string>
-			<key>showEnvVarsInLog</key>
-			<string>0</string>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>Pods_RunnerTests.framework</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
 		</dict>
-		<key>DC02D2C8EE5DD34BEADD6D87</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array/>
-			<key>inputFileListPaths</key>
-			<array/>
-			<key>inputPaths</key>
-			<array>
-				<string>${PODS_PODFILE_DIR_PATH}/Podfile.lock</string>
-				<string>${PODS_ROOT}/Manifest.lock</string>
-			</array>
-			<key>isa</key>
-			<string>PBXShellScriptBuildPhase</string>
-			<key>name</key>
-			<string>[CP] Check Pods Manifest.lock</string>
-			<key>outputFileListPaths</key>
-			<array/>
-			<key>outputPaths</key>
-			<array>
-				<string>$(DERIVED_FILE_DIR)/Pods-Runner-checkManifestLockResult.txt</string>
-			</array>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-			<key>shellPath</key>
-			<string>/bin/sh</string>
-			<key>shellScript</key>
-			<string>diff "${PODS_PODFILE_DIR_PATH}/Podfile.lock" "${PODS_ROOT}/Manifest.lock" &gt; /dev/null
-if [ $? != 0 ] ; then
-    # print error to STDERR
-    echo "error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation." &gt;&amp;2
-    exit 1
-fi
-# This output is used by Xcode 'outputs' to avoid re-running this script phase.
-echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
-</string>
-			<key>showEnvVarsInLog</key>
-			<string>0</string>
-		</dict>
-		<key>F1373FD88489AE536FEE4A97</key>
+		<key>C68DFABD4E4D1E0BEC61E0B3</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -1512,6 +1461,57 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 			<string>Pods-RunnerTests.profile.xcconfig</string>
 			<key>path</key>
 			<string>Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>FA5524B618914D53C03D7DAB</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-RunnerTests.debug.xcconfig</string>
+			<key>path</key>
+			<string>Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>FBF0C67ABC9C06BF3D5E09A4</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-Runner.profile.xcconfig</string>
+			<key>path</key>
+			<string>Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>FD4D74AF2C767DAF20BB502D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>3CCDA42F3F62325428672223</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>FD839DD19148347D92AA2576</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>3CCDA42F3F62325428672223</string>
+				<string>9DE8ABE1DAFADBDE77E5481D</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Frameworks</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
