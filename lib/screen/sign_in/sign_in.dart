@@ -17,7 +17,7 @@ import 'package:midas/widgets/buttons/large_button.dart';
 import 'package:pinput/pinput.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+// import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -29,26 +29,26 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen>
     with WidgetsBindingObserver {
   Future<void> _checkIfIsLogged() async {
-    final accessToken = await FacebookAuth.instance.accessToken;
-    setState(() {});
-    if (accessToken != null) {
-      print("is Logged:::: ${accessToken.toJson()}");
-      setState(() {});
-    }
+    // final accessToken = await FacebookAuth.instance.accessToken;
+    // setState(() {});
+    // if (accessToken != null) {
+    //   print("is Logged:::: ${accessToken.toJson()}");
+    //   setState(() {});
+    // }
   }
 
   Future<void> _facebookLogin() async {
-    try {
-      final LoginResult result = await FacebookAuth.instance.login();
-      if (result.status == LoginStatus.success) {
-      } else {
-        print(result.status);
-        print(result.message);
-      }
-      setState(() {});
-    } catch (e) {
-      print(e);
-    }
+    // try {
+    //   final LoginResult result = await FacebookAuth.instance.login();
+    //   if (result.status == LoginStatus.success) {
+    //   } else {
+    //     print(result.status);
+    //     print(result.message);
+    //   }
+    //   setState(() {});
+    // } catch (e) {
+    //   print(e);
+    // }
   }
 
   GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
@@ -101,7 +101,7 @@ class _SignInScreenState extends State<SignInScreen>
   @override
   void initState() {
     super.initState();
-    generateDeviceToken();
+    // generateDeviceToken();
     WidgetsBinding.instance.addObserver(this);
     _loadUsername();
     userController.isBiometricEnabled =
@@ -112,9 +112,9 @@ class _SignInScreenState extends State<SignInScreen>
         LocalStorage.getBiometricAlert() == null
             ? false.obs
             : LocalStorage.getBiometricAlert()!.obs;
-    biometricLogin();
-    _checkIfIsLogged();
-    logoutFirebase();
+    // biometricLogin();
+    // _checkIfIsLogged();
+    // logoutFirebase();
   }
 
 
@@ -127,7 +127,7 @@ class _SignInScreenState extends State<SignInScreen>
 
   logoutFirebase() async {
     await FirebaseAuth.instance.signOut();
-    await FacebookAuth.i.logOut();
+    // await FacebookAuth.i.logOut();
     await _googleSignIn.signOut();
   }
 

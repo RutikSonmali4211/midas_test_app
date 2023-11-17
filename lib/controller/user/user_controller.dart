@@ -17,7 +17,7 @@ import 'package:midas/widgets/alert_message/alert_message.dart';
 import 'package:midas/widgets/biometric_alert_box.dart';
 import 'package:midas/widgets/loader.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+// import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class UserController extends GetxController {
@@ -167,7 +167,7 @@ class UserController extends GetxController {
         throw CustomException(ConstantUtil.internetUnavailable);
       }
       await FirebaseAuth.instance.signOut();
-      await FacebookAuth.i.logOut();
+      // await FacebookAuth.i.logOut();
       await _googleSignIn.signOut();
       var response = await userService.logoutUser(context);
       var jsonResponse = jsonDecode(response.body);
