@@ -1,32 +1,18 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:get/get.dart';
-import 'package:midas/screen/loading/loading.dart';
-import 'package:midas/screen/sign_in/sign_in.dart';
-import 'package:midas/storage/local_storage.dart';
-import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:midas/demo.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await LocalStorage.init();
+  // await Firebase.initializeApp();
+  // await LocalStorage.init();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  String? token = LocalStorage.getToken();
-  // runApp(
-  //   DevicePreview(
-  //     enabled: true,
-  //     tools: const [
-  //       ...DevicePreview.defaultTools,
-  //     ],
-  //     builder: (context) => MyApp(token: token),
-  //   ),
-  // );
+  // String? token;
   runApp(
-    MyApp(token: token),
+    MyApp(token: ""),
   );
 }
 
@@ -43,23 +29,21 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool _isLoading = true;
+  // bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
       setState(() {
-        _isLoading = false;
+        // _isLoading = false;
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      locale: DevicePreview.locale(context),
-      builder: DevicePreview.appBuilder,
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Simplifin',
       theme: ThemeData(
@@ -67,12 +51,8 @@ class _MyAppState extends State<MyApp> {
         scaffoldBackgroundColor: Colors.white,
         textTheme: const TextTheme(),
       ),
-      home: _isLoading
-          ? const LoadingScreen()
-          // : (widget.token != null &&
-          //         JwtDecoder.isExpired(widget.token) == false)
-          // ? const BottomNevbar()
-          : const SignInScreen(),
+      home: 
+           const DemoScreen(),
     );
   }
 }
