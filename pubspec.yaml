@@ -53,16 +53,17 @@ dependencies:
   local_auth:
   device_preview:
   # dio: ^5.3.2
-  firebase_core:
+  firebase_core: ^2.22.0
   firebase_messaging:
   http_interceptor:
   connectivity_plus:
   intl:
   firebase_auth:
   google_sign_in:
-  # flutter_facebook_auth:
+  flutter_facebook_auth:
   image_picker:
   geolocator:
+  firebase_crashlytics:
 
 dev_dependencies:
   flutter_test:
