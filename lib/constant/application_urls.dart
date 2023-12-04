@@ -11,8 +11,7 @@ class ApplicationUrls {
       '${baseUrl}auth/checkbiometricenable';
   static const String addDeviceTokenForBiometricUrl =
       '${baseUrl}users/addnewdevicetoken';
-  static const String usersUrl =
-      '${baseUrl}users';
+  static const String usersUrl = '${baseUrl}users';
   static const String signInWithBiometricUrl = '${baseUrl}auth/signinbiometric';
   static const String dropDownUrl = "${baseUrl}dropdownData";
   static const String investmentUrl = "${baseUrl}investment";
@@ -25,4 +24,8 @@ class ApplicationUrls {
   static const String sendOtpUrl = "${baseUrl}sms/sendotp";
   static const String verifyOtpUrl = "${baseUrl}sms/verifyotp";
   static const String netWorthUrl = "${baseUrl}netWorth/checkNetWorth";
+  static const String uploadKycFile = "${baseUrl}kyc/uploadKycFile";
+  static const String createKyc = "${baseUrl}kyc/";
+  static const String createEsign = "${baseUrl}kyc/startkyc";
+  static const String fetchKycStatus = "${baseUrl}kyc/fetchkycstatus";
 }

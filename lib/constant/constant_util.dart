@@ -78,4 +78,15 @@ class ConstantUtil {
     }
     return formattedDate;
   }
+
+  static const String addressType = "address";
+  static const String addressproofBackType="addressProofBack";
+  static const String bankAccountType="bankAccountProof";
+  static const String pancardType="pancardDoc";
+  static const String signDocType="signDoc";
+  static const String photoDocType="photoDoc";
+  static const String ipvVedioType="ipvVedio";
+
+
+
 }

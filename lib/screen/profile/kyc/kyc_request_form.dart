@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -13,6 +12,9 @@ import 'package:midas/widgets/appbar/small_appbar.dart';
 import 'package:midas/widgets/buttons/icon_button.dart';
 import 'package:midas/widgets/buttons/small_button.dart';
 import 'package:midas/widgets/upper_case_formatter.dart';
+import '../../../Controller/kyc/kyc_controller.dart';
+import '../../../Model/Dto/ImageData.dart';
+import 'kyc_pending.dart';
 
 class KYCRequestForm extends StatefulWidget {
   const KYCRequestForm({super.key});
@@ -24,6 +26,13 @@ class KYCRequestForm extends StatefulWidget {
 class _KYCRequestFormState extends State<KYCRequestForm> {
   var height;
   var width;
+  var addressFileId = "";
+  var addressProofBackId = "";
+  var bankAccountDocId = "";
+  var panCardDocId = "";
+  var photoDocId = "";
+  var signDocId = "";
+  var ipvVedioId = "";
   int currentStep = 1;
   int stepLength = 4;
   bool complete = false;
@@ -147,26 +156,26 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
   XFile? bankAccountProofDocument;
   XFile? videoVerificationDocument;
 
-  List<String> genderList = ["Male", "Female", "Transgender"];
-  List<String> countriesList = ["India"];
+  List<String> genderList = ["male", "female", "transgender"];
+  List<String> countriesList = ["in"];
   List<String> addressProofTypeList = [
-    "Passport",
+    "passport",
     "voter id",
-    "Driving licence"
+    "driving licence"
   ];
-  List<String> maritalStatusList = ["Married", "Unmarried"];
+  List<String> maritalStatusList = ["married", "unmarried", "others"];
 
   List<String> occupationTypeList = [
-    "Business",
-    "Professional",
-    "Self employed",
-    "Retired",
-    "Housewife",
-    "Student",
-    "Public sector",
-    "Private sector",
-    "Government sector",
-    "Others"
+    "business",
+    "professional",
+    "self employed",
+    "retired",
+    "housewife",
+    "student",
+    "public sector",
+    "private sector",
+    "government sector",
+    "others"
   ];
   bool _showGenderDropdown = false;
   bool _showCountryOfBirthDropdown = false;
@@ -174,6 +183,50 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
   bool _showAddressProofType = false;
   bool _showMaritalStatusDropdown = false;
   bool _showOccupationTypeDropdown = false;
+  KycController kycController = Get.put(KycController());
+
+  @override
+  void initState() {
+    super.initState();
+    setPresentDetails();
+  }
+
+  setPresentDetails() async {
+    final Map<String, dynamic> data =
+        await kycController.fetchKycDetails(context);
+    if (data["status"] == true) {
+      fullNameController.text = data["result"]["name"] ?? "";
+      phoneNoController.text = data["result"]["mobile"]["number"] ?? "";
+      emailController.text = data["result"]["email"] ?? "";
+      panController.text = data["result"]["pan"] ?? "";
+      aadhaarController.text = (data["result"]["aadhaar_number"] ?? "").toString();
+      dateofBirthController.text = data["result"]["date_of_birth"] ?? "";
+      genderController.text = data["result"]["gender"] ?? "";
+      fatherNameController.text = data["result"]["father_name"] ?? "";
+      motherNameController.text = data["result"]["mother_name"] ?? "";
+      countryOfBirthController.text = data["result"]["country_of_birth"] ?? "";
+      maritalStatusController.text = data["result"]["marital_status"] ?? "";
+      occupationTypeController.text = data["result"]["occupation_type"] ?? "";
+      addressline1Controller.text = data["result"]["address"]["line_1"] ?? "";
+      addressline2Controller.text = data["result"]["address"]["line_2"] ?? "";
+      addressline3Controller.text = data["result"]["address"]["line_3"] ?? "";
+      cityController.text = data["result"]["address"]["city"] ?? "";
+      pincodeController.text = data["result"]["address"]["pincode"] ?? "";
+      countryController.text = data["result"]["address"]["country"] ?? "";
+      addressProofTypeController.text = data["result"]["address"]["proof_type"] ?? "";
+      addressProofNumberController.text = data["result"]["address"]["proof_number"] ?? "";
+      addressProofIssueDateController.text =
+          data["result"]["address"]["proof_issue_date"] ?? "";
+      addressProofExpiryDateController.text =
+          data["result"]["address"]["proof_expiry_date"] ?? "";
+      bankAccountHolderNameController.text =
+          data["result"]["bank_account"]["account_holder_name"] ?? "";
+      bankAccountNumberController.text =
+          data["result"]["bank_account"]["account_number"] ?? "";
+      bankAccountIfscCodeController.text =
+          data["result"]["bank_account"]["ifsc_code"] ?? "";
+    }
+  }
 
   void _toggleGenderDropdown() async {
     setState(() {
@@ -211,13 +264,107 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
     });
   }
 
-  next() {
+  uploadFile(String name, File file, String documentType) async {
+    ImageData data = await kycController.uploadFile(name, file, context);
+    if (documentType == ConstantUtil.addressType) {
+      addressFileId = data.value;
+    }
+    if (documentType == ConstantUtil.addressproofBackType) {
+      addressProofBackId = data.value;
+    }
+    if (documentType == ConstantUtil.bankAccountType) {
+      bankAccountDocId = data.value;
+    }
+    if (documentType == ConstantUtil.ipvVedioType) {
+      ipvVedioId = data.value;
+    }
+    if (documentType == ConstantUtil.pancardType) {
+      panCardDocId = data.value;
+    }
+    if (documentType == ConstantUtil.photoDocType) {
+      photoDocId = data.value;
+    }
+    if (documentType == ConstantUtil.signDocType) {
+      signDocId = data.value;
+    }
+  }
+
+  String ipvVedio = "test";
+
+  Future<bool> createKyc(bool startKyc) async {
+    bool isSuccess = await kycController.createKyc(
+        startKyc,
+        fullNameController.text.toString(),
+        phoneNoController.text.toString(),
+        emailController.text.toString(),
+        panController.text.toString(),
+        aadhaarController.text.toString(),
+        dateofBirthController.text.toString(),
+        genderController.text.toString(),
+        fatherNameController.text.toString(),
+        motherNameController.text.toString(),
+        countryOfBirthController.text.toString(),
+        maritalStatusController.text.toString(),
+        occupationTypeController.text.toString(),
+        addressline1Controller.text.toString(),
+        addressline2Controller.text.toString(),
+        addressline3Controller.text.toString(),
+        cityController.text.toString(),
+        pincodeController.text.toString(),
+        countryController.text.toString(),
+        addressFileId,
+        addressProofBackId,
+        addressProofTypeController.text.toString(),
+        addressProofNumberController.text.toString(),
+        addressProofIssueDateController.text.toString(),
+        addressProofExpiryDateController.text.toString(),
+        bankAccountHolderNameController.text.toString(),
+        bankAccountNumberController.text.toString(),
+        bankAccountIfscCodeController.text.toString(),
+        bankAccountDocId,
+        panCardDocId,
+        signDocId,
+        photoDocId,
+        ipvVedioId,
+        context);
+    if (isSuccess) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> next() async {
     if (currentStep <= 4) {
       if (formKeys[currentStep - 1].currentState!.validate()) {
-        setState(() => currentStep += 1);
+        try {
+          bool kycupdate = await createKyc(false);
+          if (kycupdate) {
+            setState(() => currentStep += 1);
+          } else {
+            print("KYC update failed");
+          }
+        } catch (e) {
+          print("Error during KYC update: $e");
+        }
       }
     } else if (currentStep == 5) {
-      if (formKeys[currentStep - 1].currentState!.validate()) {}
+      if (formKeys[currentStep - 1].currentState!.validate()) {
+        try {
+          bool kycupdate = await createKyc(true);
+          if (kycupdate) {
+            // ignore: use_build_context_synchronously
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const KycPendingPhase()),
+            );
+          } else {
+            print("KYC update failed");
+          }
+        } catch (e) {
+          print("Error during KYC update: $e");
+        }
+      }
     }
   }
 
@@ -1293,65 +1440,66 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                   ),
               ],
             ),
-             if(maritalStatusController.text == "Married")
-            SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
-            if(maritalStatusController.text == "Married")
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RichText(
-                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
-                  textAlign: TextAlign.start,
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Spouse name',
-                        style: TextStyle(
-                            fontSize: SizeUtil.body(context),
-                            color: AppColors.grey,
-                            fontFamily: "Helvetica"),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 2,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 40.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
-                    child: TextFormField(
-                      maxLength: 40,
-                      controller: spouseNameController,
-                      autofocus: true,
-                      focusNode: spouseNameFocusNode,
-                      onEditingComplete: () {
-                        FocusScope.of(context)
-                            .requestFocus(occupationTypeFocusNode);
-                      },
-                      decoration: InputDecoration(
-                        counterText: "",
-                        filled: true,
-                        isDense: true,
-                        border: InputBorder.none,
-                        hintText: 'e.g. John Doe',
-                        hintStyle: TextStyle(
-                            color: AppColors.grey,
-                            fontFamily: "Helvetica",
-                            fontSize: SizeUtil.body(context)),
-                        fillColor: TextfieldColors.background,
-                      ),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[a-z A-Z]'))
+            if (maritalStatusController.text == "Married")
+              SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
+            if (maritalStatusController.text == "Married")
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RichText(
+                    textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                    textAlign: TextAlign.start,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Spouse name',
+                          style: TextStyle(
+                              fontSize: SizeUtil.body(context),
+                              color: AppColors.grey,
+                              fontFamily: "Helvetica"),
+                        ),
                       ],
-                      style: TextStyle(fontSize: SizeUtil.body(context)),
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
                     ),
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(
+                    height: 2,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 40.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(5),
+                      child: TextFormField(
+                        maxLength: 40,
+                        controller: spouseNameController,
+                        autofocus: true,
+                        focusNode: spouseNameFocusNode,
+                        onEditingComplete: () {
+                          FocusScope.of(context)
+                              .requestFocus(occupationTypeFocusNode);
+                        },
+                        decoration: InputDecoration(
+                          counterText: "",
+                          filled: true,
+                          isDense: true,
+                          border: InputBorder.none,
+                          hintText: 'e.g. John Doe',
+                          hintStyle: TextStyle(
+                              color: AppColors.grey,
+                              fontFamily: "Helvetica",
+                              fontSize: SizeUtil.body(context)),
+                          fillColor: TextfieldColors.background,
+                        ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'[a-z A-Z]'))
+                        ],
+                        style: TextStyle(fontSize: SizeUtil.body(context)),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -2401,6 +2549,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                 setState(() {
                                   addressProofController.text = image.name;
                                   addressProofDocument = image;
+                                  File selectedFile = File(image.path);
+                                  uploadFile(image.name, selectedFile,
+                                      ConstantUtil.addressType);
                                 });
                               }, false);
                             }
@@ -2518,6 +2669,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                 setState(() {
                                   addressProofBackController.text = image.name;
                                   addressProofBackDocument = image;
+                                  File selectedFile = File(image.path);
+                                  uploadFile(image.name, selectedFile,
+                                      ConstantUtil.addressproofBackType);
                                 });
                               }, false);
                             }
@@ -2870,6 +3024,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                 setState(() {
                                   bankAccountProofController.text = image.name;
                                   bankAccountProofDocument = image;
+                                  File selectedFile = File(image.path);
+                                  uploadFile(image.name, selectedFile,
+                                      ConstantUtil.bankAccountType);
                                 });
                               }, false);
                             }
@@ -3116,6 +3273,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                 setState(() {
                                   panCardDocumentController.text = image.name;
                                   panCardDocument = image;
+                                  File selectedFile = File(image.path);
+                                  uploadFile(image.name, selectedFile,
+                                      ConstantUtil.pancardType);
                                 });
                               }, false);
                             }
@@ -3232,6 +3392,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                   signatureScanDocumentController.text =
                                       image.name;
                                   signatureScanDocument = image;
+                                  File selectedFile = File(image.path);
+                                  uploadFile(image.name, selectedFile,
+                                      ConstantUtil.signDocType);
                                 });
                               }, false);
                             }
@@ -3346,6 +3509,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                 setState(() {
                                   photoDocumentController.text = image.name;
                                   photoDocument = image;
+                                  File selectedFile = File(image.path);
+                                  uploadFile(image.name, selectedFile,
+                                      ConstantUtil.photoDocType);
                                 });
                               }, false);
                             }
@@ -3577,6 +3743,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                   videoVerificationDocumentController.text =
                                       video.name;
                                   videoVerificationDocument = video;
+                                  File selectedFile = File(video.path);
+                                  uploadFile(video.name, selectedFile,
+                                      ConstantUtil.ipvVedioType);
                                 });
                               }, true);
                             }

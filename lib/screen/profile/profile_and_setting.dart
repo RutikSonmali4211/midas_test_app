@@ -4,18 +4,24 @@ import 'package:midas/constant/colors.dart';
 import 'package:midas/constant/size_util.dart';
 import 'package:midas/controller/user/user_controller.dart';
 import 'package:midas/screen/profile/investment_profile/investment_profile.dart';
-import 'package:midas/screen/profile/kyc/kyc_details.dart';
 import 'package:midas/screen/profile/pincode/pincode.dart';
 import 'package:midas/screen/profile/user_information/user_information.dart';
 import 'package:midas/screen/sign_in/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:midas/widgets/appbar/small_appbar.dart';
+import '../../Controller/kyc/kyc_controller.dart';
+import '../../Model/Dto/ImageData.dart';
 import '../../constant/sizeConstant.dart';
 import 'package:midas/storage/local_storage.dart';
 import 'contactUs/contactUs.dart';
 import 'investmentReport/investmentReport.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'kyc/esign_required_screen.dart';
+import 'kyc/kyc_done_screen.dart';
+import 'kyc/kyc_pending.dart';
+import 'kyc/start_kyc.dart';
 
 class ProfileAndSettings extends StatefulWidget {
   const ProfileAndSettings({super.key});
@@ -54,7 +60,68 @@ class _ProfileAndSettingsState extends State<ProfileAndSettings> {
     } else {}
   }
 
-  _launchURL(String url) async {
+  KycController kycController = Get.put(KycController());
+
+  switchKycScreen() async {
+    ImageData data = await kycController.fetchKycStatus(context);
+    if (data.value == "pending") {
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const KycPendingPhase()),
+      );
+    }
+    if (data.value == "esign_required") {
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const EsignRequired()),
+      );
+    }
+    if (data.value == "submitted") {
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const KycPendingPhase()),
+      );
+    }
+    if (data.value == "successful") {
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const KycDone()),
+      );}
+    if (data.value == "expired") {
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const KycDetailsPhase()),
+      );
+    }
+    if (data.value == "rejected") {
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const KycDetailsPhase()),
+      );
+    }
+    if (data.value == "") {
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const KycDetailsPhase()),
+      );
+    }
+  }
+
+   _launchURL(String url) async {
     // ignore: deprecated_member_use
     if (await canLaunch(url)) {
       // ignore: deprecated_member_use
@@ -249,12 +316,7 @@ class _ProfileAndSettingsState extends State<ProfileAndSettings> {
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const KycDetailsPhase()),
-                                    );
+                                    switchKycScreen();
                                   },
                                   child: Row(
                                     mainAxisAlignment:
@@ -611,7 +673,7 @@ class _ProfileAndSettingsState extends State<ProfileAndSettings> {
                                 ),
                                 InkWell(
                                   onTap: () {
-                                      _launchURL(
+                                    _launchURL(
                                         'https://www.w3.org/Provider/Style/dummy.html');
                                     // Navigator.push(
                                     //   context,

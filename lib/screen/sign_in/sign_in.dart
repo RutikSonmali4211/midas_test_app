@@ -6,7 +6,6 @@ import 'package:midas/Widgets/buttons/auth_button.dart';
 import 'package:midas/constant/colors.dart';
 import 'package:midas/constant/sizeConstant.dart';
 import 'package:midas/constant/size_util.dart';
-import 'package:midas/controller/device_token/device_token_controller.dart';
 import 'package:midas/controller/user/user_controller.dart';
 import 'package:midas/screen/shared/bottom_navbar.dart';
 import 'package:midas/screen/sign_up/sign_up.dart';
@@ -101,7 +100,7 @@ class _SignInScreenState extends State<SignInScreen>
   @override
   void initState() {
     super.initState();
-    generateDeviceToken();
+    // generateDeviceToken();
     WidgetsBinding.instance.addObserver(this);
     _loadUsername();
     userController.isBiometricEnabled =
@@ -118,12 +117,12 @@ class _SignInScreenState extends State<SignInScreen>
   }
 
 
-   generateDeviceToken() async {
-    if (LocalStorage.getDeviceToken() == null) {
-      String? deviceToken = await DeviceTokenController.getDeviceToken();
-      LocalStorage.setDeviceToken(deviceToken!);
-    }
-  }
+  //  generateDeviceToken() async {
+  //   if (LocalStorage.getDeviceToken() == null) {
+  //     String? deviceToken = await DeviceTokenController.getDeviceToken();
+  //     LocalStorage.setDeviceToken(deviceToken!);
+  //   }
+  // }
 
   logoutFirebase() async {
     await FirebaseAuth.instance.signOut();

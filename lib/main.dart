@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:midas/controller/device_token/device_token_controller.dart';
 import 'package:midas/screen/loading/loading.dart';
 import 'package:midas/screen/sign_in/sign_in.dart';
 import 'package:midas/storage/local_storage.dart';
@@ -12,16 +13,14 @@ import 'package:flutter/services.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  // Pass all uncaught "fatal" errors from the framework to Crashlytics
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
   PlatformDispatcher.instance.onError = (error, stack) {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
   await LocalStorage.init();
-  // String? deviceToken = await DeviceTokenController.getDeviceToken();
-  // LocalStorage.setDeviceToken(deviceToken!);
+  String? deviceToken = await DeviceTokenController.getDeviceToken();
+  LocalStorage.setDeviceToken(deviceToken!);
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

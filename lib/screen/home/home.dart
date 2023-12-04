@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      // homeController.getLastSevenDaysGraphDataByUserId(context);
+      homeController.getLastSevenDaysGraphDataByUserId(context);
       investmentController.getCurrentAndInvestedValues(context);
       if (userController.isDeviceSupport.value) {
         if (!userController.isBiometricEnabled.value &&
