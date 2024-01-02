@@ -55,7 +55,7 @@ dependencies:
   # dio: ^5.3.2
   firebase_core: ^2.22.0
   firebase_messaging:
-  http_interceptor:
+  http_interceptor: ^1.0.2
   connectivity_plus:
   intl:
   firebase_auth:

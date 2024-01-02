@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
-import 'package:http_interceptor/extensions/string.dart';
+import 'package:http_interceptor/extensions/extensions.dart';
 import 'package:midas/constant/size_util.dart';
 import 'package:midas/controller/investment/mutual_funds/mutual_funds_controller.dart';
 import 'package:midas/screen/payments/payment_failed_screen.dart';
