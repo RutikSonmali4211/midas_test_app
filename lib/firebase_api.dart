@@ -10,6 +10,7 @@ import 'package:midas/screen/notifications/notifications.dart';
 Future<void> handleBackgroundMessage(RemoteMessage message) async {
   // ignore: unnecessary_null_comparison
   if (message == null) return;
+  ConstantUtil.isNotificationReceived.value =true;
   print(message.notification?.title);
   print(message.notification?.body);
 }
@@ -33,7 +34,7 @@ class FirebaseApi {
         // ignore: prefer_const_constructors
         InitializationSettings(
             android:
-                const AndroidInitializationSettings("@drawable/ic_launcher"));
+                const AndroidInitializationSettings("@mipmap/ic_launcher"));
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,

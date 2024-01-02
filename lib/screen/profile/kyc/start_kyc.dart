@@ -83,7 +83,7 @@ class _KyKycDetailsPhaseState extends State<KycDetailsPhase> {
                       textColor: AppColors.white,
                       onPressed: () async {
                         if (await getLocation()) {
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const KYCRequestForm()),

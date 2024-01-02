@@ -61,13 +61,13 @@ dependencies:
   firebase_auth:
   google_sign_in:
   flutter_facebook_auth:
-  image_picker:
+  image_picker: ^1.0.5
   geolocator:
   firebase_crashlytics:
   flutter_file_downloader:
   permission_handler:
   # webview_flutter: ^4.4.2
-  flutter_local_notifications:
+  flutter_local_notifications: ^16.3.0
   flutter_inappwebview:
 
 dev_dependencies:
