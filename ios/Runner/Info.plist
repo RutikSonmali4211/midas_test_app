@@ -90,6 +90,8 @@
         <string>Needs PhotoLib access</string>
         <key>NSCameraUsageDescription</key>
         <string>Needs camera access</string>
+		<key>NSMicrophoneUsageDescription</key>
+        <string>This app does not require access to the microphone.</string>
         <!-- End of the added permissions -->
         <key>UIApplicationSupportsIndirectInputEvents</key>
         <true/>
