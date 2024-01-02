@@ -16,9 +16,9 @@ class KycService {
   }
 
   Future<http.Response> fetchKycStatus(BuildContext context) async {
-    String userId =LocalStorage.getUserId().toString();
+    String userId = LocalStorage.getUserId().toString();
     var response = await ApiHandler.get(
-      "${ApplicationUrls.fetchKycStatus}/$userId", {}, context);
+        "${ApplicationUrls.fetchKycStatus}/$userId", {}, context);
     return response;
   }
 
@@ -26,10 +26,29 @@ class KycService {
     String userId = LocalStorage.getUserId().toString();
     Map<String, dynamic> requestBody = {
       "userId": userId,
-      "postBackUrl": "myflutterapp://callback"
+      "postBackUrl": "http://devmidasadmin.ergobite.com:3000/webhook/"
     };
     var response = await ApiHandler.post(
         ApplicationUrls.createEsign, requestBody, context);
+    return response;
+  }
+
+  Future<http.Response> updateBankDetails(
+      String bankAccountHolderName,
+      String bankAccountNumber,
+      String bankAccountIfscCode,
+      BuildContext context) async {
+    String userId = LocalStorage.getUserId().toString();
+    Map<String, dynamic> requestBody = {
+      "userId": userId,
+      "bank_account": {
+        "account_holder_name": bankAccountHolderName,
+        "account_number": bankAccountNumber,
+        "ifsc_code": bankAccountIfscCode,
+      },
+    };
+    var response = await ApiHandler.post(
+        ApplicationUrls.updateBankaccount, requestBody, context);
     return response;
   }
 
@@ -67,6 +86,8 @@ class KycService {
       String signatureDocument,
       String photoDoc,
       String ipvVedio,
+      var latitude,
+      var longitude,
       BuildContext context) async {
     try {
       final userId = LocalStorage.getUserId();
@@ -101,7 +122,7 @@ class KycService {
           "proof_issue_date": addressProofIssueDate,
           "proof_expiry_date": addressProofExpiryDate
         },
-        "geolocation": {"latitude": 12.354, "longitude": 77.453},
+        "geolocation": {"latitude": latitude, "longitude": longitude},
         "bank_account": {
           "account_holder_name": bankAccountHolderName,
           "account_number": bankAccountNumber,
@@ -119,5 +140,19 @@ class KycService {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<http.Response> updateKycStatusAfterEsignCompleted(
+      String status, BuildContext context) async {
+    String userId = LocalStorage.getUserId().toString();
+    Map<String, dynamic> requestBody = {
+      "userId": userId,
+      "status": status,
+    };
+    var response = await ApiHandler.post(
+        ApplicationUrls.updateKycStatusAfterEsignCompleted,
+        requestBody,
+        context);
+    return response;
   }
 }

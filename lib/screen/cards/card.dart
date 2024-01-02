@@ -1,4 +1,6 @@
-import 'package:midas/Model/cards/cardAds.dart';
+import 'package:get/get.dart';
+import 'package:midas/constant/constant_util.dart';
+import 'package:midas/model/cards/cardAds.dart';
 import 'package:midas/data/cards/card_ads._list.dart';
 import 'package:midas/screen/notifications/notifications.dart';
 import 'package:midas/screen/profile/profile_and_setting.dart';
@@ -55,18 +57,45 @@ class _CardsState extends State<Cards> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        IconButton(
-                          color: AppColors.white,
-                          iconSize: SizeUtil.iconsSize(context),
-                          icon: const Icon(Icons.notifications_outlined),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Notifications()),
-                            );
-                          },
-                        ),
+                        Obx(() => Center(
+                              child: Stack(
+                                children: [
+                                  IconButton(
+                                    color: AppColors.white,
+                                    iconSize: SizeUtil.iconsSize(context),
+                                    icon: const Icon(
+                                        Icons.notifications_outlined),
+                                    onPressed: () async {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const Notifications()),
+                                      );
+                                      ConstantUtil
+                                          .isNotificationReceived.value = false;
+                                    },
+                                  ),
+                                  if (ConstantUtil.isNotificationReceived.value)
+                                    Positioned(
+                                      top: 11,
+                                      right: 13,
+                                      child: Container(
+                                        width:
+                                            SizeUtil.scallingFactor(context) *
+                                                11,
+                                        height:
+                                            SizeUtil.scallingFactor(context) *
+                                                11,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.red,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            )),
                         IconButton(
                           color: AppColors.white,
                           icon: const Icon(Icons.account_circle),
@@ -170,19 +199,43 @@ class _CardsState extends State<Cards> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        IconButton(
-                          padding: const EdgeInsets.all(0),
-                          color: AppColors.white,
-                          iconSize: SizeUtil.iconsSize(context),
-                          icon: const Icon(Icons.notifications_outlined),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Notifications()),
-                            );
-                          },
-                        ),
+                       Obx(() => Center(
+                            child: Stack(
+                              children: [
+                                IconButton(
+                                  color: AppColors.white,
+                                  iconSize: SizeUtil.iconsSize(context),
+                                  icon:
+                                      const Icon(Icons.notifications_outlined),
+                                  onPressed: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const Notifications()),
+                                    );
+                                    ConstantUtil.isNotificationReceived.value =
+                                        false;
+                                  },
+                                ),
+                                if (ConstantUtil.isNotificationReceived.value)
+                                  Positioned(
+                                    top: 11,
+                                    right: 13,
+                                    child: Container(
+                                      width:
+                                          SizeUtil.scallingFactor(context) * 11,
+                                      height:
+                                          SizeUtil.scallingFactor(context) * 11,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.red,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          )),
                         IconButton(
                           padding: const EdgeInsets.all(0),
                           color: AppColors.white,
@@ -210,7 +263,7 @@ class _CardsState extends State<Cards> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                       SizedBox(
+                      SizedBox(
                         height: SizeUtil.verticalSpacingMedium(context),
                       ),
                       GestureDetector(
@@ -470,7 +523,8 @@ class _CardsState extends State<Cards> {
                                 ),
                                 const Spacer(),
                                 Container(
-                                  margin: const EdgeInsets.only(top: 10, right: 10),
+                                  margin:
+                                      const EdgeInsets.only(top: 10, right: 10),
                                   child: Text(
                                     'Ad',
                                     style: TextStyle(
@@ -596,7 +650,8 @@ class _CardsState extends State<Cards> {
     // ignore: deprecated_member_use
     if (await canLaunch(url)) {
       // ignore: deprecated_member_use
-      await launch(url,forceSafariVC: true,enableJavaScript: true,forceWebView: true);
+      await launch(url,
+          forceSafariVC: true, enableJavaScript: true, forceWebView: true);
     } else {
       throw 'Could not launch $url';
     }

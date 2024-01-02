@@ -28,7 +28,7 @@ class _InvestmentState extends State<Investment> {
   @override
   void initState() {
     super.initState();
-   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       investmentController.getCurrentAndInvestedValues(context);
     });
   }
@@ -69,19 +69,43 @@ class _InvestmentState extends State<Investment> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      IconButton(
-                        padding: const EdgeInsets.all(0),
-                        color: AppColors.white,
-                        iconSize: SizeUtil.iconsSize(context),
-                        icon: const Icon(Icons.notifications_outlined),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const Notifications()),
-                          );
-                        },
-                      ),
+                      Obx(() => Center(
+                            child: Stack(
+                              children: [
+                                IconButton(
+                                  color: AppColors.white,
+                                  iconSize: SizeUtil.iconsSize(context),
+                                  icon:
+                                      const Icon(Icons.notifications_outlined),
+                                  onPressed: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const Notifications()),
+                                    );
+                                    ConstantUtil.isNotificationReceived.value =
+                                        false;
+                                  },
+                                ),
+                                if (ConstantUtil.isNotificationReceived.value)
+                                  Positioned(
+                                    top: 11,
+                                    right: 13,
+                                    child: Container(
+                                      width:
+                                          SizeUtil.scallingFactor(context) * 11,
+                                      height:
+                                          SizeUtil.scallingFactor(context) * 11,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.red,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          )),
                       IconButton(
                         padding: const EdgeInsets.all(0),
                         color: AppColors.white,
@@ -115,10 +139,11 @@ class _InvestmentState extends State<Investment> {
                     physics: const ScrollPhysics(),
                     padding: EdgeInsets.only(
                         bottom: SizeUtil.verticalSpacingMedium(context)),
-                    itemCount: investmentController.investmentList.value.investments.length,
+                    itemCount: investmentController
+                        .investmentList.value.investments.length,
                     itemBuilder: (context, index) {
-                      InvestmentData item =
-                          investmentController.investmentList.value.investments[index];
+                      InvestmentData item = investmentController
+                          .investmentList.value.investments[index];
                       return Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: size.width * 0.04,
@@ -205,7 +230,8 @@ class _InvestmentState extends State<Investment> {
                                                         context))),
                                             TextSpan(
                                               text: ConstantUtil.formatAmount(
-                                                  item.investedValue),
+                                                  item.investedValue
+                                                      .toDouble()),
                                               style: TextStyle(
                                                   color: AppColors.primary,
                                                   fontSize:
@@ -251,7 +277,8 @@ class _InvestmentState extends State<Investment> {
                                                 TextSpan(
                                                   text:
                                                       ConstantUtil.formatAmount(
-                                                          item.currentValue),
+                                                          item.currentValue
+                                                              .toDouble()),
                                                   style: TextStyle(
                                                       color: AppColors.primary,
                                                       fontSize: SizeUtil.body(

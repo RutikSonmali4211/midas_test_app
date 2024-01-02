@@ -14,7 +14,8 @@ import 'package:pinput/pinput.dart';
 
 class OtpVerification extends StatefulWidget {
   final String mobileNumber;
-  const OtpVerification({super.key, required this.mobileNumber});
+  final VoidCallback onConfirm;
+  const OtpVerification({super.key, required this.mobileNumber,required this.onConfirm});
 
   @override
   State<OtpVerification> createState() => _OtpVerificationState();
@@ -22,7 +23,7 @@ class OtpVerification extends StatefulWidget {
 
 class _OtpVerificationState extends State<OtpVerification> {
   SmsController smsController = Get.put(SmsController());
-  TextEditingController otpController = TextEditingController();
+  // TextEditingController otpController = TextEditingController();
   int countdown = 30;
   Timer? _countdownTimer;
 
@@ -82,7 +83,7 @@ class _OtpVerificationState extends State<OtpVerification> {
               height: 20,
             ),
             Pinput(
-              controller: otpController,
+              controller: smsController.otpController,
               pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
               length: 6,
               defaultPinTheme: DefaultSizes.getPinBoxTheme(context),
@@ -102,21 +103,16 @@ class _OtpVerificationState extends State<OtpVerification> {
                     SmallButton(
                         text: "Cancel",
                         onPressed: () {
+                          smsController.otpController.clear();
                           Navigator.pop(context, null);
                         },
                         backgroundColor: AppColors.white,
                         textColor: AppColors.primary),
                     SmallButton(
                         text: "Confirm",
-                        onPressed: () async {
-                          final otp = otpController.text;
-                          if (otp.length == 6) {
-                            bool isSuccess = await smsController.verifyOtp(
-                                widget.mobileNumber, otp);
-                            if (isSuccess) {
-                              Navigator.pop(context, otp);
-                            }
-                          }
+                        onPressed: (){
+                          Navigator.pop(context,true);
+                          widget.onConfirm();
                         },
                         backgroundColor: AppColors.primary,
                         textColor: AppColors.white),
@@ -134,7 +130,7 @@ class _OtpVerificationState extends State<OtpVerification> {
                         onTap: countdown == 0
                             ? () async {
                                 bool isSuccess = await smsController
-                                    .sendOtp(widget.mobileNumber);
+                                    .resendOtp(widget.mobileNumber);
                                 if (isSuccess) {
                                   resetCountdown();
                                   startCountdown();

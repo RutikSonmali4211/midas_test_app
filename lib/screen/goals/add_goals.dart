@@ -2,6 +2,7 @@
 
 import 'package:get/get.dart';
 import 'package:midas/constant/colors.dart';
+import 'package:midas/constant/constant_util.dart';
 import 'package:midas/controller/goals/goals_controller.dart';
 import 'package:midas/screen/notifications/notifications.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +15,8 @@ import 'package:midas/Widgets/buttons/small_button.dart';
 
 class AddGoalItem extends StatefulWidget {
   final bool isEdit;
- final bool isWatch;
- final String goalId;
+  final bool isWatch;
+  final String goalId;
   final String goalName;
   final String goalValue;
   final DateTime goalTargetDate;
@@ -47,10 +48,11 @@ class _AddGoalItemState extends State<AddGoalItem> {
   final TextEditingController descriptionController = TextEditingController();
 
   Future<void> _selectgoalTargetDate(BuildContext context) async {
+    DateTime firstDateAfterCurretyear = DateTime(DateTime.now().year + 1);
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
+      initialDate: firstDateAfterCurretyear,
+      firstDate: firstDateAfterCurretyear,
       lastDate: DateTime(2101),
     );
     if (picked != null && picked != DateTime.now()) {
@@ -72,7 +74,8 @@ class _AddGoalItemState extends State<AddGoalItem> {
     if (widget.isEdit || widget.isWatch) {
       goalNameController.text = widget.goalName;
       goalValueController.text = widget.goalValue;
-      goalTargetDateController.text = "${widget.goalTargetDate.day.toString().padLeft(2, '0')}/${widget.goalTargetDate.month.toString().padLeft(2, '0')}/${widget.goalTargetDate.year.toString()}";
+      goalTargetDateController.text =
+          "${widget.goalTargetDate.day.toString().padLeft(2, '0')}/${widget.goalTargetDate.month.toString().padLeft(2, '0')}/${widget.goalTargetDate.year.toString()}";
       descriptionController.text = widget.description;
     }
   }
@@ -108,18 +111,42 @@ class _AddGoalItemState extends State<AddGoalItem> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    IconButton(
-                      color: AppColors.white,
-                      iconSize: SizeUtil.iconsSize(context),
-                      icon: const Icon(Icons.notifications_outlined),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const Notifications()),
-                        );
-                      },
-                    ),
+                    Obx(() => Center(
+                          child: Stack(
+                            children: [
+                              IconButton(
+                                color: AppColors.white,
+                                iconSize: SizeUtil.iconsSize(context),
+                                icon: const Icon(Icons.notifications_outlined),
+                                onPressed: () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const Notifications()),
+                                  );
+                                  ConstantUtil.isNotificationReceived.value =
+                                      false;
+                                },
+                              ),
+                              if (ConstantUtil.isNotificationReceived.value)
+                                Positioned(
+                                  top: 11,
+                                  right: 13,
+                                  child: Container(
+                                    width:
+                                        SizeUtil.scallingFactor(context) * 11,
+                                    height:
+                                        SizeUtil.scallingFactor(context) * 11,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.red,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        )),
                     IconButton(
                       color: AppColors.white,
                       icon: const Icon(Icons.account_circle),
@@ -153,7 +180,8 @@ class _AddGoalItemState extends State<AddGoalItem> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         RichText(
-                           textScaleFactor:MediaQuery.of(context).textScaleFactor,
+                          textScaleFactor:
+                              MediaQuery.of(context).textScaleFactor,
                           textAlign: TextAlign.start,
                           text: TextSpan(
                             children: [
@@ -191,7 +219,8 @@ class _AddGoalItemState extends State<AddGoalItem> {
                                 fillColor: TextfieldColors.background,
                               ),
                               inputFormatters: [
-                                FilteringTextInputFormatter.allow(RegExp(r'[a-z A-Z]'))
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[a-z A-Z]'))
                               ],
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
@@ -223,7 +252,8 @@ class _AddGoalItemState extends State<AddGoalItem> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           RichText(
-                             textScaleFactor:MediaQuery.of(context).textScaleFactor,
+                            textScaleFactor:
+                                MediaQuery.of(context).textScaleFactor,
                             textAlign: TextAlign.start,
                             text: TextSpan(
                               children: [
@@ -294,7 +324,8 @@ class _AddGoalItemState extends State<AddGoalItem> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           RichText(
-                             textScaleFactor:MediaQuery.of(context).textScaleFactor,
+                            textScaleFactor:
+                                MediaQuery.of(context).textScaleFactor,
                             textAlign: TextAlign.start,
                             text: TextSpan(
                               children: [
@@ -376,7 +407,8 @@ class _AddGoalItemState extends State<AddGoalItem> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         RichText(
-                           textScaleFactor:MediaQuery.of(context).textScaleFactor,
+                          textScaleFactor:
+                              MediaQuery.of(context).textScaleFactor,
                           textAlign: TextAlign.start,
                           text: TextSpan(
                             children: [
@@ -439,26 +471,26 @@ class _AddGoalItemState extends State<AddGoalItem> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             SmallButton(
-                text: widget.isWatch ?"Back":"Cancel",
+                text: widget.isWatch ? "Back" : "Cancel",
                 onPressed: () {
                   Navigator.pop(context);
                 },
                 backgroundColor: AppColors.white,
                 textColor: AppColors.primary),
-              if(!widget.isWatch)
-            SmallButton(
-                text: "Confirm",
-                onPressed: () {
-                  if (addGoalsFormKey.currentState!.validate()) {
-                    if(widget.isEdit){
-                         updateGoal();
-                    }else{
-                      addGoal();
+            if (!widget.isWatch)
+              SmallButton(
+                  text: "Confirm",
+                  onPressed: () {
+                    if (addGoalsFormKey.currentState!.validate()) {
+                      if (widget.isEdit) {
+                        updateGoal();
+                      } else {
+                        addGoal();
+                      }
                     }
-                  }
-                },
-                backgroundColor: AppColors.primary,
-                textColor: AppColors.white),
+                  },
+                  backgroundColor: AppColors.primary,
+                  textColor: AppColors.white),
           ],
         ),
       ]),
@@ -470,26 +502,29 @@ class _AddGoalItemState extends State<AddGoalItem> {
         goalNameController.text.toString(),
         double.parse(goalValueController.text.toString()),
         goalTargetDateController.text.toString(),
-        descriptionController.text.toString(),context);
+        descriptionController.text.toString(),
+        context);
 
     if (isSuccess) {
       Navigator.maybePop(
-          context, MaterialPageRoute(builder: (context) => const Goals())).then((value) => goalsController.getGoalsList(context));
+              context, MaterialPageRoute(builder: (context) => const Goals()))
+          .then((value) => goalsController.getGoalsList(context));
     } else {}
   }
 
-
   updateGoal() async {
     bool isSuccess = await goalsController.updateGoal(
-      widget.goalId.toString(),
+        widget.goalId.toString(),
         goalNameController.text.toString(),
         double.parse(goalValueController.text.toString()),
         goalTargetDateController.text.toString(),
-        descriptionController.text.toString(),context);
+        descriptionController.text.toString(),
+        context);
 
     if (isSuccess) {
       Navigator.maybePop(
-          context, MaterialPageRoute(builder: (context) => const Goals())).then((value) => goalsController.getGoalsList(context));
+              context, MaterialPageRoute(builder: (context) => const Goals()))
+          .then((value) => goalsController.getGoalsList(context));
     } else {}
   }
 }

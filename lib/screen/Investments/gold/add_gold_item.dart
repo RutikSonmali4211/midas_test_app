@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:midas/Widgets/buttons/small_button.dart';
 import 'package:midas/constant/colors.dart';
+import 'package:midas/constant/constant_util.dart';
 import 'package:midas/constant/sizeConstant.dart';
 import 'package:midas/constant/size_util.dart';
 import 'package:midas/controller/gold_types/gold_types_controller.dart';
@@ -71,7 +72,7 @@ class _AddGoldItemState extends State<AddGoldItem> {
     // if (widget.isEdit || widget.isWatch) {
     //   shortTitleController.text = widget.shortTitle;
     //   weightController.text = widget.weight;
-      // goldPurityController.text = widget.goldPurity;
+    // goldPurityController.text = widget.goldPurity;
     //   descriptionController.text = widget.description;
     // }
   }
@@ -79,449 +80,491 @@ class _AddGoldItemState extends State<AddGoldItem> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.shadow,
-                  offset: Offset(0, 4),
-                  blurRadius: 4.0,
-                  spreadRadius: 2.0,
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+           _showDataDropdown = false;
+          shortTitleFocusNode.unfocus();
+          weightFocusNode.unfocus();
+          goldPurityFocusNode.unfocus();
+          descriptionFocusNode.unfocus();
+        });
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.shadow,
+                    offset: Offset(0, 4),
+                    blurRadius: 4.0,
+                    spreadRadius: 2.0,
+                  ),
+                ],
+                borderRadius: BorderRadius.only(
+                  bottomLeft:
+                      Radius.circular(DefaultSizes.appheadercircularborder),
+                  bottomRight:
+                      Radius.circular(DefaultSizes.appheadercircularborder),
                 ),
-              ],
-              borderRadius: BorderRadius.only(
-                bottomLeft:
-                    Radius.circular(DefaultSizes.appheadercircularborder),
-                bottomRight:
-                    Radius.circular(DefaultSizes.appheadercircularborder),
+                color: AppColors.primary,
               ),
-              color: AppColors.primary,
-            ),
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: SizeUtil.getStatusBarHeight(context),
-                    right: 20,
-                    bottom: DefaultSizes.bottemspaceofheader,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        padding: const EdgeInsets.all(0),
-                        color: AppColors.white,
-                        iconSize: SizeUtil.iconsSize(context),
-                        icon: const Icon(Icons.notifications_outlined),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const Notifications()),
-                          );
-                        },
-                      ),
-                      IconButton(
-                        padding: const EdgeInsets.all(0),
-                        color: AppColors.white,
-                        icon: const Icon(Icons.account_circle),
-                        iconSize: SizeUtil.iconsSize(context),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const ProfileAndSettings()),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: SizeUtil.verticalSpacingMedium(context),
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
-              child: Form(
-                key: addGoldItemFormKey,
-                child: Column(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: SizeUtil.getStatusBarHeight(context),
+                      right: 20,
+                      bottom: DefaultSizes.bottemspaceofheader,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        RichText(
-                          textScaleFactor:
-                              MediaQuery.of(context).textScaleFactor,
-                          textAlign: TextAlign.start,
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Short Title',
-                                style: TextStyle(
-                                    fontSize: SizeUtil.body(context),
-                                    color: AppColors.grey),
-                              ),
-                              TextSpan(
-                                  text: "*",
-                                  style: TextStyle(
-                                      fontSize: SizeUtil.body(context),
-                                      color: AppColors.red)),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 2,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 40.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
-                            child: TextFormField(
-                              // readOnly: widget.isWatch,
-                              autofocus: true,
-                              controller: shortTitleController,
-                              focusNode: shortTitleFocusNode,
-                              onEditingComplete: () {
-                                FocusScope.of(context)
-                                    .requestFocus(weightFocusNode);
-                              },
-                              decoration: InputDecoration(
-                                filled: true,
-                                isDense: true,
-                                border: InputBorder.none,
-                                hintText: 'e.g. Gold coin',
-                                hintStyle: TextStyle(
-                                    color: AppColors.grey,
-                                    fontFamily: "Helvetica",
-                                    fontSize: SizeUtil.body(context)),
-                                fillColor: TextfieldColors.background,
-                              ),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                    RegExp(r'[a-z A-Z]'))
+                        Obx(() => Center(
+                            child: Stack(
+                              children: [
+                                IconButton(
+                                  color: AppColors.white,
+                                  iconSize: SizeUtil.iconsSize(context),
+                                  icon:
+                                      const Icon(Icons.notifications_outlined),
+                                  onPressed: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const Notifications()),
+                                    );
+                                    ConstantUtil.isNotificationReceived.value =
+                                        false;
+                                  },
+                                ),
+                                if (ConstantUtil.isNotificationReceived.value)
+                                  Positioned(
+                                    top: 11,
+                                    right: 13,
+                                    child: Container(
+                                      width:
+                                          SizeUtil.scallingFactor(context) * 11,
+                                      height:
+                                          SizeUtil.scallingFactor(context) * 11,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.red,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  ),
                               ],
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'short title is required';
-                                }
-                                return null;
-                              },
-                              style: TextStyle(
-                                  fontSize: SizeUtil.body(context),
-                                  fontFamily: "Helvetica"),
                             ),
-                          ),
+                          )),
+                        IconButton(
+                          padding: const EdgeInsets.all(0),
+                          color: AppColors.white,
+                          icon: const Icon(Icons.account_circle),
+                          iconSize: SizeUtil.iconsSize(context),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ProfileAndSettings()),
+                            );
+                          },
                         ),
                       ],
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: SizeUtil.verticalSpacingMedium(context),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+                  child: Form(
+                    key: addGoldItemFormKey,
+                    child: Column(
                       children: [
-                        RichText(
-                          textScaleFactor:
-                              MediaQuery.of(context).textScaleFactor,
-                          textAlign: TextAlign.start,
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Weight (in gms)',
-                                style: TextStyle(
-                                    fontSize: SizeUtil.body(context),
-                                    color: AppColors.grey,
-                                    fontFamily: "Helvetica"),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RichText(
+                              textScaleFactor:
+                                  MediaQuery.of(context).textScaleFactor,
+                              textAlign: TextAlign.start,
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'Short Title',
+                                    style: TextStyle(
+                                        fontSize: SizeUtil.body(context),
+                                        color: AppColors.grey),
+                                  ),
+                                  TextSpan(
+                                      text: "*",
+                                      style: TextStyle(
+                                          fontSize: SizeUtil.body(context),
+                                          color: AppColors.red)),
+                                ],
                               ),
-                              TextSpan(
-                                  text: "*",
+                            ),
+                            const SizedBox(
+                              height: 2,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 40.0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: TextFormField(
+                                  // readOnly: widget.isWatch,
+                                  autofocus: true,
+                                  controller: shortTitleController,
+                                  focusNode: shortTitleFocusNode,
+                                  onEditingComplete: () {
+                                    FocusScope.of(context)
+                                        .requestFocus(weightFocusNode);
+                                  },
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    isDense: true,
+                                    border: InputBorder.none,
+                                    hintText: 'e.g. Gold coin',
+                                    hintStyle: TextStyle(
+                                        color: AppColors.grey,
+                                        fontFamily: "Helvetica",
+                                        fontSize: SizeUtil.body(context)),
+                                    fillColor: TextfieldColors.background,
+                                  ),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'[a-z A-Z]'))
+                                  ],
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return 'short title is required';
+                                    }
+                                    return null;
+                                  },
                                   style: TextStyle(
+                                      fontSize: SizeUtil.body(context),
+                                      fontFamily: "Helvetica"),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RichText(
+                              textScaleFactor:
+                                  MediaQuery.of(context).textScaleFactor,
+                              textAlign: TextAlign.start,
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'Weight (in gms)',
+                                    style: TextStyle(
+                                        fontSize: SizeUtil.body(context),
+                                        color: AppColors.grey,
+                                        fontFamily: "Helvetica"),
+                                  ),
+                                  TextSpan(
+                                      text: "*",
+                                      style: TextStyle(
+                                          fontSize: SizeUtil.body(context),
+                                          color: AppColors.red,
+                                          fontFamily: "Helvetica")),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 2,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 40.0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: TextFormField(
+                                  // readOnly: widget.isWatch,
+                                  controller: weightController,
+                                  focusNode: weightFocusNode,
+                                  onEditingComplete: () {
+                                    FocusScope.of(context)
+                                        .requestFocus(goldPurityFocusNode);
+                                  },
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                          signed: true, decimal: true),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(10)
+                                  ],
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    isDense: true,
+                                    border: InputBorder.none,
+                                    hintText: 'e.g., 5,10,20',
+                                    hintStyle: TextStyle(
+                                        color: AppColors.grey,
+                                        fontFamily: "Helvetica",
+                                        fontSize: SizeUtil.body(context)),
+                                    fillColor: TextfieldColors.background,
+                                  ),
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return 'weight is required';
+                                    } else if (int.parse(value.toString()) == 0) {
+                                      return 'please enter valid weight';
+                                    }
+                                    return null;
+                                  },
+                                  style: TextStyle(
+                                      fontSize: SizeUtil.body(context),
+                                      fontFamily: "Helvetica"),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: SizeUtil.verticalSpacingMedium(context),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RichText(
+                              textScaleFactor:
+                                  MediaQuery.of(context).textScaleFactor,
+                              textAlign: TextAlign.start,
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'Gold Purity',
+                                    style: TextStyle(
+                                      fontSize: SizeUtil.body(context),
+                                      color: AppColors.grey,
+                                      fontFamily: "Helvetica",
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: "*",
+                                    style: TextStyle(
                                       fontSize: SizeUtil.body(context),
                                       color: AppColors.red,
-                                      fontFamily: "Helvetica")),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 2,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 40.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
-                            child: TextFormField(
-                              // readOnly: widget.isWatch,
-                              controller: weightController,
-                              focusNode: weightFocusNode,
-                              onEditingComplete: () {
-                                FocusScope.of(context)
-                                    .requestFocus(goldPurityFocusNode);
-                              },
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                      signed: true, decimal: true),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(10)
-                              ],
-                              decoration: InputDecoration(
-                                filled: true,
-                                isDense: true,
-                                border: InputBorder.none,
-                                hintText: 'e.g., 5,10,20',
-                                hintStyle: TextStyle(
-                                    color: AppColors.grey,
-                                    fontFamily: "Helvetica",
-                                    fontSize: SizeUtil.body(context)),
-                                fillColor: TextfieldColors.background,
+                                      fontFamily: "Helvetica",
+                                    ),
+                                  ),
+                                ],
                               ),
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'weight is required';
-                                } else if (int.parse(value.toString()) == 0) {
-                                  return 'please enter valid weight';
-                                }
-                                return null;
-                              },
-                              style: TextStyle(
-                                  fontSize: SizeUtil.body(context),
-                                  fontFamily: "Helvetica"),
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: SizeUtil.verticalSpacingMedium(context),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RichText(
-                          textScaleFactor:
-                              MediaQuery.of(context).textScaleFactor,
-                          textAlign: TextAlign.start,
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Gold Purity',
-                                style: TextStyle(
-                                  fontSize: SizeUtil.body(context),
-                                  color: AppColors.grey,
-                                  fontFamily: "Helvetica",
-                                ),
-                              ),
-                              TextSpan(
-                                text: "*",
-                                style: TextStyle(
-                                  fontSize: SizeUtil.body(context),
-                                  color: AppColors.red,
-                                  fontFamily: "Helvetica",
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 40),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
-                            child: TextFormField(
-                              onEditingComplete: () {
-                                FocusScope.of(context)
-                                    .requestFocus(descriptionFocusNode);
-                              },
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              decoration: InputDecoration(
-                                suffixIcon: Icon(
-                                  Icons.arrow_drop_down,
-                                  size: SizeUtil.iconsSize(context),
-                                  color: AppColors.primary,
-                                ),
-                                suffixIconConstraints: const BoxConstraints(),
-                                filled: true,
-                                isDense: true,
-                                border: InputBorder.none,
-                                hintText: 'e.g., 18k, 22k, 24k',
-                                hintStyle: TextStyle(
-                                    color: Colors.grey,
-                                    fontFamily: "Helvetica",
-                                    fontSize: SizeUtil.body(context)),
-                                fillColor: TextfieldColors.background,
-                              ),
-                              readOnly: true,
-                              onTap: 
-                                  // widget.isWatch ? () {} : 
-                                  _toggleDataDropDown,
-                              style: TextStyle(
-                                  fontSize: SizeUtil.body(context),
-                                  fontFamily: "Helvetica"),
-                              controller: goldPurityController,
-                              focusNode: goldPurityFocusNode,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'gold purity is required';
-                                } else {
-                                  return null;
-                                }
-                              },
-                            ),
-                          ),
-                        ),
-                        if (_showDataDropdown)
-                          Material(
-                            color: Colors.transparent,
-                            child: Padding(
+                            const SizedBox(height: 2),
+                            Padding(
                               padding: const EdgeInsets.only(right: 40),
-                              child: Card(
-                                color: AppColors.white,
-                                elevation: 2,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    if (goldTypeList.isEmpty)
-                                      ListTile(
-                                        title: Text(
-                                          'No Records Found',
-                                          style: TextStyle(
-                                              fontSize: SizeUtil.body(context),
-                                              fontFamily: "Helvetica"),
-                                        ),
-                                        enabled: false,
-                                      ),
-                                    if (goldTypeList.isNotEmpty)
-                                      ListView.builder(
-                                        padding: EdgeInsets.zero,
-                                        shrinkWrap: true,
-                                        itemCount: goldTypeList.length,
-                                        itemBuilder: (context, index) {
-                                          final option = goldTypeList[index];
-                                          return ListTile(
-                                            dense: true,
-                                            title: Text(option,
-                                                style: TextStyle(
-                                                    fontFamily: "Helvetica",
-                                                    fontSize: SizeUtil.body(
-                                                        context))),
-                                            onTap: () {
-                                              setState(() {
-                                                goldPurityController.text =
-                                                    option;
-                                                _showDataDropdown = false;
-                                              });
-                                            },
-                                          );
-                                        },
-                                      ),
-                                  ],
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: TextFormField(
+                                  onEditingComplete: () {
+                                    FocusScope.of(context)
+                                        .requestFocus(descriptionFocusNode);
+                                  },
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
+                                  decoration: InputDecoration(
+                                    suffixIcon: Icon(
+                                      Icons.arrow_drop_down,
+                                      size: SizeUtil.iconsSize(context),
+                                      color: AppColors.primary,
+                                    ),
+                                    suffixIconConstraints: const BoxConstraints(),
+                                    filled: true,
+                                    isDense: true,
+                                    border: InputBorder.none,
+                                    hintText: 'e.g., 18k, 22k, 24k',
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey,
+                                        fontFamily: "Helvetica",
+                                        fontSize: SizeUtil.body(context)),
+                                    fillColor: TextfieldColors.background,
+                                  ),
+                                  readOnly: true,
+                                  onTap: _toggleDataDropDown,
+                                  style: TextStyle(
+                                      fontSize: SizeUtil.body(context),
+                                      fontFamily: "Helvetica"),
+                                  controller: goldPurityController,
+                                  focusNode: goldPurityFocusNode,
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return 'gold purity is required';
+                                    } else {
+                                      return null;
+                                    }
+                                  },
                                 ),
                               ),
                             ),
-                          ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: SizeUtil.verticalSpacingMedium(context),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RichText(
-                          textScaleFactor:
-                              MediaQuery.of(context).textScaleFactor,
-                          textAlign: TextAlign.start,
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Description of the item',
-                                style: TextStyle(
-                                    fontSize: SizeUtil.body(context),
-                                    color: AppColors.grey,
-                                    fontFamily: "Helvetica"),
+                            if (_showDataDropdown)
+                              Material(
+                                color: Colors.transparent,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 40),
+                                  child: Card(
+                                    color: AppColors.white,
+                                    elevation: 2,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        if (goldTypeList.isEmpty)
+                                          ListTile(
+                                            title: Text(
+                                              'No Records Found',
+                                              style: TextStyle(
+                                                  fontSize:
+                                                      SizeUtil.body(context),
+                                                  fontFamily: "Helvetica"),
+                                            ),
+                                            enabled: false,
+                                          ),
+                                        if (goldTypeList.isNotEmpty)
+                                          ListView.builder(
+                                            padding: EdgeInsets.zero,
+                                            shrinkWrap: true,
+                                            itemCount: goldTypeList.length,
+                                            itemBuilder: (context, index) {
+                                              final option = goldTypeList[index];
+                                              return ListTile(
+                                                dense: true,
+                                                title: Text(option,
+                                                    style: TextStyle(
+                                                        fontFamily: "Helvetica",
+                                                        fontSize: SizeUtil.body(
+                                                            context))),
+                                                onTap: () {
+                                                  setState(() {
+                                                    goldPurityController.text =
+                                                        option;
+                                                    _showDataDropdown = false;
+                                                  });
+                                                },
+                                              );
+                                            },
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ],
-                          ),
+                          ],
                         ),
-                        const SizedBox(height: 2),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 40),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
-                            child: TextFormField(
-                              // readOnly: widget.isWatch,
-                              controller: descriptionController,
-                              focusNode: descriptionFocusNode,
-                              onEditingComplete: () {
-                                descriptionFocusNode.unfocus();
-                              },
-                              maxLines: 3,
-                              decoration: InputDecoration(
-                                filled: true,
-                                isDense: true,
-                                border: InputBorder.none,
-                                hintText: 'e.g., Necklace with Beads',
-                                hintStyle: TextStyle(
-                                    color: AppColors.grey,
-                                    fontFamily: "Helvetica",
-                                    fontSize: SizeUtil.body(context)),
-                                fillColor: TextfieldColors.background,
+                        SizedBox(
+                          height: SizeUtil.verticalSpacingMedium(context),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RichText(
+                              textScaleFactor:
+                                  MediaQuery.of(context).textScaleFactor,
+                              textAlign: TextAlign.start,
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'Description of the item',
+                                    style: TextStyle(
+                                        fontSize: SizeUtil.body(context),
+                                        color: AppColors.grey,
+                                        fontFamily: "Helvetica"),
+                                  ),
+                                ],
                               ),
-                              style:
-                                  TextStyle(fontSize: SizeUtil.body(context)),
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              textInputAction: TextInputAction
-                                  .newline, // Add this line to enable newline key on the keyboard
                             ),
-                          ),
+                            const SizedBox(height: 2),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 40),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: TextFormField(
+                                  // readOnly: widget.isWatch,
+                                  controller: descriptionController,
+                                  focusNode: descriptionFocusNode,
+                                  onEditingComplete: () {
+                                    descriptionFocusNode.unfocus();
+                                  },
+                                  maxLines: 3,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    isDense: true,
+                                    border: InputBorder.none,
+                                    hintText: 'e.g., Necklace with Beads',
+                                    hintStyle: TextStyle(
+                                        color: AppColors.grey,
+                                        fontFamily: "Helvetica",
+                                        fontSize: SizeUtil.body(context)),
+                                    fillColor: TextfieldColors.background,
+                                  ),
+                                  style:
+                                      TextStyle(fontSize: SizeUtil.body(context)),
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
+                                  textInputAction: TextInputAction
+                                      .newline,
+                                  onTap: (){
+                                        setState(() {
+                                          _showDataDropdown=false;
+                                        });
+              
+                                      },     
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              SmallButton(
-                  text:
-                   "Cancel",
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  backgroundColor: AppColors.white,
-                  textColor: AppColors.primary),
-              // if (!widget.isWatch)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                SmallButton(
+                    text: "Cancel",
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    backgroundColor: AppColors.white,
+                    textColor: AppColors.primary),
+                // if (!widget.isWatch)
                 SmallButton(
                     text: "Confirm",
                     onPressed: () {
                       if (addGoldItemFormKey.currentState!.validate()) {
-                          addGoldItems();
+                        addGoldItems();
                       }
                     },
                     backgroundColor: AppColors.primary,
                     textColor: AppColors.white),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+import 'package:midas/constant/constant_util.dart';
 import 'package:midas/screen/Investments/gold/gold.dart';
 import 'package:midas/screen/Investments/mutual_funds/mutual_funds.dart';
 import 'package:midas/screen/Investments/other_assets/other_assets.dart';
@@ -62,19 +64,43 @@ class _MenuState extends State<Menu> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    IconButton(
-                      padding: const EdgeInsets.all(0),
-                      color: AppColors.white,
-                      iconSize: SizeUtil.iconsSize(context),
-                      icon: const Icon(Icons.notifications_outlined),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const Notifications()),
-                        );
-                      },
-                    ),
+                   Obx(() => Center(
+                            child: Stack(
+                              children: [
+                                IconButton(
+                                  color: AppColors.white,
+                                  iconSize: SizeUtil.iconsSize(context),
+                                  icon:
+                                      const Icon(Icons.notifications_outlined),
+                                  onPressed: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const Notifications()),
+                                    );
+                                    ConstantUtil.isNotificationReceived.value =
+                                        false;
+                                  },
+                                ),
+                                if (ConstantUtil.isNotificationReceived.value)
+                                  Positioned(
+                                    top: 11,
+                                    right: 13,
+                                    child: Container(
+                                      width:
+                                          SizeUtil.scallingFactor(context) * 11,
+                                      height:
+                                          SizeUtil.scallingFactor(context) * 11,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.red,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          )),
                     IconButton(
                       padding: const EdgeInsets.all(0),
                       color: AppColors.white,

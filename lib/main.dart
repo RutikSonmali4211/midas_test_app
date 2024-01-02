@@ -3,6 +3,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:midas/controller/device_token/device_token_controller.dart';
+import 'package:midas/firebase_api.dart';
 import 'package:midas/screen/loading/loading.dart';
 import 'package:midas/screen/sign_in/sign_in.dart';
 import 'package:midas/storage/local_storage.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/services.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await FirebaseApi().initNotification();
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   PlatformDispatcher.instance.onError = (error, stack) {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);

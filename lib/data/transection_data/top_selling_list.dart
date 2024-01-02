@@ -1,4 +1,4 @@
-import '../../Model/transection_model/top_selling_item.dart';
+import '../../model/transection_model/top_selling_item.dart';
 
 List<TopSellingItems> topSellingList = [
   TopSellingItems(

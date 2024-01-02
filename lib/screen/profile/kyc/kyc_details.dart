@@ -23,7 +23,7 @@ class _KyKycDetailsPhaseState extends State<KycDetailsPhase> {
   var width;
   bool kycCompleted = false;
 
-  KycController kycController = Get.put(KycController());
+  KYCController kycController = Get.put(KYCController());
 
 
   Future<bool> getLocation() async {

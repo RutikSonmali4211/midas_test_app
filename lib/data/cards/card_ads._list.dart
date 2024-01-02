@@ -1,4 +1,4 @@
-import 'package:midas/Model/cards/cardAds.dart';
+import 'package:midas/model/cards/cardAds.dart';
 
 // ignore: non_constant_identifier_names
 List<CardsAdsEntity> CardsAdsEntityList = [

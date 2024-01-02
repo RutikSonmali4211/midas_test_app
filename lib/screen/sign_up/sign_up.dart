@@ -222,7 +222,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
         context: context,
         builder: (BuildContext context) {
           return OtpVerification(
-              mobileNumber: phoneNoController.text.toString());
+            mobileNumber: phoneNoController.text.toString(),
+            onConfirm: () async {
+              String otp = smsController.otpController.text;
+              if (otp.length == 6) {
+                bool isSuccess = await smsController.verifyOtp(
+                    phoneNoController.text.toString(), otp);
+                if (isSuccess) {
+                  smsController.otpController.clear();
+                  Navigator.pop(context, otp);
+                }
+              } else {
+                showErrorAlert("please enter valid otp");
+              }
+            },
+          );
         },
       );
     }
@@ -399,7 +413,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 padding: const EdgeInsets.only(right: 5.0),
                                 child: Icon(Icons.check_circle,
                                     size: 30,
-                                    color: smsController.isMobileNumberVerified.value
+                                    color: smsController
+                                            .isMobileNumberVerified.value
                                         ? AppColors.primary
                                         : AppColors.grey),
                               ),
@@ -446,8 +461,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Obx(
                         () => GestureDetector(
                           onTap: () {
-                            if (isMobileNumberValid &&
-                                !smsController.isMobileNumberVerified.value) {
+                            if (isMobileNumberValid &&!smsController.isMobileNumberVerified.value) {
                               sendOtp(context);
                             }
                           },
@@ -843,10 +857,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
     width = size.width;
     return GestureDetector(
       onTap: () {
-        // setState(() {
-        //   _showDataDropdown = false;
-        //   _showFinancialDataDropdown = false;
-        // });
+        setState(() {
+          fullNameFocusNode.unfocus();
+          phoneNoFocusNode.unfocus();
+          emailFocusNode.unfocus();
+          panFocusNode.unfocus();
+          aadhaarFocusNode.unfocus();
+          userNameFocusNode.unfocus();
+          pinFocusNode.unfocus();
+        });
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -903,7 +922,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: width * 0.04,
-                  vertical: SizeUtil.scallingFactor(context)*35),
+                  vertical: SizeUtil.scallingFactor(context) * 35),
               child: Text(
                 textAlign: TextAlign.start,
                 getCurrentStepName(currentStep),

@@ -100,7 +100,7 @@ class _MutualFundsOrdersState extends State<MutualFundsOrders> {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          const MutualFundTransactionScreen(isSeeSingleTransaction: false,)),
+                          const MutualFundTransactionScreen(isSeeSingleTransaction: false,isinNumber: "",)),
                 );
               },
               child: Container(

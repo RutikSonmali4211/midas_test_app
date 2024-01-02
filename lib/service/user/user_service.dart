@@ -88,6 +88,22 @@ class UserService {
     }
   }
 
+  Future<http.Response> checkKyc(
+      String userId, String pancard, BuildContext context) async {
+    try {
+      Map<String, dynamic> requestBody = {
+        "pancardnumber": pancard,
+        "userid": userId,
+      };
+      var response =
+          await ApiHandler.post(ApplicationUrls.checkKyc, requestBody, context);
+      print(response);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   // this service is used to login the existing user
   Future<http.Response> loginWithBiometric(
       String deviceToken, String userId) async {

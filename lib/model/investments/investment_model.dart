@@ -19,7 +19,7 @@ String investmentModelToJson(InvestmentModel data) => json.encode(data.toJson())
 
 class InvestmentModel {
     List<InvestmentData> investments;
-    int totalValue;
+    double totalValue;
     DateTime lastUpdatedDate;
 
     InvestmentModel({
@@ -30,7 +30,7 @@ class InvestmentModel {
 
     factory InvestmentModel.fromJson(Map<String, dynamic> json) => InvestmentModel(
         investments: List<InvestmentData>.from(json["investments"].map((x) => InvestmentData.fromJson(x))),
-        totalValue: json["totalValue"],
+        totalValue: json["totalValue"].toDouble(),
         lastUpdatedDate: DateTime.parse(json["lastUpdatedDate"]),
     );
 
@@ -43,8 +43,8 @@ class InvestmentModel {
 
 class InvestmentData {
     String type;
-    int currentValue;
-    int investedValue;
+    double currentValue;
+    double investedValue;
 
     InvestmentData({
         required this.type,
@@ -54,8 +54,8 @@ class InvestmentData {
 
     factory InvestmentData.fromJson(Map<String, dynamic> json) => InvestmentData(
         type: json["type"],
-        currentValue: json["currentValue"],
-        investedValue: json["investedValue"],
+        currentValue: json["currentValue"].toDouble(),
+        investedValue: json["investedValue"].toDouble(),
     );
 
     Map<String, dynamic> toJson() => {

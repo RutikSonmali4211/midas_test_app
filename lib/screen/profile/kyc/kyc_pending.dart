@@ -18,7 +18,7 @@ class _KycPendingPhaseState extends State<KycPendingPhase> {
   var width;
   bool kycCompleted = false;
 
-  KycController kycController = Get.put(KycController());
+  KYCController kycController = Get.put(KYCController());
 
 
   @override

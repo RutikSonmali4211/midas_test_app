@@ -1,11 +1,14 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:get/get.dart';
 import 'package:midas/constant/colors.dart';
 import 'package:midas/constant/size_util.dart';
 import 'package:flutter/material.dart';
+import 'package:midas/controller/kyc/kyc_controller.dart';
+import 'package:midas/screen/profile/kyc/esign_browser_screen.dart';
 import 'package:midas/widgets/appbar/small_appbar.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../Controller/kyc/kyc_controller.dart';
-import '../../../Model/Dto/ImageData.dart';
+import '../../../model/Dto/ImageData.dart';
 import '../../../Widgets/alert_message/alert_message.dart';
 import '../../../Widgets/buttons/large_button.dart';
 
@@ -21,13 +24,17 @@ class _EsignRequiredState extends State<EsignRequired> {
   var width;
   bool kycCompleted = false;
 
-  KycController kycController = Get.put(KycController());
+  KYCController kycController = Get.put(KYCController());
 
   startEsign() async {
     ImageData data = await kycController.startEsign(context);
     if (data.status == true) {
-       _launchURL(data.value);
-    }else{
+      Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
+          builder: (context) => EsignBrowserScreen(
+                postbackurl: data.value,
+              )));
+      //  _launchURL(data.value);
+    } else {
       showErrorAlert("Esign Failed");
     }
   }
@@ -68,7 +75,7 @@ class _EsignRequiredState extends State<EsignRequired> {
                 const SizedBox(height: 20),
                 Text(
                   textAlign: TextAlign.center,
-                  "Esign Required",
+                  "Seem Like your KYC is incomplete. We just require Esign to complete it.",
                   style: TextStyle(
                       fontSize: SizeUtil.bodyLarge(context),
                       color: AppColors.grey),

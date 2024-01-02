@@ -87,7 +87,7 @@ class _OtherAssetsScreenState extends State<OtherAssetsScreen> {
                           isbackButtonAvailable: true,
                           content: ConstantUtil.formatAmountOnHeader(
                               otherAssetsController
-                                  .otherAssets.value.currentValue),
+                                  .otherAssets.value.currentValue.toDouble()),
                           timeline: otherAssetsController
                                   .otherAssets.value.investment.isNotEmpty
                               ? "Last Updated: ${DateFormat("hh:mm a").format(otherAssetsController.otherAssets.value.lastUpdatedDate.toLocal())}"
@@ -330,7 +330,7 @@ class _OtherAssetsScreenState extends State<OtherAssetsScreen> {
                                                                 .formatAmount(
                                                                     otherAsset
                                                                         .data
-                                                                        .currentPrice),
+                                                                        .currentPrice.toDouble()),
                                                             style: TextStyle(
                                                                 color: AppColors
                                                                     .primary,
@@ -386,7 +386,7 @@ class _OtherAssetsScreenState extends State<OtherAssetsScreen> {
                                                                 .formatAmount(
                                                                     otherAsset
                                                                         .data
-                                                                        .purchasePrice),
+                                                                        .purchasePrice.toDouble()),
                                                             style: TextStyle(
                                                                 color: AppColors
                                                                     .primary,

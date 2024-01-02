@@ -1,4 +1,6 @@
+import 'package:get/get.dart';
 import 'package:midas/constant/colors.dart';
+import 'package:midas/constant/constant_util.dart';
 import 'package:midas/constant/sizeConstant.dart';
 import 'package:midas/constant/size_util.dart';
 import 'package:midas/screen/notifications/notifications.dart';
@@ -47,18 +49,43 @@ class LargeAppbar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                IconButton(
-                  color: AppColors.white,
-                  iconSize: SizeUtil.iconsSize(context),
-                  icon: const Icon(Icons.notifications_outlined),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const Notifications()),
-                    );
-                  },
-                ),
+                Obx(() => Center(
+                            child: Stack(
+                              children: [
+                                IconButton(
+                                  color: AppColors.white,
+                                  iconSize: SizeUtil.iconsSize(context),
+                                  icon:
+                                      const Icon(Icons.notifications_outlined),
+                                  onPressed: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const Notifications()),
+                                    );
+                                    ConstantUtil.isNotificationReceived.value =
+                                        false;
+                                  },
+                                ),
+                                if (ConstantUtil.isNotificationReceived.value)
+                                  Positioned(
+                                    top: 11,
+                                    right: 13,
+                                    child: Container(
+                                      width:
+                                          SizeUtil.scallingFactor(context) * 11,
+                                      height:
+                                          SizeUtil.scallingFactor(context) * 11,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.red,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          )),
                 IconButton(
                   color: AppColors.white,
                   icon: const Icon(Icons.account_circle),

@@ -1,6 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:io';
-
 // class DeviceTokenController {
 //   static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 

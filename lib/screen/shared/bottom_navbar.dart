@@ -51,7 +51,7 @@ class _BottomNevbarState extends State<BottomNevbar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: false,
       body: WillPopScope(
         onWillPop: () async {
            final NavigatorState? currentNavigator =

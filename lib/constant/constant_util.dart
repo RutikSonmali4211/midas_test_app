@@ -1,7 +1,10 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'package:midas/constant/application_urls.dart';
 
-class ConstantUtil {
+class ConstantUtil extends GetxController {
   static const String status = "active";
   static const String requestValidKey = "simplifinAuth123";
   static const Duration requestTimeout = Duration(seconds: 30);
@@ -9,12 +12,15 @@ class ConstantUtil {
       "request timeout please try again";
   static const String internetUnavailable = "no internet connection";
   static const String bioMatric = "bioMatric";
+  static const String kycStatus = "kycStatus";
   static const String username = "username";
   static const String userId = "userId";
   static const String deviceToken = "deviceToken";
   static const String token = "token";
   static const String user = "user";
   static const String biometricAlert = "biometricAlert";
+
+  static RxBool isNotificationReceived = false.obs;
 
   static const String biometricAuthMessage =
       'Unlock your screen with PIN, pattern, password, face, or biometric';
@@ -43,12 +49,31 @@ class ConstantUtil {
     return connectivityResult != ConnectivityResult.none;
   }
 
-  static String formatAmount(int number) {
+  static String formatAmount(double number) {
     final format = NumberFormat("#,##,###", 'en_IN');
     return format.format(number);
   }
 
-  static String formatAmountOnHeader(int number) {
+  static Future<String?> getUsersIPAddress() async {
+    try {
+      var response =
+          await http.get(Uri.parse(ApplicationUrls.getUsersIpAddressUrl));
+      return response.statusCode == 200 ? response.body : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static Future<String?> getServerIpAddress() async {
+    try {
+      Uri response = Uri.parse(ApplicationUrls.baseUrl);
+      return response.host;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static String formatAmountOnHeader(double number) {
     if (number >= 10000000) {
       double crore = number / 10000000.0;
       String formattedCrore = NumberFormat("#.##").format(crore);
@@ -79,14 +104,29 @@ class ConstantUtil {
     return formattedDate;
   }
 
+  static double getDifferenceInCurrentValueAndInvestedValue(
+      int currentValue, int investedValue) {
+    double total = double.parse((currentValue - investedValue).toString());
+    return total;
+  }
+
+  static double getDifferenceInCurrentValueAndInvestedValueOnPortfolio(
+      double currentValue, double investedValue) {
+    double total = double.parse((currentValue - investedValue).toString());
+    return total;
+  }
+
   static const String addressType = "address";
-  static const String addressproofBackType="addressProofBack";
-  static const String bankAccountType="bankAccountProof";
-  static const String pancardType="pancardDoc";
-  static const String signDocType="signDoc";
-  static const String photoDocType="photoDoc";
-  static const String ipvVedioType="ipvVedio";
+  static const String addressproofBackType = "addressProofBack";
+  static const String bankAccountType = "bankAccountProof";
+  static const String pancardType = "pancardDoc";
+  static const String signDocType = "signDoc";
+  static const String photoDocType = "photoDoc";
+  static const String ipvVedioType = "ipvVedio";
+}
 
-
-
+class MutualFundAmcTypes {
+  static const String amc = "amc";
+  static const String category = "category";
+  static const String type = "type";
 }

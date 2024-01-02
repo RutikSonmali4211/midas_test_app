@@ -51,7 +51,7 @@ class _DepositsScreenState extends State<GoldScreen> {
                     isAmount: true,
                     isbackButtonAvailable: true,
                     content: ConstantUtil.formatAmountOnHeader(
-                        goldTypesController.goldDetails.value.totalValue),
+                        goldTypesController.goldDetails.value.totalValue.toDouble()),
                     timeline: goldTypesController
                                 .goldDetails.value.totalValue !=
                             0
@@ -114,7 +114,7 @@ class _DepositsScreenState extends State<GoldScreen> {
                                       TextSpan(
                                         text: ConstantUtil.formatAmount(
                                             goldTypesController
-                                                .gold24kprice.value),
+                                                .gold24kprice.value.toDouble()),
                                         style: TextStyle(
                                           color: AppColors.primary,
                                           fontSize: SizeUtil.bodyLarge(context),
@@ -155,7 +155,7 @@ class _DepositsScreenState extends State<GoldScreen> {
                                       TextSpan(
                                         text: ConstantUtil.formatAmount(
                                             goldTypesController
-                                                .gold22kprice.value),
+                                                .gold22kprice.value.toDouble()),
                                         style: TextStyle(
                                           color: AppColors.primary,
                                           fontSize: SizeUtil.bodyLarge(context),
@@ -196,7 +196,7 @@ class _DepositsScreenState extends State<GoldScreen> {
                                       TextSpan(
                                         text: ConstantUtil.formatAmount(
                                             goldTypesController
-                                                .gold18kprice.value),
+                                                .gold18kprice.value.toDouble()),
                                         style: TextStyle(
                                           color: AppColors.primary,
                                           fontSize: SizeUtil.bodyLarge(context),
@@ -333,7 +333,7 @@ class _DepositsScreenState extends State<GoldScreen> {
                                                 TextSpan(
                                                   text:
                                                       ConstantUtil.formatAmount(
-                                                          item.currentValue),
+                                                          item.currentValue.toDouble()),
                                                   style: TextStyle(
                                                       color: AppColors.primary,
                                                       fontSize: SizeUtil.body(
@@ -352,7 +352,7 @@ class _DepositsScreenState extends State<GoldScreen> {
                                             CrossAxisAlignment.center,
                                         children: [
                                           Text(
-                                            'Qty: ${ConstantUtil.formatAmount(item.qty)} gms',
+                                            'Qty: ${ConstantUtil.formatAmount(item.qty.toDouble())} gms',
                                             style: TextStyle(
                                                 color: AppColors.primary,
                                                 fontSize:

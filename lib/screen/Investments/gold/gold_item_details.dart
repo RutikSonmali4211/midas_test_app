@@ -86,7 +86,7 @@ class _GoldItemDetailsState extends State<GoldItemDetails> {
                           isAmount: true,
                           isbackButtonAvailable: true,
                           content: ConstantUtil.formatAmountOnHeader(
-                              goldController.goldItems.value.currentValue),
+                              goldController.goldItems.value.currentValue.toDouble()),
                           timeline: goldController
                                   .goldItems.value.investment.isNotEmpty
                               ? "Last Updated: ${DateFormat("hh:mm a").format(goldController.goldItems.value.lastUpdatedDate.toLocal())}"

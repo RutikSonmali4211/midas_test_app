@@ -291,7 +291,7 @@ class _GoalsSectionState extends State<GoalsSection> {
                                                     TextSpan(
                                                       text: ConstantUtil
                                                           .formatAmount(
-                                                              goal.value),
+                                                              goal.value.toDouble()),
                                                       style: TextStyle(
                                                           color:
                                                               AppColors.primary,

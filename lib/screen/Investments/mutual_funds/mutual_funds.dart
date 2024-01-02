@@ -1,6 +1,9 @@
+import 'package:flutter/gestures.dart';
+import 'package:get/get.dart';
 import 'package:midas/Widgets/appbar/large_appbar.dart';
 import 'package:midas/constant/colors.dart';
 import 'package:midas/constant/size_util.dart';
+import 'package:midas/controller/investment/mutual_funds/mutual_funds_controller.dart';
 import 'package:midas/screen/Investments/mutual_funds/mutual_funds_portfolio.dart';
 import 'package:midas/screen/Investments/mutual_funds/mutual_funds_transaction.dart';
 import 'package:midas/screen/Investments/mutual_funds/mutual_funds_watchlist.dart';
@@ -19,57 +22,94 @@ class _MutualFundsScreenState extends State<MutualFundsScreen> {
   var height;
   var width;
 
+  MutualFundsController mutualFundsController =
+      Get.put(MutualFundsController());
+
+  @override
+  void initState() {
+    super.initState();
+    mutualFundsController.getSchedularlastUpdatedDate(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     height = screenSize.height;
     width = screenSize.width;
-    return Scaffold(
-      body: DefaultTabController(
-        length: 4,
-        child: Column(
-          children: [
-            const LargeAppbar(heading: "", isAmount: false, isbackButtonAvailable: true, content: "Mutual Funds", timeline: "Last Updated: 5:00 pm"),
-            const SizedBox(height: 10),
-            TabBar(
-              isScrollable: true,
-              padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.04),
-              indicatorSize: TabBarIndicatorSize.tab,
-              indicatorWeight: 3,
-              labelColor: AppColors.primary,
-              unselectedLabelColor: AppColors.grey,
-              unselectedLabelStyle: TextStyle(fontSize: SizeUtil.headingMedium(context),fontFamily: "Helvetica",fontWeight: FontWeight.w700),
-              labelStyle: TextStyle(fontSize:  SizeUtil.headingMedium(context),fontFamily: "Helvetica",fontWeight: FontWeight.w700,shadows: const [Shadow(
-                  color: AppColors.shadow,
-                  offset: Offset(0, 2),
-                  blurRadius: 2,
-                )]),
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          mutualFundsController.mutualFundAmcSearchFocusNode.unfocus();
+        });
+      },
+      child: Scaffold(
+        body: DefaultTabController(
+          initialIndex: 0,
+          length: 4,
+          child: Column(
+            children: [
+              LargeAppbar(
+                  heading: "",
+                  isAmount: false,
+                  isbackButtonAvailable: true,
+                  content: "Mutual Funds",
+                  timeline:
+                      "Last Updated: ${mutualFundsController.schedularLastUpdatedTime}"),
+              const SizedBox(height: 10),
+              TabBar(
+                isScrollable: true,
+                padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * 0.04),
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicatorWeight: 3,
+                labelColor: AppColors.primary,
+                unselectedLabelColor: AppColors.grey,
+                unselectedLabelStyle: TextStyle(
+                    fontSize: SizeUtil.headingMedium(context),
+                    fontFamily: "Helvetica",
+                    fontWeight: FontWeight.w700),
+                labelStyle: TextStyle(
+                    fontSize: SizeUtil.headingMedium(context),
+                    fontFamily: "Helvetica",
+                    fontWeight: FontWeight.w700,
+                    shadows: const [
+                      Shadow(
+                        color: AppColors.shadow,
+                        offset: Offset(0, 2),
+                        blurRadius: 2,
+                      )
+                    ]),
                 indicatorPadding: const EdgeInsets.symmetric(vertical: 1),
-              indicator:  UnderlineTabIndicator(
-              insets: const EdgeInsets.symmetric(horizontal: 10),
-                borderSide: BorderSide(
-                  width: SizeUtil.scallingFactor(context)*4, color: AppColors.primary),
-                borderRadius: const BorderRadius.all(Radius.circular(30))),
-              tabs: const <Tab>[
-                Tab(text: 'Portfolio'),
-                Tab(text: 'SIP'),
-                Tab(text: 'Orders'),
-                Tab(text: 'Watchlist'),
-              ],
-            ),
-            SizedBox(height: SizeUtil.verticalSpacingMedium(context),),
-             const Expanded(
-              child: TabBarView(
-                physics: ScrollPhysics(),
-                children: <Widget>[
-                MutualFundsPortfolio(),
-                MutualFundsOrdersSIP(),
-                MutualFundTransactionScreen(isSeeSingleTransaction: false),
-                MutualFundsWatchList()
+                indicator: UnderlineTabIndicator(
+                    insets: const EdgeInsets.symmetric(horizontal: 10),
+                    borderSide: BorderSide(
+                        width: SizeUtil.scallingFactor(context) * 4,
+                        color: AppColors.primary),
+                    borderRadius: const BorderRadius.all(Radius.circular(30))),
+                tabs: const <Tab>[
+                  Tab(text: 'Portfolio'),
+                  Tab(text: 'SIP'),
+                  Tab(text: 'Orders'),
+                  Tab(text: 'Watchlist'),
                 ],
               ),
-            ),
-          ],
+              SizedBox(
+                height: SizeUtil.verticalSpacingMedium(context),
+              ),
+              const Expanded(
+                child: TabBarView(
+                  physics: ScrollPhysics(),
+                  children: <Widget>[
+                    MutualFundsPortfolio(),
+                    MutualFundsOrdersSIP(),
+                    MutualFundTransactionScreen(
+                        isSeeSingleTransaction: false, isinNumber: ""),
+                    MutualFundsWatchList()
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

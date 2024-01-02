@@ -12,6 +12,14 @@ class LocalStorage {
     return preferences;
   }
 
+  static setkycStatusEnabled(String kycStatus) {
+    instance.setString(ConstantUtil.kycStatus, kycStatus);
+  }
+
+  static String? getkycStatusEnabled() {
+    return instance.getString(ConstantUtil.kycStatus);
+  }
+
   static setIsBiometricEnabled(bool isBiometric) {
     instance.setBool(ConstantUtil.bioMatric, isBiometric);
   }
@@ -72,8 +80,7 @@ class LocalStorage {
     return instance.getBool(ConstantUtil.biometricAlert);
   }
 
-   static removeIsBiometricAlert() {
+  static removeIsBiometricAlert() {
     instance.remove(ConstantUtil.biometricAlert);
   }
-
 }

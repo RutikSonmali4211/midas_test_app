@@ -6,10 +6,11 @@ import 'package:midas/Widgets/buttons/large_button.dart';
 import 'package:midas/constant/colors.dart';
 import 'package:midas/constant/size_util.dart';
 import 'package:flutter/material.dart';
+import 'package:midas/controller/kyc/kyc_controller.dart';
 import 'package:midas/screen/profile/kyc/kyc_request_form.dart';
 import 'package:midas/widgets/alert_message/alert_message.dart';
 import 'package:midas/widgets/appbar/small_appbar.dart';
-import '../../../Controller/kyc/kyc_controller.dart';
+import 'package:midas/widgets/loader.dart';
 
 class KycDetailsPhase extends StatefulWidget {
   const KycDetailsPhase({super.key});
@@ -23,10 +24,11 @@ class _KyKycDetailsPhaseState extends State<KycDetailsPhase> {
   var width;
   bool kycCompleted = false;
 
-  KycController kycController = Get.put(KycController());
+  KYCController kycController = Get.put(KYCController());
 
   Future<bool> getLocation() async {
     try {
+      Loader.showLoading();
       Position? position = await kycController.getCurrentLocation();
       if (position == null) {
         showErrorAlert("Give the Permission for Location");
@@ -36,6 +38,8 @@ class _KyKycDetailsPhaseState extends State<KycDetailsPhase> {
     } catch (e) {
       showErrorAlert(e.toString());
       return false;
+    } finally {
+      Loader.hideLoading();
     }
   }
 
@@ -65,7 +69,7 @@ class _KyKycDetailsPhaseState extends State<KycDetailsPhase> {
                 const SizedBox(height: 20),
                 Text(
                   textAlign: TextAlign.center,
-                  "KYC not complete",
+                  "Start KYC",
                   style: TextStyle(
                       fontSize: SizeUtil.bodyLarge(context),
                       color: AppColors.grey),

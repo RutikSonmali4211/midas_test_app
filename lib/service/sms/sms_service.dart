@@ -23,6 +23,23 @@ class SmsService {
     }
   }
 
+  Future<http.Response> resendOtp(String mobileNumber) async {
+    try {
+      var response = await http
+          .post(Uri.parse(ApplicationUrls.resendOtpUrl),
+              headers: {"Content-Type": "application/json","isvalidrequest":ConstantUtil.requestValidKey},
+              body: json.encode({
+                "mobileNumber": mobileNumber,
+              }))
+          .timeout(ConstantUtil.requestTimeout, onTimeout: () {
+        throw ConstantUtil.requestTimeoutMesssage;
+      });
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<http.Response> verifyOtp(String mobileNumber,String otp) async {
     try {
       var response = await http

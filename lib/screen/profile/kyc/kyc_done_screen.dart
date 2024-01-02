@@ -6,9 +6,9 @@ import 'package:midas/Widgets/buttons/large_button.dart';
 import 'package:midas/constant/colors.dart';
 import 'package:midas/constant/size_util.dart';
 import 'package:flutter/material.dart';
+import 'package:midas/controller/kyc/kyc_controller.dart';
 import 'package:midas/widgets/alert_message/alert_message.dart';
 import 'package:midas/widgets/appbar/small_appbar.dart';
-import '../../../Controller/kyc/kyc_controller.dart';
 
 class KycDone extends StatefulWidget {
   const KycDone({super.key});
@@ -21,7 +21,7 @@ class _KycDoneState extends State<KycDone> {
   var height;
   var width;
 
-  KycController kycController = Get.put(KycController());
+  KYCController kycController = Get.put(KYCController());
 
   Future<bool> getLocation() async {
     try {

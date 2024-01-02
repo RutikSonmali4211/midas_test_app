@@ -28,11 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
   UserController userController = Get.put(UserController());
   HomeController homeController = Get.put(HomeController());
 
-  // double minY = 0;
-  // double maxY = 0;
-  // List<FlSpot>? lastSevenDaysNetWorth = [];
-  // List<String>? lastSevenDayDates =[];
-
   @override
   void initState() {
     super.initState();
@@ -49,16 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // double calculateBuffer(List<FlSpot> data, {required bool isMin}) {
-  //   // Calculate the buffer based on the range of data
-  //   final double range = isMin
-  //       ? data.map((spot) => spot.y).reduce((a, b) => a > b ? a : b) -
-  //           data.map((spot) => spot.y).reduce((a, b) => a < b ? a : b)
-  //       : data.map((spot) => spot.y).reduce((a, b) => a > b ? a : b) -
-  //           data.map((spot) => spot.y).reduce((a, b) => a < b ? a : b);
-  //   return range * 0.1; // Adjust the factor as needed
-  // }
-
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -67,58 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
     double scalingFactor = SizeUtil.calculateScalingFactor(context);
     double statusbarHeight = SizeUtil.getStatusBarHeight(context);
     Size size = MediaQuery.of(context).size;
-
-    // if (homeController.netWorthGraphList.length == 7) {
-    //   setState(() {
-    //     lastSevenDaysNetWorth = homeController.netWorthGraphList
-    //         .asMap()
-    //         .map((index, value) => MapEntry(index,
-    //             FlSpot(index.toDouble(), value.revenue.round().toDouble())))
-    //         .values
-    //         .toList();
-
-    //     lastSevenDayDates = homeController.netWorthGraphList
-    //         .asMap()
-    //         .map((index, value) => MapEntry(
-    //             index,
-    //             DateFormat('d MMM')
-    //                 .format(DateTime.parse(value.date.toString()))))
-    //         .values
-    //         .toList();
-
-    //     minY = lastSevenDaysNetWorth!
-    //             .map((spot) => spot.y)
-    //             .reduce((a, b) => a < b ? a : b) -
-    //         calculateBuffer(lastSevenDaysNetWorth!, isMin: true);
-    //     maxY = lastSevenDaysNetWorth!
-    //             .map((spot) => spot.y)
-    //             .reduce((a, b) => a > b ? a : b) +
-    //         calculateBuffer(lastSevenDaysNetWorth!, isMin: false);
-    //   });
-    // }
-
-    //  final double maxY = datalist.map((spot) => spot.y).reduce((a, b) => a > b ? a : b) + 50.0; // Add some buffer
-    // final double scaleFactor = maxY / datalist.map((spot) => spot.y).reduce((a, b) => a > b ? a : b);
-
-    // final List<FlSpot> lastSevenDaysNetWorth = [
-    //   const FlSpot(0.0, 100),
-    //   const FlSpot(1.0, 120),
-    //   const FlSpot(2.0, 200),
-    //   const FlSpot(3.0, 130),
-    //   const FlSpot(4.0, 170),
-    //   const FlSpot(5.0, 160),
-    //   const FlSpot(6.0, 190),
-    // ];
-
-    // List<String> lastSevenDayDates = [
-    //   "17 Apr",
-    //   "18 Apr",
-    //   "19 Apr",
-    //   "20 Apr",
-    //   "21 Apr",
-    //   "22 Apr",
-    //   "23 Apr"
-    // ];
 
     return Scaffold(
         body: Obx(() => investmentController.isLoading.value
@@ -155,19 +88,45 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              IconButton(
-                                color: AppColors.white,
-                                iconSize: SizeUtil.iconsSize(context),
-                                icon: const Icon(Icons.notifications_outlined),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const Notifications()),
-                                  );
-                                },
-                              ),
+                              Obx(() => Center(
+                                child: Stack(
+                                  children: [
+                                    IconButton(
+                                      color: AppColors.white,
+                                      iconSize: SizeUtil.iconsSize(context),
+                                      icon: const Icon(
+                                          Icons.notifications_outlined),
+                                      onPressed: () async {
+                                       await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const Notifications()),
+                                        );
+                                        ConstantUtil.isNotificationReceived.value = false;
+                                      },
+                                    ),
+                                    if (ConstantUtil
+                                        .isNotificationReceived.value)
+                                      Positioned(
+                                        top: 11,
+                                        right: 13,
+                                        child: Container(
+                                          width:
+                                              SizeUtil.scallingFactor(context) *
+                                                  11,
+                                          height:
+                                              SizeUtil.scallingFactor(context) *
+                                                  11,
+                                          decoration: const BoxDecoration(
+                                            color: Colors.red,
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              )),
                               IconButton(
                                 color: AppColors.white,
                                 icon: const Icon(Icons.account_circle),
@@ -449,7 +408,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             child: Column(
                               children: [
-                                if (homeController.lastSevenDayDates.length == 7 && homeController.lastSevenDaysNetWorth.length == 7)
+                                if (homeController.lastSevenDayDates.length ==
+                                        7 &&
+                                    homeController
+                                            .lastSevenDaysNetWorth.length ==
+                                        7)
                                   Container(
                                     padding: EdgeInsets.all(
                                         SizeUtil.verticalSpacingSmall(context)),
@@ -492,7 +455,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             LineChartData(
                                               clipData: const FlClipData.all(),
                                               minX: 0,
-                                              maxX: homeController.lastSevenDaysNetWorth
+                                              maxX: homeController
+                                                      .lastSevenDaysNetWorth
                                                       .length
                                                       .toDouble() -
                                                   1,
@@ -532,7 +496,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ),
                                               lineBarsData: [
                                                 LineChartBarData(
-                                                  spots: homeController.lastSevenDaysNetWorth,
+                                                  spots: homeController
+                                                      .lastSevenDaysNetWorth,
                                                   isCurved: true,
                                                   color: Colors.green,
                                                   dotData: const FlDotData(
@@ -563,8 +528,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              for (String date
-                                                  in homeController.lastSevenDayDates)
+                                              for (String date in homeController
+                                                  .lastSevenDayDates)
                                                 Text(
                                                   date,
                                                   style: TextStyle(
@@ -582,7 +547,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ],
                                     ),
                                   ),
-                                 if (homeController.lastSevenDayDates.length == 7 && homeController.lastSevenDaysNetWorth.length == 7)
+                                if (homeController.lastSevenDayDates.length ==
+                                        7 &&
+                                    homeController
+                                            .lastSevenDaysNetWorth.length ==
+                                        7)
                                   SizedBox(
                                     height:
                                         SizeUtil.verticalSpacingMedium(context),
@@ -712,7 +681,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 text: ConstantUtil.formatAmount(
                                                                     investmentController
                                                                         .otherAssetsCurrentValue
-                                                                        .value),
+                                                                        .value
+                                                                        .toDouble()),
                                                                 style:
                                                                     TextStyle(
                                                                   fontFamily:
@@ -1163,7 +1133,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 text: ConstantUtil.formatAmount(
                                                                     investmentController
                                                                         .goldCurrentValue
-                                                                        .value),
+                                                                        .value
+                                                                        .toDouble()),
                                                                 style:
                                                                     TextStyle(
                                                                   fontFamily:
@@ -1230,6 +1201,193 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           child: Text(
                                                             "${Convertors.getInvestedAssetPercentage(investmentController.goldCurrentValue.value, investmentController.investmentList.value.totalValue)} %",
                                                             //  "${(((investmentController.goldCurrentValue / investmentController.investmentList.value.totalValue)*100)).toStringAsFixed(2)} %",
+                                                            style: TextStyle(
+                                                              color:
+                                                                  AppTextColors
+                                                                      .grey,
+                                                              fontFamily:
+                                                                  "Helvetica",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              fontSize:
+                                                                  SizeUtil.body(
+                                                                      context),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const Divider(
+                                          height: 5,
+                                          color: AppTextColors.grey,
+                                          thickness: 0.5,
+                                          indent: 10,
+                                          endIndent: 10,
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.all(10),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: size.width * 0.05),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: AppColors.white,
+                                                    border: Border.all(
+                                                      color: AppColors.primary,
+                                                      width: 1.0,
+                                                    ),
+                                                  ),
+                                                  child: CircleAvatar(
+                                                    backgroundColor:
+                                                        AppColors.white,
+                                                    radius: scalingFactor * 22,
+                                                    child: Icon(
+                                                      Icons.trending_up,
+                                                      size: scalingFactor * 22,
+                                                      color: AppColors.primary,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          'Mutual Funds',
+                                                          style: TextStyle(
+                                                            color: AppColors
+                                                                .primary,
+                                                            fontFamily:
+                                                                "Helvetica",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            fontSize:
+                                                                SizeUtil.body(
+                                                                    context),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        RichText(
+                                                          textScaleFactor:
+                                                              MediaQuery.of(
+                                                                      context)
+                                                                  .textScaleFactor,
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                          text: TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text: '₹',
+                                                                style:
+                                                                    TextStyle(
+                                                                  letterSpacing:
+                                                                      2,
+                                                                  fontFamily:
+                                                                      'NotoSans',
+                                                                  color: AppTextColors
+                                                                      .primary,
+                                                                  fontSize:
+                                                                      SizeUtil.body(
+                                                                          context),
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
+                                                              ),
+                                                              TextSpan(
+                                                                text: ConstantUtil.formatAmount(
+                                                                    investmentController
+                                                                        .mutualFundCurrentValue
+                                                                        .value
+                                                                        .toDouble()),
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontFamily:
+                                                                      "Helvetica",
+                                                                  color: AppTextColors
+                                                                      .primary,
+                                                                  fontSize:
+                                                                      SizeUtil.body(
+                                                                          context),
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Flexible(
+                                                          flex: 6,
+                                                          child: Container(
+                                                            // width: size.width * 0.46,
+                                                            child: ClipRRect(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                              child:
+                                                                  LinearProgressIndicator(
+                                                                value: Convertors.getLinearBarValue(
+                                                                    investmentController
+                                                                        .mutualFundCurrentValue
+                                                                        .value,
+                                                                    investmentController
+                                                                        .investmentList
+                                                                        .value
+                                                                        .totalValue),
+                                                                backgroundColor:
+                                                                    Colors.grey[
+                                                                        300],
+                                                                valueColor:
+                                                                    const AlwaysStoppedAnimation<
+                                                                            Color>(
+                                                                        Colors
+                                                                            .green),
+                                                                minHeight: 6,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        Flexible(
+                                                          flex: 2,
+                                                          child: Text(
+                                                            "${Convertors.getInvestedAssetPercentage(investmentController.mutualFundCurrentValue.value, investmentController.investmentList.value.totalValue)} %",
+                                                            // "${(((investmentController.otherAssetsCurrentValue / investmentController.investmentList.value.totalValue)*100)).toStringAsFixed(2)} %",
                                                             style: TextStyle(
                                                               color:
                                                                   AppTextColors

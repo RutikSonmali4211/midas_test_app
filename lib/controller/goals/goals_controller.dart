@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:midas/constant/constant_util.dart';
 import 'package:midas/constant/date_util.dart';
+import 'package:midas/controller/mutual_fund_recommondation/mutual_fund_recommondation_controller.dart';
 import 'package:midas/exception/custom_exception.dart';
 import 'package:midas/logs/Loggers.dart';
 import 'package:midas/model/goals/goals_model.dart';
@@ -15,8 +16,9 @@ import 'package:midas/widgets/loader.dart';
 
 class GoalsController extends GetxController {
   final GolasService golasService = GolasService();
+   MutualfundRecommondationControlller mutualfundRecommondationControlller = Get.put(MutualfundRecommondationControlller());
   int currentPage = 1;
-  int pageSize = 5;
+  int pageSize = 10;
   bool canLoadMore = true;
   var isLoading = false.obs;
   final goalsList = <GoalsModel>[].obs;
@@ -34,6 +36,7 @@ class GoalsController extends GetxController {
           goalName, goalValue, convertedGoalTargetDate, description, context);
       var jsonResponse = jsonDecode(response.body);
       if (response.statusCode == 200) {
+        mutualfundRecommondationControlller.createMutualFundRecommondationByGoals(jsonResponse["result"]["_id"],  goalName,goalTargetDate, goalValue, context);
         showSuccessAlert(jsonResponse['message'] ?? "goal added successfully");
         // getGoalsList(context, page: 1);
         return true;
@@ -165,6 +168,7 @@ class GoalsController extends GetxController {
           convertedGoalTargetDate, description, context);
       var jsonResponse = jsonDecode(response.body);
       if (response.statusCode == 200) {
+        mutualfundRecommondationControlller.createMutualFundRecommondationByGoals(goalId,  goalName,goalTargetDate, goalValue, context);
         showSuccessAlert(jsonResponse['message']);
         update();
         // getGoalsList(context, page: 1);

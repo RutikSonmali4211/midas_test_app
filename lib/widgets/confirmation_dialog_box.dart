@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:midas/Widgets/buttons/small_button.dart';
 import 'package:midas/constant/colors.dart';
 import 'package:midas/constant/size_util.dart';
@@ -7,9 +8,10 @@ class ConfirmDialogBox extends StatelessWidget {
   final String heading;
   final String body;
   final String message;
+  final VoidCallback onConfirm;
 
   const ConfirmDialogBox(
-      {super.key, required this.heading, required this.body, required this.message});
+      {super.key, required this.heading, required this.body, required this.message,required this.onConfirm});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,7 @@ class ConfirmDialogBox extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if(heading.isNotEmpty)
             Text(
               heading,
               style: TextStyle(
@@ -76,7 +79,10 @@ class ConfirmDialogBox extends StatelessWidget {
                     textColor: AppColors.primary),
                 SmallButton(
                     text: "Confirm",
-                    onPressed: () {},
+                    onPressed: (){
+                     Get.back();
+                      onConfirm();
+                    },
                     backgroundColor: AppColors.primary,
                     textColor: AppColors.white),
               ],

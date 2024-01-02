@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,15 +8,16 @@ import 'package:image_picker/image_picker.dart';
 import 'package:midas/constant/colors.dart';
 import 'package:midas/constant/constant_util.dart';
 import 'package:midas/constant/size_util.dart';
+import 'package:midas/controller/kyc/kyc_controller.dart';
+import 'package:midas/controller/sms/sms_controller.dart';
 import 'package:midas/widgets/alert_message/alert_message.dart';
 import 'package:midas/widgets/alert_message/warning_message.dart';
 import 'package:midas/widgets/appbar/small_appbar.dart';
 import 'package:midas/widgets/buttons/icon_button.dart';
 import 'package:midas/widgets/buttons/small_button.dart';
 import 'package:midas/widgets/upper_case_formatter.dart';
-import '../../../Controller/kyc/kyc_controller.dart';
-import '../../../Model/Dto/ImageData.dart';
-import 'kyc_pending.dart';
+import '../../../model/Dto/ImageData.dart';
+import '../../../widgets/otp_verification.dart';
 
 class KYCRequestForm extends StatefulWidget {
   const KYCRequestForm({super.key});
@@ -26,20 +29,13 @@ class KYCRequestForm extends StatefulWidget {
 class _KYCRequestFormState extends State<KYCRequestForm> {
   var height;
   var width;
-  var addressFileId = "";
-  var addressProofBackId = "";
-  var bankAccountDocId = "";
-  var panCardDocId = "";
-  var photoDocId = "";
-  var signDocId = "";
-  var ipvVedioId = "";
   int currentStep = 1;
   int stepLength = 4;
   bool complete = false;
+  bool isMobileNumberValid = false;
 
   List<GlobalKey<FormState>> formKeys =
       List.generate(5, (_) => GlobalKey<FormState>());
-
   TextEditingController fullNameController = TextEditingController();
   TextEditingController phoneNoController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -54,7 +50,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
   TextEditingController maritalStatusController = TextEditingController();
   TextEditingController occupationTypeController = TextEditingController();
 
-// controllers to select document for address to uplaod
+  // controllers to select document for address to uplaod
   TextEditingController addressline1Controller = TextEditingController();
   TextEditingController addressline2Controller = TextEditingController();
   TextEditingController addressline3Controller = TextEditingController();
@@ -99,7 +95,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
   final FocusNode maritalStatusFocusNode = FocusNode();
   final FocusNode occupationTypeFocusNode = FocusNode();
 
-// focus nodes to select document for address to uplaod
+  // focus nodes to select document for address to uplaod
 
   final FocusNode addressline1FocusNode = FocusNode();
   final FocusNode addressline2FocusNode = FocusNode();
@@ -148,46 +144,49 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
     occupationTypeFocusNode.dispose();
   }
 
-  XFile? addressProofDocument;
-  XFile? addressProofBackDocument;
-  XFile? panCardDocument;
-  XFile? signatureScanDocument;
-  XFile? photoDocument;
-  XFile? bankAccountProofDocument;
-  XFile? videoVerificationDocument;
+  Map<String, String> genderList = {
+    'Male': 'male',
+    'Female': 'female',
+    'Transgender': 'transgender',
+  };
+  Map<String, String> countriesList = {'India': 'in'};
+  Map<String, String> addressProofTypeList = {
+    'Passport': 'passport',
+    'Voter Id': 'voter id',
+    'Driving License': 'driving licence',
+  };
+  Map<String, String> maritalStatusList = {
+    'Married': 'married',
+    'Unmarried': 'unmarried',
+    'Others': 'others',
+  };
 
-  List<String> genderList = ["male", "female", "transgender"];
-  List<String> countriesList = ["in"];
-  List<String> addressProofTypeList = [
-    "passport",
-    "voter id",
-    "driving licence"
-  ];
-  List<String> maritalStatusList = ["married", "unmarried", "others"];
+  Map<String, String> occupationTypeList = {
+    'Business': 'business',
+    'Professional': 'professional',
+    'Self Employed': 'self employed',
+    'Retired': 'retired',
+    'Housewife': 'housewife',
+    'Student': 'student',
+    'Pubic Sector': 'public sector',
+    'Private Sector': 'private sector',
+    'Government Sector': 'government sector',
+    'Others': 'others',
+  };
 
-  List<String> occupationTypeList = [
-    "business",
-    "professional",
-    "self employed",
-    "retired",
-    "housewife",
-    "student",
-    "public sector",
-    "private sector",
-    "government sector",
-    "others"
-  ];
   bool _showGenderDropdown = false;
   bool _showCountryOfBirthDropdown = false;
   bool _showCountryDropdown = false;
   bool _showAddressProofType = false;
   bool _showMaritalStatusDropdown = false;
   bool _showOccupationTypeDropdown = false;
-  KycController kycController = Get.put(KycController());
+  KYCController kycController = Get.put(KYCController());
+  SmsController smsController = Get.put(SmsController());
 
   @override
   void initState() {
     super.initState();
+    smsController.isMobileNumberVerified.value = false;
     setPresentDetails();
   }
 
@@ -197,24 +196,52 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
     if (data["status"] == true) {
       fullNameController.text = data["result"]["name"] ?? "";
       phoneNoController.text = data["result"]["mobile"]["number"] ?? "";
+      if(data["result"]["mobile"]["number"] != null){
+        isMobileNumberValid = true;
+      }
+      smsController.isMobileNumberVerified.value = true;
+      smsController.update();
       emailController.text = data["result"]["email"] ?? "";
       panController.text = data["result"]["pan"] ?? "";
-      aadhaarController.text = (data["result"]["aadhaar_number"] ?? "").toString();
+      aadhaarController.text =
+          (data["result"]["aadhaar_number"] ?? "").toString();
       dateofBirthController.text = data["result"]["date_of_birth"] ?? "";
-      genderController.text = data["result"]["gender"] ?? "";
+      genderController.text = genderList.keys.firstWhere(
+        (key) => genderList[key] == data["result"]["gender"],
+        orElse: () => "",
+      );
       fatherNameController.text = data["result"]["father_name"] ?? "";
       motherNameController.text = data["result"]["mother_name"] ?? "";
-      countryOfBirthController.text = data["result"]["country_of_birth"] ?? "";
-      maritalStatusController.text = data["result"]["marital_status"] ?? "";
-      occupationTypeController.text = data["result"]["occupation_type"] ?? "";
+      countryOfBirthController.text = countriesList.keys.firstWhere(
+        (key) => countriesList[key] == data["result"]["country_of_birth"],
+        orElse: () => "",
+      );
+      maritalStatusController.text = maritalStatusList.keys.firstWhere(
+        (key) => maritalStatusList[key] == data["result"]["marital_status"],
+        orElse: () => "",
+      );
+      occupationTypeController.text = occupationTypeList.keys.firstWhere(
+        (key) => occupationTypeList[key] == data["result"]["occupation_type"],
+        orElse: () => "",
+      );
       addressline1Controller.text = data["result"]["address"]["line_1"] ?? "";
       addressline2Controller.text = data["result"]["address"]["line_2"] ?? "";
       addressline3Controller.text = data["result"]["address"]["line_3"] ?? "";
       cityController.text = data["result"]["address"]["city"] ?? "";
       pincodeController.text = data["result"]["address"]["pincode"] ?? "";
-      countryController.text = data["result"]["address"]["country"] ?? "";
-      addressProofTypeController.text = data["result"]["address"]["proof_type"] ?? "";
-      addressProofNumberController.text = data["result"]["address"]["proof_number"] ?? "";
+      countryController.text = countriesList.keys.firstWhere(
+        (key) => countriesList[key] == data["result"]["country"],
+        orElse: () => "",
+      );
+      addressProofTypeController.text = addressProofTypeList.keys.firstWhere(
+        (key) => addressProofTypeList[key] == data["result"]["proof_type"],
+        orElse: () => "",
+      );
+      addressProofNumberController.text =
+          data["result"]["address"]["proof_number"] ?? "";
+      addressProofController.text = data["result"]["address"]["proof"] ?? "";
+      addressProofBackController.text =
+          data["result"]["address"]["proof_back"] ?? "";
       addressProofIssueDateController.text =
           data["result"]["address"]["proof_issue_date"] ?? "";
       addressProofExpiryDateController.text =
@@ -223,8 +250,17 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
           data["result"]["bank_account"]["account_holder_name"] ?? "";
       bankAccountNumberController.text =
           data["result"]["bank_account"]["account_number"] ?? "";
+      bankAccountProofController.text =
+          data["result"]["bank_account"]["proof"] ?? "";
       bankAccountIfscCodeController.text =
           data["result"]["bank_account"]["ifsc_code"] ?? "";
+      bankAccountProofController.text =
+          data["result"]["bank_account"]["proof"] ?? "";
+      videoVerificationDocumentController.text =
+          data["result"]["ipv_video"] ?? "";
+      panCardDocumentController.text = data["result"]["identity_proof"] ?? "";
+      photoDocumentController.text = data["result"]["photo"] ?? "";
+      signatureScanDocumentController.text = data["result"]["signature"] ?? "";
     }
   }
 
@@ -266,27 +302,31 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
 
   uploadFile(String name, File file, String documentType) async {
     ImageData data = await kycController.uploadFile(name, file, context);
-    if (documentType == ConstantUtil.addressType) {
-      addressFileId = data.value;
-    }
-    if (documentType == ConstantUtil.addressproofBackType) {
-      addressProofBackId = data.value;
-    }
-    if (documentType == ConstantUtil.bankAccountType) {
-      bankAccountDocId = data.value;
-    }
-    if (documentType == ConstantUtil.ipvVedioType) {
-      ipvVedioId = data.value;
-    }
-    if (documentType == ConstantUtil.pancardType) {
-      panCardDocId = data.value;
-    }
-    if (documentType == ConstantUtil.photoDocType) {
-      photoDocId = data.value;
-    }
-    if (documentType == ConstantUtil.signDocType) {
-      signDocId = data.value;
-    }
+    setState(() {
+      if (documentType == ConstantUtil.addressType && data.value.isNotEmpty) {
+        addressProofController.text = data.value;
+      }
+      if (documentType == ConstantUtil.addressproofBackType &&
+          data.value.isNotEmpty) {
+        addressProofBackController.text = data.value;
+      }
+      if (documentType == ConstantUtil.bankAccountType &&
+          data.value.isNotEmpty) {
+        bankAccountProofController.text = data.value;
+      }
+      if (documentType == ConstantUtil.ipvVedioType && data.value.isNotEmpty) {
+        videoVerificationDocumentController.text = data.value;
+      }
+      if (documentType == ConstantUtil.pancardType && data.value.isNotEmpty) {
+        panCardDocumentController.text = data.value;
+      }
+      if (documentType == ConstantUtil.photoDocType && data.value.isNotEmpty) {
+        photoDocumentController.text = data.value;
+      }
+      if (documentType == ConstantUtil.signDocType && data.value.isNotEmpty) {
+        signatureScanDocumentController.text = data.value;
+      }
+    });
   }
 
   String ipvVedio = "test";
@@ -300,32 +340,32 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
         panController.text.toString(),
         aadhaarController.text.toString(),
         dateofBirthController.text.toString(),
-        genderController.text.toString(),
+        genderList[genderController.text].toString(),
         fatherNameController.text.toString(),
         motherNameController.text.toString(),
-        countryOfBirthController.text.toString(),
-        maritalStatusController.text.toString(),
-        occupationTypeController.text.toString(),
+        countriesList[countryOfBirthController.text].toString(),
+        maritalStatusList[maritalStatusController.text].toString(),
+        occupationTypeList[occupationTypeController.text].toString(),
         addressline1Controller.text.toString(),
         addressline2Controller.text.toString(),
         addressline3Controller.text.toString(),
         cityController.text.toString(),
         pincodeController.text.toString(),
-        countryController.text.toString(),
-        addressFileId,
-        addressProofBackId,
-        addressProofTypeController.text.toString(),
+        countriesList[countryController.text].toString(),
+        addressProofController.text.toString(),
+        addressProofBackController.text.toString(),
+        addressProofTypeList[addressProofTypeController.text].toString(),
         addressProofNumberController.text.toString(),
         addressProofIssueDateController.text.toString(),
         addressProofExpiryDateController.text.toString(),
         bankAccountHolderNameController.text.toString(),
         bankAccountNumberController.text.toString(),
         bankAccountIfscCodeController.text.toString(),
-        bankAccountDocId,
-        panCardDocId,
-        signDocId,
-        photoDocId,
-        ipvVedioId,
+        bankAccountProofController.text.toString(),
+        panCardDocumentController.text.toString(),
+        signatureScanDocumentController.text.toString(),
+        photoDocumentController.text.toString(),
+        videoVerificationDocumentController.text.toString(),
         context);
     if (isSuccess) {
       return true;
@@ -337,32 +377,32 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
   Future<void> next() async {
     if (currentStep <= 4) {
       if (formKeys[currentStep - 1].currentState!.validate()) {
-        try {
-          bool kycupdate = await createKyc(false);
-          if (kycupdate) {
-            setState(() => currentStep += 1);
-          } else {
-            print("KYC update failed");
+        if (smsController.isMobileNumberVerified.value) {
+          try {
+            bool kycupdate = await createKyc(false);
+            if (kycupdate) {
+             setState(() => currentStep += 1);
+            } else {
+              print("KYC update failed");
+            }
+          } catch (e) {
+            print("Error during KYC update: $e");
           }
-        } catch (e) {
-          print("Error during KYC update: $e");
+        } else {
+          showErrorAlert(ConstantUtil.phoneNumberNotVerifieldMessage);
         }
       }
     } else if (currentStep == 5) {
       if (formKeys[currentStep - 1].currentState!.validate()) {
-        try {
-          bool kycupdate = await createKyc(true);
-          if (kycupdate) {
-            // ignore: use_build_context_synchronously
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const KycPendingPhase()),
-            );
-          } else {
-            print("KYC update failed");
-          }
-        } catch (e) {
-          print("Error during KYC update: $e");
+        bool kycupdate = await createKyc(true);
+        if (kycupdate) {
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //       builder: (context) => const KycSubmittedPhase()),
+          // );
+        } else {
+          print("KYC update failed");
         }
       }
     }
@@ -376,6 +416,36 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
     }
   }
 
+  Future<void> sendOtp(BuildContext context) async {
+    smsController.otpController.clear();
+    bool isSuccess =
+        await smsController.resendOtp(phoneNoController.text.toString());
+    if (isSuccess) {
+      await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return OtpVerification(
+            mobileNumber: phoneNoController.text.toString(),
+            onConfirm: () async {
+              String otp = smsController.otpController.text;
+              if (otp.length == 6) {
+                bool isSuccess = await smsController.verifyOtp(
+                    phoneNoController.text.toString(), otp);
+                if (isSuccess) {
+                  smsController.otpController.clear();
+                  Navigator.pop(context, otp);
+                }
+              } else {
+                showErrorAlert("please enter valid otp");
+              }
+            },
+          );
+        },
+      );
+    }
+  }
+
   Future<void> _selectDateOfBirth(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -386,7 +456,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
     if (picked != null && picked != DateTime.now()) {
       setState(() {
         dateofBirthController.text =
-            "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year.toString()}";
+            "${picked.year.toString()}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
       });
     }
   }
@@ -649,121 +719,137 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
               ],
             ),
             SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RichText(
-                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
-                  textAlign: TextAlign.start,
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Phone Number (10 digits)',
-                        style: TextStyle(
-                            fontSize: SizeUtil.body(context),
-                            color: AppColors.grey,
-                            fontFamily: "Helvetica"),
-                      ),
-                      TextSpan(
-                          text: "*",
+            Obx(
+              () => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RichText(
+                    textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                    textAlign: TextAlign.start,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Phone Number (10 digits)',
                           style: TextStyle(
                               fontSize: SizeUtil.body(context),
-                              color: AppColors.red,
-                              fontFamily: "Helvetica")),
-                    ],
+                              color: AppColors.grey,
+                              fontFamily: "Helvetica"),
+                        ),
+                        TextSpan(
+                            text: "*",
+                            style: TextStyle(
+                                fontSize: SizeUtil.body(context),
+                                color: AppColors.red,
+                                fontFamily: "Helvetica")),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Padding(
-                  padding: const EdgeInsets.only(right: 40),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: TextFormField(
-                            maxLength: 10,
-                            focusNode: phoneNoFocusNode,
-                            onEditingComplete: () {
-                              FocusScope.of(context)
-                                  .requestFocus(dateofBirthFocusNode);
-                            },
-                            controller: phoneNoController,
-                            keyboardType: const TextInputType.numberWithOptions(
-                                signed: true, decimal: true),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(10),
-                            ],
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            decoration: InputDecoration(
-                              counterText: "",
-                              suffixIcon: const Padding(
-                                padding: EdgeInsets.only(right: 5.0),
-                                child: Icon(Icons.check_circle,
-                                    size: 30, color: AppColors.primary),
+                  const SizedBox(height: 2),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 40),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(5),
+                            child: TextFormField(
+                              maxLength: 10,
+                              focusNode: phoneNoFocusNode,
+                              onEditingComplete: () {
+                                FocusScope.of(context)
+                                    .requestFocus(dateofBirthFocusNode);
+                              },
+                              controller: phoneNoController,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      signed: true, decimal: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                              ],
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              decoration: InputDecoration(
+                                counterText: "",
+                                suffixIcon: Padding(
+                                  padding: const EdgeInsets.only(right: 5.0),
+                                  child: Icon(Icons.check_circle,
+                                      size: 30,
+                                      color: smsController
+                                              .isMobileNumberVerified.value
+                                          ? AppColors.primary
+                                          : AppColors.grey),
+                                ),
+                                suffixIconConstraints: const BoxConstraints(),
+                                filled: true,
+                                isDense: true,
+                                border: InputBorder.none,
+                                hintText: 'e.g., 9876543210',
+                                hintStyle: TextStyle(
+                                    color: AppColors.grey,
+                                    fontFamily: "Helvetica",
+                                    fontSize: SizeUtil.body(context)),
+                                fillColor: TextfieldColors.background,
                               ),
-                              suffixIconConstraints: const BoxConstraints(),
-                              filled: true,
-                              isDense: true,
-                              border: InputBorder.none,
-                              hintText: 'e.g., 9876543210',
-                              hintStyle: TextStyle(
-                                  color: AppColors.grey,
-                                  fontFamily: "Helvetica",
-                                  fontSize: SizeUtil.body(context)),
-                              fillColor: TextfieldColors.background,
-                            ),
-                            style: TextStyle(
-                                fontSize: SizeUtil.body(context),
-                                fontFamily: "Helvetica"),
-                            onChanged: (value) {},
-                            validator: (value) {
-                              if (value!.isEmpty &&
-                                  !phoneNoFocusNode.hasFocus) {
-                                return 'phone number is required';
-                              } else {
-                                if (value.length != 10) {
-                                  return 'phone number must be exactly 10 digits.';
+                              style: TextStyle(
+                                  fontSize: SizeUtil.body(context),
+                                  fontFamily: "Helvetica"),
+                              onChanged: (value) {
+                                if (value.length == 10) {
+                                  setState(() {
+                                    isMobileNumberValid = true;
+                                  });
+                                } else {
+                                  setState(() {
+                                    isMobileNumberValid = false;
+                                  });
                                 }
+                              },
+                              validator: (value) {
+                                if (value!.isEmpty &&
+                                    !phoneNoFocusNode.hasFocus) {
+                                  return 'phone number is required';
+                                } else {
+                                  if (value.length != 10) {
+                                    return 'phone number must be exactly 10 digits.';
+                                  }
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 7.5),
+                          child: GestureDetector(
+                            onTap: () async {
+                              if (isMobileNumberValid &&
+                                  !smsController.isMobileNumberVerified.value) {
+                                sendOtp(context);
                               }
-                              return null;
                             },
+                            child: Text(
+                              smsController.isMobileNumberVerified.value
+                                  ? "Verified"
+                                  : "Send OTP",
+                              style: TextStyle(
+                                  color: isMobileNumberValid
+                                      ? AppColors.primary
+                                      : AppColors.grey,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: SizeUtil.body(context),
+                                  fontFamily: "Helvetica"),
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 10),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 7.5),
-                        child: GestureDetector(
-                          onTap: () async {
-                            // await showDialog(
-                            //   barrierDismissible: false,
-                            //   context: context,
-                            //   builder: (BuildContext context) {
-                            //     return OtpVerification(
-                            //         mobileNumber:
-                            //             phoneNoController.text.toString());
-                            //   },
-                            // );
-                          },
-                          child: Text(
-                            "Send OTP",
-                            style: TextStyle(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w400,
-                                fontSize: SizeUtil.body(context),
-                                fontFamily: "Helvetica"),
-                          ),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -887,7 +973,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         filled: true,
                         isDense: true,
                         border: InputBorder.none,
-                        hintText: 'e.g., Male, Femle',
+                        hintText: 'e.g., Male, Female',
                         hintStyle: TextStyle(
                             color: Colors.grey,
                             fontFamily: "Helvetica",
@@ -938,7 +1024,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                 shrinkWrap: true,
                                 itemCount: genderList.length,
                                 itemBuilder: (context, index) {
-                                  final option = genderList[index];
+                                  final List<String> gender =
+                                      genderList.keys.toList();
+                                  final option = gender[index];
                                   return ListTile(
                                     dense: true,
                                     title: Text(option,
@@ -1035,8 +1123,8 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                 ),
               ],
             ),
-            SizedBox(
-              height: height * 0.35,
+            const SizedBox(
+              height: 30,
             )
           ],
         ),
@@ -1059,7 +1147,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'Father name',
+                        text: 'Father Name',
                         style: TextStyle(
                             fontSize: SizeUtil.body(context),
                             color: AppColors.grey,
@@ -1132,7 +1220,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'Mother name',
+                        text: 'Mother Name',
                         style: TextStyle(
                             fontSize: SizeUtil.body(context),
                             color: AppColors.grey,
@@ -1294,7 +1382,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                 shrinkWrap: true,
                                 itemCount: countriesList.length,
                                 itemBuilder: (context, index) {
-                                  final option = countriesList[index];
+                                  List<String> country =
+                                      countriesList.keys.toList();
+                                  final option = country[index];
                                   return ListTile(
                                     dense: true,
                                     title: Text(option,
@@ -1417,7 +1507,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                 shrinkWrap: true,
                                 itemCount: maritalStatusList.length,
                                 itemBuilder: (context, index) {
-                                  final option = maritalStatusList[index];
+                                  final marriage =
+                                      maritalStatusList.keys.toList();
+                                  final option = marriage[index];
                                   return ListTile(
                                     dense: true,
                                     title: Text(option,
@@ -1548,7 +1640,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         filled: true,
                         isDense: true,
                         border: InputBorder.none,
-                        hintText: 'e.g., business, professional, self_employed',
+                        hintText: 'e.g., Business, Professional, Self Employed',
                         hintStyle: TextStyle(
                           color: Colors.grey,
                           fontFamily: "Helvetica",
@@ -1604,7 +1696,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                   padding: EdgeInsets.zero,
                                   itemCount: occupationTypeList.length,
                                   itemBuilder: (context, index) {
-                                    final option = occupationTypeList[index];
+                                    List<String> occupation =
+                                        occupationTypeList.keys.toList();
+                                    final option = occupation[index];
                                     return ListTile(
                                       dense: true,
                                       title: Text(
@@ -1632,8 +1726,8 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                   ),
               ],
             ),
-            SizedBox(
-              height: height * 0.35,
+            const SizedBox(
+              height: 30,
             )
           ],
         ),
@@ -1656,7 +1750,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'line 1',
+                        text: 'Line 1',
                         style: TextStyle(
                             fontSize: SizeUtil.body(context),
                             color: AppColors.grey,
@@ -1692,7 +1786,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         filled: true,
                         isDense: true,
                         border: InputBorder.none,
-                        hintText: 'e.g. John Doe',
+                        hintText: 'e.g. line 1',
                         hintStyle: TextStyle(
                             color: AppColors.grey,
                             fontFamily: "Helvetica",
@@ -1726,7 +1820,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'line 2',
+                        text: 'Line 2',
                         style: TextStyle(
                             fontSize: SizeUtil.body(context),
                             color: AppColors.grey,
@@ -1761,7 +1855,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         filled: true,
                         isDense: true,
                         border: InputBorder.none,
-                        hintText: 'e.g. John Doe',
+                        hintText: 'e.g. line 2',
                         hintStyle: TextStyle(
                             color: AppColors.grey,
                             fontFamily: "Helvetica",
@@ -1795,7 +1889,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'line 3',
+                        text: 'Line 3',
                         style: TextStyle(
                             fontSize: SizeUtil.body(context),
                             color: AppColors.grey,
@@ -1829,7 +1923,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         filled: true,
                         isDense: true,
                         border: InputBorder.none,
-                        hintText: 'e.g. John Doe',
+                        hintText: 'e.g. line 3',
                         hintStyle: TextStyle(
                             color: AppColors.grey,
                             fontFamily: "Helvetica",
@@ -1968,7 +2062,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         filled: true,
                         isDense: true,
                         border: InputBorder.none,
-                        hintText: 'e.g. John Doe',
+                        hintText: 'e.g. 410300',
                         hintStyle: TextStyle(
                             color: AppColors.grey,
                             fontFamily: "Helvetica",
@@ -2045,7 +2139,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         filled: true,
                         isDense: true,
                         border: InputBorder.none,
-                        hintText: 'e.g., IN, USA',
+                        hintText: 'e.g., India',
                         hintStyle: TextStyle(
                             color: Colors.grey,
                             fontFamily: "Helvetica",
@@ -2096,7 +2190,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                 shrinkWrap: true,
                                 itemCount: countriesList.length,
                                 itemBuilder: (context, index) {
-                                  final option = countriesList[index];
+                                  List<String> country =
+                                      countriesList.keys.toList();
+                                  final option = country[index];
                                   return ListTile(
                                     dense: true,
                                     title: Text(option,
@@ -2129,7 +2225,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'Proof type',
+                        text: 'Proof Type',
                         style: TextStyle(
                           fontSize: SizeUtil.body(context),
                           color: AppColors.grey,
@@ -2168,7 +2264,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         filled: true,
                         isDense: true,
                         border: InputBorder.none,
-                        hintText: 'e.g., passport',
+                        hintText: 'e.g., Passport',
                         hintStyle: TextStyle(
                             color: Colors.grey,
                             fontFamily: "Helvetica",
@@ -2219,7 +2315,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                 shrinkWrap: true,
                                 itemCount: addressProofTypeList.length,
                                 itemBuilder: (context, index) {
-                                  final option = addressProofTypeList[index];
+                                  List<String> address =
+                                      addressProofTypeList.keys.toList();
+                                  final option = address[index];
                                   return ListTile(
                                     dense: true,
                                     title: Text(option,
@@ -2508,7 +2606,6 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                   onTap: () {
                                     setState(() {
                                       addressProofController.clear();
-                                      addressProofDocument = null;
                                     });
                                   },
                                   child: const Icon(Icons.clear,
@@ -2544,11 +2641,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         padding: const EdgeInsets.only(top: 8),
                         child: GestureDetector(
                           onTap: () {
-                            if (addressProofDocument == null) {
+                            if (addressProofController.text.isEmpty) {
                               mediaPicker(addressProofController, (image) {
                                 setState(() {
-                                  addressProofController.text = image.name;
-                                  addressProofDocument = image;
                                   File selectedFile = File(image.path);
                                   uploadFile(image.name, selectedFile,
                                       ConstantUtil.addressType);
@@ -2557,7 +2652,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                             }
                           },
                           child: Text(
-                            addressProofDocument == null
+                            addressProofController.text.isEmpty
                                 ? "Select a file"
                                 : "Uploaded",
                             style: TextStyle(
@@ -2628,7 +2723,6 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                   onTap: () {
                                     setState(() {
                                       addressProofBackController.clear();
-                                      addressProofBackDocument = null;
                                     });
                                   },
                                   child: const Icon(Icons.clear,
@@ -2664,11 +2758,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         padding: const EdgeInsets.only(top: 8),
                         child: GestureDetector(
                           onTap: () {
-                            if (addressProofBackDocument == null) {
+                            if (addressProofBackController.text.isEmpty) {
                               mediaPicker(addressProofBackController, (image) {
                                 setState(() {
-                                  addressProofBackController.text = image.name;
-                                  addressProofBackDocument = image;
                                   File selectedFile = File(image.path);
                                   uploadFile(image.name, selectedFile,
                                       ConstantUtil.addressproofBackType);
@@ -2677,7 +2769,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                             }
                           },
                           child: Text(
-                            addressProofBackDocument == null
+                            addressProofBackController.text.isEmpty
                                 ? "Select a file"
                                 : "Uploaded",
                             style: TextStyle(
@@ -2698,8 +2790,8 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
             ),
             const WarningMessage(
                 message: ConstantUtil.warningMessageToUploadImage),
-            SizedBox(
-              height: height * 0.35,
+            const SizedBox(
+              height: 30,
             )
           ],
         ),
@@ -2722,7 +2814,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'Account holder name',
+                        text: 'Account Holder Name',
                         style: TextStyle(
                             fontSize: SizeUtil.body(context),
                             color: AppColors.grey,
@@ -2945,7 +3037,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'Bank account proof',
+                        text: 'Bank Account Proof',
                         style: TextStyle(
                             fontSize: SizeUtil.body(context),
                             color: AppColors.grey,
@@ -2983,7 +3075,6 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                   onTap: () {
                                     setState(() {
                                       bankAccountProofController.clear();
-                                      bankAccountProofDocument = null;
                                     });
                                   },
                                   child: const Icon(Icons.clear,
@@ -3019,11 +3110,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         padding: const EdgeInsets.only(top: 8),
                         child: GestureDetector(
                           onTap: () {
-                            if (bankAccountProofDocument == null) {
+                            if (bankAccountProofController.text.isEmpty) {
                               mediaPicker(bankAccountProofController, (image) {
                                 setState(() {
-                                  bankAccountProofController.text = image.name;
-                                  bankAccountProofDocument = image;
                                   File selectedFile = File(image.path);
                                   uploadFile(image.name, selectedFile,
                                       ConstantUtil.bankAccountType);
@@ -3032,7 +3121,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                             }
                           },
                           child: Text(
-                            bankAccountProofDocument == null
+                            bankAccountProofController.text.isEmpty
                                 ? "Select a file"
                                 : "Uploaded",
                             style: TextStyle(
@@ -3053,8 +3142,8 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
             ),
             const WarningMessage(
                 message: ConstantUtil.warningMessageToUploadImage),
-            SizedBox(
-              height: height * 0.35,
+            const SizedBox(
+              height: 30,
             )
           ],
         ),
@@ -3067,119 +3156,6 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
       child: Form(
           key: formKeys[4],
           child: Column(children: [
-            // Column(
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            //   children: [
-            //     RichText(
-            //       textScaleFactor: MediaQuery.of(context).textScaleFactor,
-            //       textAlign: TextAlign.start,
-            //       text: TextSpan(
-            //         children: [
-            //           TextSpan(
-            //             text: 'Address with proof (address)',
-            //             style: TextStyle(
-            //                 fontSize: SizeUtil.body(context),
-            //                 color: AppColors.grey,
-            //                 fontFamily: "Helvetica"),
-            //           ),
-            //           TextSpan(
-            //               text: "*",
-            //               style: TextStyle(
-            //                   fontSize: SizeUtil.body(context),
-            //                   color: AppColors.red,
-            //                   fontFamily: "Helvetica")),
-            //         ],
-            //       ),
-            //     ),
-            //     const SizedBox(height: 2),
-            //     Padding(
-            //       padding: const EdgeInsets.only(right: 40),
-            //       child: Row(
-            //         crossAxisAlignment: CrossAxisAlignment.start,
-            //         mainAxisAlignment: MainAxisAlignment.start,
-            //         children: [
-            //           Expanded(
-            //             child: ClipRRect(
-            //               borderRadius: BorderRadius.circular(5),
-            //               child: TextFormField(
-            //                 readOnly: true,
-            //                 controller: addressProofDocumentController,
-            //                 keyboardType: const TextInputType.numberWithOptions(
-            //                     signed: true, decimal: true),
-            //                 autovalidateMode:
-            //                     AutovalidateMode.onUserInteraction,
-            //                 decoration: InputDecoration(
-            //                   counterText: "",
-            //                   suffixIcon: Padding(
-            //                     padding: const EdgeInsets.only(right: 5.0),
-            //                     child: GestureDetector(
-            //                       onTap: () {
-            //                         setState(() {
-            //                           addressProofDocumentController.clear();
-            //                           addressProofDocument = null;
-            //                         });
-            //                       },
-            //                       child: const Icon(Icons.clear,
-            //                           size: 20, color: AppColors.primary),
-            //                     ),
-            //                   ),
-            //                   suffixIconConstraints: const BoxConstraints(),
-            //                   filled: true,
-            //                   isDense: true,
-            //                   border: InputBorder.none,
-            //                   hintText: 'document.jpg',
-            //                   hintStyle: TextStyle(
-            //                       color: AppColors.grey,
-            //                       fontFamily: "Helvetica",
-            //                       fontSize: SizeUtil.body(context)),
-            //                   fillColor: TextfieldColors.background,
-            //                 ),
-            //                 style: TextStyle(
-            //                     fontSize: SizeUtil.body(context),
-            //                     fontFamily: "Helvetica"),
-            //                 onChanged: (value) {},
-            //                 validator: (value) {
-            //                   if (value!.isEmpty) {
-            //                     return 'address proof is required';
-            //                   }
-            //                   return null;
-            //                 },
-            //               ),
-            //             ),
-            //           ),
-            //           const SizedBox(width: 10),
-            //           Padding(
-            //             padding: const EdgeInsets.only(top: 8),
-            //             child: GestureDetector(
-            //               onTap: () {
-            //                 if (addressProofDocument == null) {
-            //                   mediaPicker(addressProofDocumentController,
-            //                       (image) {
-            //                     setState(() {
-            //                       addressProofDocumentController.text =
-            //                           image.name;
-            //                       addressProofDocument = image;
-            //                     });
-            //                   }, false);
-            //                 }
-            //               },
-            //               child: Text(
-            //                 addressProofDocument == null
-            //                     ? "Select a file"
-            //                     : "Uploaded",
-            //                 style: TextStyle(
-            //                     color: AppColors.primary,
-            //                     fontWeight: FontWeight.w400,
-            //                     fontSize: SizeUtil.body(context),
-            //                     fontFamily: "Helvetica"),
-            //               ),
-            //             ),
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   ],
-            // ),
             SizedBox(
               height: SizeUtil.verticalSpacingMedium(context),
             ),
@@ -3192,7 +3168,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'PAN card copy (identity_proof)',
+                        text: 'PAN Card Copy (identity_proof)',
                         style: TextStyle(
                             fontSize: SizeUtil.body(context),
                             color: AppColors.grey,
@@ -3232,7 +3208,6 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                   onTap: () {
                                     setState(() {
                                       panCardDocumentController.clear();
-                                      panCardDocument = null;
                                     });
                                   },
                                   child: const Icon(Icons.clear,
@@ -3268,11 +3243,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         padding: const EdgeInsets.only(top: 8),
                         child: GestureDetector(
                           onTap: () {
-                            if (panCardDocument == null) {
+                            if (panCardDocumentController.text.isEmpty) {
                               mediaPicker(panCardDocumentController, (image) {
                                 setState(() {
-                                  panCardDocumentController.text = image.name;
-                                  panCardDocument = image;
                                   File selectedFile = File(image.path);
                                   uploadFile(image.name, selectedFile,
                                       ConstantUtil.pancardType);
@@ -3281,7 +3254,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                             }
                           },
                           child: Text(
-                            panCardDocument == null
+                            panCardDocumentController.text.isEmpty
                                 ? "Select a file"
                                 : "Uploaded",
                             style: TextStyle(
@@ -3309,7 +3282,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'Signature scan (signature)',
+                        text: 'Signature Scan (signature)',
                         style: TextStyle(
                             fontSize: SizeUtil.body(context),
                             color: AppColors.grey,
@@ -3349,7 +3322,6 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                   onTap: () {
                                     setState(() {
                                       signatureScanDocumentController.clear();
-                                      signatureScanDocument = null;
                                     });
                                   },
                                   child: const Icon(Icons.clear,
@@ -3385,13 +3357,10 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         padding: const EdgeInsets.only(top: 8),
                         child: GestureDetector(
                           onTap: () {
-                            if (signatureScanDocument == null) {
+                            if (signatureScanDocumentController.text.isEmpty) {
                               mediaPicker(signatureScanDocumentController,
                                   (image) {
                                 setState(() {
-                                  signatureScanDocumentController.text =
-                                      image.name;
-                                  signatureScanDocument = image;
                                   File selectedFile = File(image.path);
                                   uploadFile(image.name, selectedFile,
                                       ConstantUtil.signDocType);
@@ -3400,7 +3369,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                             }
                           },
                           child: Text(
-                            signatureScanDocument == null
+                            signatureScanDocumentController.text.isEmpty
                                 ? "Select a file"
                                 : "Uploaded",
                             style: TextStyle(
@@ -3468,7 +3437,6 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                   onTap: () {
                                     setState(() {
                                       photoDocumentController.clear();
-                                      photoDocument = null;
                                     });
                                   },
                                   child: const Icon(Icons.clear,
@@ -3504,11 +3472,9 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         padding: const EdgeInsets.only(top: 8),
                         child: GestureDetector(
                           onTap: () {
-                            if (photoDocument == null) {
+                            if (photoDocumentController.text.isEmpty) {
                               mediaPicker(photoDocumentController, (image) {
                                 setState(() {
-                                  photoDocumentController.text = image.name;
-                                  photoDocument = image;
                                   File selectedFile = File(image.path);
                                   uploadFile(image.name, selectedFile,
                                       ConstantUtil.photoDocType);
@@ -3517,7 +3483,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                             }
                           },
                           child: Text(
-                            photoDocument == null
+                            photoDocumentController.text.isEmpty
                                 ? "Select a file"
                                 : "Uploaded",
                             style: TextStyle(
@@ -3533,122 +3499,6 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                 ),
               ],
             ),
-            // SizedBox(
-            //   height: SizeUtil.verticalSpacingMedium(context),
-            // ),
-            // Column(
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            //   children: [
-            //     RichText(
-            //       textScaleFactor: MediaQuery.of(context).textScaleFactor,
-            //       textAlign: TextAlign.start,
-            //       text: TextSpan(
-            //         children: [
-            //           TextSpan(
-            //             text: 'Bank account details (bank_account)',
-            //             style: TextStyle(
-            //                 fontSize: SizeUtil.body(context),
-            //                 color: AppColors.grey,
-            //                 fontFamily: "Helvetica"),
-            //           ),
-            //           TextSpan(
-            //               text: "*",
-            //               style: TextStyle(
-            //                   fontSize: SizeUtil.body(context),
-            //                   color: AppColors.red,
-            //                   fontFamily: "Helvetica")),
-            //         ],
-            //       ),
-            //     ),
-            //     const SizedBox(height: 2),
-            //     Padding(
-            //       padding: const EdgeInsets.only(right: 40),
-            //       child: Row(
-            //         crossAxisAlignment: CrossAxisAlignment.start,
-            //         mainAxisAlignment: MainAxisAlignment.start,
-            //         children: [
-            //           Expanded(
-            //             child: ClipRRect(
-            //               borderRadius: BorderRadius.circular(5),
-            //               child: TextFormField(
-            //                 readOnly: true,
-            //                 controller: bankAccountDocumentController,
-            //                 keyboardType: const TextInputType.numberWithOptions(
-            //                     signed: true, decimal: true),
-            //                 autovalidateMode:
-            //                     AutovalidateMode.onUserInteraction,
-            //                 decoration: InputDecoration(
-            //                   counterText: "",
-            //                   suffixIcon: Padding(
-            //                     padding: const EdgeInsets.only(right: 5.0),
-            //                     child: GestureDetector(
-            //                       onTap: () {
-            //                         setState(() {
-            //                           bankAccountDocumentController.clear();
-            //                           bankAccountDocument = null;
-            //                         });
-            //                       },
-            //                       child: const Icon(Icons.clear,
-            //                           size: 20, color: AppColors.primary),
-            //                     ),
-            //                   ),
-            //                   suffixIconConstraints: const BoxConstraints(),
-            //                   filled: true,
-            //                   isDense: true,
-            //                   border: InputBorder.none,
-            //                   hintText: 'document.jpg',
-            //                   hintStyle: TextStyle(
-            //                       color: AppColors.grey,
-            //                       fontFamily: "Helvetica",
-            //                       fontSize: SizeUtil.body(context)),
-            //                   fillColor: TextfieldColors.background,
-            //                 ),
-            //                 style: TextStyle(
-            //                     fontSize: SizeUtil.body(context),
-            //                     fontFamily: "Helvetica"),
-            //                 onChanged: (value) {},
-            //                 validator: (value) {
-            //                   if (value!.isEmpty) {
-            //                     return 'pan card copy is required';
-            //                   }
-            //                   return null;
-            //                 },
-            //               ),
-            //             ),
-            //           ),
-            //           const SizedBox(width: 10),
-            //           Padding(
-            //             padding: const EdgeInsets.only(top: 8),
-            //             child: GestureDetector(
-            //               onTap: () {
-            //                 if (bankAccountDocument == null) {
-            //                   mediaPicker(bankAccountDocumentController,
-            //                       (image) {
-            //                     setState(() {
-            //                       bankAccountDocumentController.text =
-            //                           image.name;
-            //                       bankAccountDocument = image;
-            //                     });
-            //                   }, false);
-            //                 }
-            //               },
-            //               child: Text(
-            //                 bankAccountDocument == null
-            //                     ? "Select a file"
-            //                     : "Uploaded",
-            //                 style: TextStyle(
-            //                     color: AppColors.primary,
-            //                     fontWeight: FontWeight.w400,
-            //                     fontSize: SizeUtil.body(context),
-            //                     fontFamily: "Helvetica"),
-            //               ),
-            //             ),
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   ],
-            // ),
             SizedBox(height: SizeUtil.verticalSpacingMedium(context)),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -3700,7 +3550,6 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                                     setState(() {
                                       videoVerificationDocumentController
                                           .clear();
-                                      videoVerificationDocument = null;
                                     });
                                   },
                                   child: const Icon(Icons.clear,
@@ -3736,13 +3585,10 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                         padding: const EdgeInsets.only(top: 8),
                         child: GestureDetector(
                           onTap: () {
-                            if (videoVerificationDocument == null) {
+                            if (videoVerificationDocumentController.text.isEmpty) {
                               mediaPicker(videoVerificationDocumentController,
                                   (video) {
                                 setState(() {
-                                  videoVerificationDocumentController.text =
-                                      video.name;
-                                  videoVerificationDocument = video;
                                   File selectedFile = File(video.path);
                                   uploadFile(video.name, selectedFile,
                                       ConstantUtil.ipvVedioType);
@@ -3751,7 +3597,7 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                             }
                           },
                           child: Text(
-                            videoVerificationDocument == null
+                            videoVerificationDocumentController.text.isEmpty
                                 ? "select a file"
                                 : "Uploaded",
                             style: TextStyle(
@@ -3775,8 +3621,8 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
             SizedBox(height: SizeUtil.verticalSpacingSmall(context)),
             const WarningMessage(
                 message: ConstantUtil.warningMessageToUploadVideo),
-            SizedBox(
-              height: height * 0.35,
+            const SizedBox(
+              height: 30,
             )
           ])),
     );
@@ -3910,17 +3756,16 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                   CustomIconButton(
                     text: " Camera",
                     onPressed: () async {
+                      Get.back();
                       if (isVideo) {
                         XFile? file = await pickVideo(ImageSource.camera);
                         if (file != null) {
                           onSelected(file);
-                          Get.back();
                         }
                       } else {
                         XFile? file = await pickImage(ImageSource.camera);
                         if (file != null) {
                           onSelected(file);
-                          Get.back();
                         }
                       }
                     },
@@ -3934,17 +3779,16 @@ class _KYCRequestFormState extends State<KYCRequestForm> {
                   CustomIconButton(
                     text: " Gallery",
                     onPressed: () async {
+                      Get.back();
                       if (isVideo) {
                         XFile? file = await pickVideo(ImageSource.gallery);
                         if (file != null) {
                           onSelected(file);
-                          Get.back();
                         }
                       } else {
                         XFile? file = await pickImage(ImageSource.gallery);
                         if (file != null) {
                           onSelected(file);
-                          Get.back();
                         }
                       }
                     },

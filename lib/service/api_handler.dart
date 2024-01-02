@@ -56,7 +56,52 @@ class ApiHandler {
     }
   }
 
- static Future<http.Response> _handleMultipartFilesRequest(
+
+   static Future<http.Response> _handleDownloadFileRequest(
+      http.Request request, BuildContext context) async {
+    try {
+      if (!await ConstantUtil.isInternetConnected()) {
+        throw CustomException(ConstantUtil.internetUnavailable);
+      }
+      final accessToken = LocalStorage.getToken();
+      if (accessToken!.isNotEmpty) {
+        request.headers['Content-Type'] = "application/json";
+        request.headers['Authorization'] = accessToken;
+      }
+
+      final client = http.Client();
+      final responseStream = await client
+          .send(request)
+          .timeout(ConstantUtil.requestTimeout, onTimeout: () {
+        throw CustomException(ConstantUtil.requestTimeoutMesssage);
+      });
+      final response = await http.Response.fromStream(responseStream);
+      if (response.statusCode == 419) {
+        final refreshedToken = await refreshToken(context);
+        if (refreshedToken!.isNotEmpty) {
+          final newRequest = http.Request(request.method, request.url)
+            ..headers.addAll(request.headers)
+            ..body = request.body;
+          newRequest.headers['Authorization'] = refreshedToken;
+          final newResponseStream = await client.send(newRequest);
+          final newresponse = await http.Response.fromStream(newResponseStream);
+          return newresponse;
+        }
+      } else if (response.statusCode == 401) {
+        LocalStorage.removeToken();
+        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const SignInScreen()),
+            (Route route) => false);
+        throw CustomException("unauthorized access");
+      }
+      client.close();
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<http.Response> _handleMultipartFilesRequest(
       http.MultipartRequest request, BuildContext context) async {
     try {
       if (!await ConstantUtil.isInternetConnected()) {
@@ -108,7 +153,6 @@ class ApiHandler {
       rethrow;
     }
   }
-
 
   static Future<String?> refreshToken(BuildContext context) async {
     String? accessToken = LocalStorage.getToken();
@@ -162,12 +206,26 @@ class ApiHandler {
     return await _handleRequest(request, context);
   }
 
-    static Future<http.Response> uploadFile(String path,
-        String userId, String documentType, File file, BuildContext context) async {
+  static Future<http.Response> patch(String path,
+      Map<String, dynamic> requestBody, BuildContext context) async {
+    final request = http.Request('PATCH', Uri.parse(path));
+    request.body = json.encode(requestBody);
+    return await _handleRequest(request, context);
+  }
+
+  static Future<http.Response> uploadFile(String path, String userId,
+      String documentType, File file, BuildContext context) async {
     final request = http.MultipartRequest('POST', Uri.parse(path));
     request.fields['userId'] = userId;
     request.fields['documentType'] = documentType;
-    request.files.add(await http.MultipartFile.fromPath('file', file.path));   
+    request.files.add(await http.MultipartFile.fromPath('file', file.path));
     return await _handleMultipartFilesRequest(request, context);
+  }
+
+   static Future<http.Response> downloadFile(String path,
+      Map<String, dynamic> requestBody, BuildContext context) async {
+    final request = http.Request('GET', Uri.parse(path));
+    request.body = json.encode(requestBody);
+    return await _handleDownloadFileRequest(request, context);
   }
 }

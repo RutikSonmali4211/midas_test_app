@@ -2,16 +2,17 @@ import 'package:get/get.dart';
 import 'package:midas/Widgets/buttons/large_button.dart';
 import 'package:midas/constant/colors.dart';
 import 'package:midas/constant/size_util.dart';
+import 'package:midas/controller/kyc/kyc_controller.dart';
 import 'package:midas/controller/user/user_controller.dart';
 import 'package:midas/screen/profile/investment_profile/investment_profile.dart';
+import 'package:midas/screen/profile/kyc/kycBankDetailsPage.dart';
 import 'package:midas/screen/profile/pincode/pincode.dart';
 import 'package:midas/screen/profile/user_information/user_information.dart';
 import 'package:midas/screen/sign_in/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:midas/widgets/appbar/small_appbar.dart';
-import '../../Controller/kyc/kyc_controller.dart';
-import '../../Model/Dto/ImageData.dart';
+import '../../model/Dto/ImageData.dart';
 import '../../constant/sizeConstant.dart';
 import 'package:midas/storage/local_storage.dart';
 import 'contactUs/contactUs.dart';
@@ -20,7 +21,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'kyc/esign_required_screen.dart';
 import 'kyc/kyc_done_screen.dart';
-import 'kyc/kyc_pending.dart';
+import 'kyc/kyc_rejected_screen.dart';
+import 'kyc/kyc_submitted.dart';
 import 'kyc/start_kyc.dart';
 
 class ProfileAndSettings extends StatefulWidget {
@@ -60,7 +62,7 @@ class _ProfileAndSettingsState extends State<ProfileAndSettings> {
     } else {}
   }
 
-  KycController kycController = Get.put(KycController());
+  KYCController kycController = Get.put(KYCController());
 
   switchKycScreen() async {
     ImageData data = await kycController.fetchKycStatus(context);
@@ -69,7 +71,7 @@ class _ProfileAndSettingsState extends State<ProfileAndSettings> {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => const KycPendingPhase()),
+            builder: (context) => const KycRejected()),
       );
     }
     if (data.value == "esign_required") {
@@ -85,7 +87,7 @@ class _ProfileAndSettingsState extends State<ProfileAndSettings> {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => const KycPendingPhase()),
+            builder: (context) => const KycSubmittedPhase()),
       );
     }
     if (data.value == "successful") {
@@ -100,7 +102,7 @@ class _ProfileAndSettingsState extends State<ProfileAndSettings> {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => const KycDetailsPhase()),
+            builder: (context) => const KycRejected()),
       );
     }
     if (data.value == "rejected") {
@@ -108,15 +110,23 @@ class _ProfileAndSettingsState extends State<ProfileAndSettings> {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => const KycDetailsPhase()),
+            builder: (context) => const KycRejected()),
       );
     }
-    if (data.value == "") {
+    if (data.value == ""||data.value == "remaining" || data.value == "Incompleted") {
       // ignore: use_build_context_synchronously
       Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => const KycDetailsPhase()),
+      );
+    }
+     if (data.value == "bank_details_required") {
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const KycBankDetailsPage()),
       );
     }
   }

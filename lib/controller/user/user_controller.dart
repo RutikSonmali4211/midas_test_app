@@ -140,6 +140,14 @@ class UserController extends GetxController {
         LocalStorage.setToken(jsonResponse['result']['token']);
         LocalStorage.setUserId(jsonResponse['result']['user']['_id']);
         LocalStorage.setUser(json.encode(jsonResponse['result']['user']));
+        LocalStorage.setkycStatusEnabled(jsonResponse['result']['user']['kycStatus']);
+        var userId = LocalStorage.getUserId();
+        print(LocalStorage.getkycStatusEnabled());
+        print(jsonResponse['result']['user']['pan']);
+        String pancard = jsonResponse['result']['user']['pan'];
+        if(LocalStorage.getkycStatusEnabled() == "Incompleted" || LocalStorage.getkycStatusEnabled() == "" || LocalStorage.getkycStatusEnabled() == null){
+            await checkKyc(pancard, userId.toString(), context);
+        }
         isLogin.value = true;
         return true;
       } else if (response.statusCode >= 500) {
@@ -157,6 +165,36 @@ class UserController extends GetxController {
       return false;
     } finally {
       Loader.hideLoading();
+    }
+  }
+
+  Future<bool> checkKyc(
+      String panCard, String userId, BuildContext context) async {
+    try {
+      if (!await ConstantUtil.isInternetConnected()) {
+        throw CustomException(ConstantUtil.internetUnavailable);
+      }
+      var response = await userService.checkKyc(userId, panCard, context);
+      var jsonResponse = jsonDecode(response.body);
+      print(jsonResponse);
+      if (response.statusCode == 200) {
+        LocalStorage.setkycStatusEnabled(
+            json.encode(jsonResponse['result']['kycStatus']));
+        return true;
+      } else if (response.statusCode >= 500) {
+        await Loggers.printLog(UserController, "ERROR",
+            "error check kys status ${jsonResponse['message']}");
+        return false;
+      } else {
+        await Loggers.printLog(UserController, "ERROR",
+            "error in check kyc status ${jsonResponse['message']}");
+        return false;
+      }
+    } catch (e) {
+      if (e is CustomException) {
+        showErrorAlert(e.toString());
+      }
+      return false;
     }
   }
 

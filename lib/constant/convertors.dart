@@ -10,7 +10,7 @@ class Convertors {
     return listOfData;
   }
 
-  static double getInvestedAssetPercentage(int value, int totalValue) {
+  static double getInvestedAssetPercentage(double value, double totalValue) {
     double percentage =
         double.parse(((value / totalValue) * 100).toStringAsFixed(2));
     if (percentage.isNaN) {
@@ -19,7 +19,7 @@ class Convertors {
     return percentage;
   }
 
-  static double getLinearBarValue(int value, int totalValue) {
+  static double getLinearBarValue(double value, double totalValue) {
     double percentage =
         double.parse((((value / totalValue) * 100) / 100).toStringAsFixed(4));
     if (percentage.isNaN) {
